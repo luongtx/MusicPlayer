@@ -2,6 +2,8 @@ package com.example.mymusicapp;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar_main);
         viewPager = findViewById(R.id.view_pager);
 
+        setSupportActionBar(toolbar);
         MyPagerAdapter pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         pagerAdapter.addFragment(new SongsFrag(), "SONGS");
         pagerAdapter.addFragment(new ArtistsFrag(), "ARTISTS");
@@ -28,5 +31,11 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter.addFragment(new PlaylistFrag(), "PLAYLIST");
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 }
