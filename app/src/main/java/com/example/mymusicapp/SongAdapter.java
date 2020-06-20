@@ -63,6 +63,7 @@ public class SongAdapter extends ArrayAdapter {
             viewHolder = (SongViewHolder) convertView.getTag();
         }
         Song song = songs.get(position);
+        viewHolder.ivImg.setImageResource(R.drawable.song);
         viewHolder.tvTitle.setText(song.getTitle());
         viewHolder.tvArtist.setText(song.getArtist());
         return convertView;
