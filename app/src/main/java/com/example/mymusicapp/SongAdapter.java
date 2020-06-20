@@ -1,22 +1,17 @@
 package com.example.mymusicapp;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SongAdapter extends ArrayAdapter {
 
@@ -63,7 +58,7 @@ public class SongAdapter extends ArrayAdapter {
             viewHolder = (SongViewHolder) convertView.getTag();
         }
         Song song = songs.get(position);
-        viewHolder.ivImg.setImageResource(R.drawable.song);
+        viewHolder.ivImg.setImageResource(R.drawable.dvd);
         viewHolder.tvTitle.setText(song.getTitle());
         viewHolder.tvArtist.setText(song.getArtist());
         return convertView;
