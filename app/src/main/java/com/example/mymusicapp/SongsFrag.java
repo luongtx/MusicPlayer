@@ -27,6 +27,9 @@ import java.util.ArrayList;
 public class SongsFrag extends Fragment {
 
     private View song_view;
+    ArrayList<Song> songs;
+    ListView lv_songs;
+
     public SongsFrag() {
         // Required empty public constructor
     }
@@ -43,8 +46,8 @@ public class SongsFrag extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ListView lv_songs = view.findViewById(R.id.lv_songs);
-        ArrayList<Song> songs = getSongList();
+        lv_songs = view.findViewById(R.id.lv_songs);
+        songs = getSongList();
         SongAdapter songAdapter = new SongAdapter(view.getContext(), R.layout.song_item, songs);
         lv_songs.setAdapter(songAdapter);
     }
