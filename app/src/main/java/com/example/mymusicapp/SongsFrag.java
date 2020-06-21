@@ -26,9 +26,7 @@ import java.util.ArrayList;
  */
 public class SongsFrag extends Fragment {
 
-    ListView lv_songs;
-    ArrayList<Song> songs;
-    View view;
+    private View song_view;
     public SongsFrag() {
         // Required empty public constructor
     }
@@ -38,35 +36,34 @@ public class SongsFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view  = inflater.inflate(R.layout.fragment_songs, container, false);
-        return view;
+        song_view  = inflater.inflate(R.layout.fragment_songs, container, false);
+        return song_view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        lv_songs = view.findViewById(R.id.lv_songs);
-        songs = getSongList();
+        ListView lv_songs = view.findViewById(R.id.lv_songs);
+        ArrayList<Song> songs = getSongList();
         SongAdapter songAdapter = new SongAdapter(view.getContext(), R.layout.song_item, songs);
         lv_songs.setAdapter(songAdapter);
     }
 
-    public void requestReadStorage() {
+    private void requestReadStorage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (view.getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+            if (song_view.getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                return;
             }
         }
     }
 
-    public ArrayList<Song> getSongList() {
+    private ArrayList<Song> getSongList() {
         requestReadStorage();
         ArrayList<Song> list_songs = new ArrayList<>();
-        ContentResolver musicResolver = view.getContext().getContentResolver();
+        ContentResolver musicResolver = song_view.getContext().getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String columns[] = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM};
+        String[] columns = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM};
         Cursor musicCursor = musicResolver.query(musicUri, columns, null, null, null);
         if(musicCursor!=null && musicCursor.moveToFirst()){
             do {
@@ -78,6 +75,7 @@ public class SongsFrag extends Fragment {
 
             } while(musicCursor.moveToNext());
         }
+        assert musicCursor != null;
         musicCursor.close();
         return list_songs;
     }
