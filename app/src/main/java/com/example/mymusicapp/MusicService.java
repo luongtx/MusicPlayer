@@ -21,15 +21,26 @@ public class MusicService extends Service implements
 
     private MediaPlayer player;
     private ArrayList<Song> songs;
-    private int songPosn;
+    private int currSongIndex;
     private final IBinder musicBind = new MusicBinder();
 
+    public interface ServiceCallbacks {
+        void onSongIndexChanged();
+    }
+
+    private ServiceCallbacks SongItemChange;
     @Override
     public void onCreate() {
         super.onCreate();
-        songPosn=0;
+        currSongIndex = -1;
         player = new MediaPlayer();
         initMusicPlayer();
+    }
+
+    public class LocalBinder extends Binder {
+        MusicService getService() {
+            return MusicService.this;
+        }
     }
 
     public void initMusicPlayer() {
@@ -54,6 +65,10 @@ public class MusicService extends Service implements
         }
     }
 
+    public void setCallBacks(ServiceCallbacks callBacks){
+        SongItemChange = callBacks;
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -67,24 +82,40 @@ public class MusicService extends Service implements
         return false;
     }
 
-    public void playSong() {
+    public void playSong(int songIndex) {
         player.reset();
-        Song playSong = songs.get(songPosn);
-        int currSong = playSong.getId();
-        Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currSong);
-        try{
-            player.setDataSource(getApplicationContext(), trackUri);
+        if(songIndex + 1 <= MainActivity.songs.size() && songIndex >= 0) {
+            currSongIndex = songIndex;
+            Song playSong = songs.get(currSongIndex);
+            int currSong = playSong.getId();
+            Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currSong);
+            try {
+                player.setDataSource(getApplicationContext(), trackUri);
+            } catch (Exception e) {
+                Log.e("MUSIC SERVICE", "Error setting data source", e);
+            }
+            player.prepareAsync();
         }
-        catch(Exception e){
-            Log.e("MUSIC SERVICE", "Error setting data source", e);
+    }
+
+    public void toggle_play() {
+        if (player.isPlaying()) {
+            player.pause();
+        } else {
+            player.start();
         }
-        player.prepareAsync();
+    }
+
+    public int getCurrSongIndex() {
+        return currSongIndex;
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-
+        playSong(currSongIndex + 1);
+        SongItemChange.onSongIndexChanged();
     }
+
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -96,7 +127,4 @@ public class MusicService extends Service implements
         mp.start();
     }
 
-    public void setSong(int songIndex){
-        songPosn=songIndex;
-    }
 }

@@ -25,7 +25,8 @@ public class SongAdapter extends ArrayAdapter {
         this.resource = resource;
         this.songs = songs;
     }
-    private class SongViewHolder {
+
+    static class SongViewHolder {
         ImageView ivImg;
         TextView tvTitle, tvArtist;
         SongViewHolder(View v) {
@@ -49,7 +50,7 @@ public class SongAdapter extends ArrayAdapter {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        SongViewHolder viewHolder;
+        final SongViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(resource, parent, false);
             viewHolder = new SongViewHolder(convertView);
@@ -63,5 +64,6 @@ public class SongAdapter extends ArrayAdapter {
         viewHolder.tvArtist.setText(song.getArtist());
         return convertView;
     }
+
 
 }

@@ -15,24 +15,32 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MusicService.ServiceCallbacks {
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound=false;
-    private ArrayList<Song> songs;
+    static ArrayList<Song> songs;
+
+    LinearLayout layout_mini_play;
+    ImageButton iv_prev, iv_play, iv_next;
+
+    SongsFrag songsFrag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout = findViewById(R.id.tab_layout);
         toolbar = findViewById(R.id.toolbar_main);
-        viewPager = findViewById(R.id.view_pager);
+        viewPager = findViewById(R.id.pager);
 
         setSupportActionBar(toolbar);
         MyPagerAdapter pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
@@ -49,8 +57,44 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter.addFragment(new AlbumsFrag(), "ALBUMS");
         pagerAdapter.addFragment(new PlaylistFrag(), "PLAYLIST");
 
+
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        layout_mini_play = findViewById(R.id.layout_mini_play);
+        layout_mini_play.setVisibility(View.GONE);
+        iv_prev = (ImageButton) findViewById(R.id.iv_prev);
+        iv_play = (ImageButton) findViewById(R.id.iv_play);
+        iv_next = (ImageButton) findViewById(R.id.iv_next);
+        iv_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                musicSrv.toggle_play();
+            }
+        });
+
+        iv_prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                musicSrv.playSong(musicSrv.getCurrSongIndex() - 1);
+                highlightSong();
+            }
+        });
+        iv_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                musicSrv.playSong(musicSrv.getCurrSongIndex() + 1);
+                highlightSong();
+            }
+        });
+    }
+
+    public void highlightSong(){
+        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
+        int currSongIndex = musicSrv.getCurrSongIndex();
+        if(viewPager.getCurrentItem() == 0 && page != null) {
+            ((SongsFrag)page).changeSongItemDisplay(currSongIndex);
+        }
     }
 
     public void requestReadStorage() {
@@ -62,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public ArrayList<Song> getSongList() {
+    public ArrayList<Song> loadSongs() {
         requestReadStorage();
         ArrayList<Song> list_songs = new ArrayList<>();
         ContentResolver musicResolver = getContentResolver();
@@ -95,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
             //pass list
             musicSrv.setList(songs);
             musicBound = true;
+            musicSrv.setCallBacks(MainActivity.this); //register service call back
         }
 
         @Override
@@ -114,8 +159,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void songPicked(int position){
-        musicSrv.setSong(position);
-        musicSrv.playSong();
+        if(position != musicSrv.getCurrSongIndex()) {
+            musicSrv.playSong(position);
+        } else {
+            musicSrv.toggle_play();
+        }
+        layout_mini_play.setVisibility(View.VISIBLE);
+        iv_play.setPressed(true);
     }
 
     @Override
@@ -124,4 +174,12 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public ArrayList<Song> getSongs() {
+        return songs;
+    }
+
+    @Override
+    public void onSongIndexChanged() {
+        highlightSong();
+    }
 }

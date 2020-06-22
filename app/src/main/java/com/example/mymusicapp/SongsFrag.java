@@ -1,23 +1,19 @@
 package com.example.mymusicapp;
 
-import android.Manifest;
-import android.content.ContentResolver;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -27,10 +23,11 @@ import java.util.ArrayList;
  */
 public class SongsFrag extends Fragment {
 
+    View lastClickView;
+    ListView lv_songs;
     public SongsFrag() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,8 +40,8 @@ public class SongsFrag extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ListView lv_songs = view.findViewById(R.id.lv_songs);
-        ArrayList<Song> songs = ((MainActivity)getActivity()).getSongList();
+        lv_songs = view.findViewById(R.id.lv_songs);
+        ArrayList<Song> songs = ((MainActivity)getActivity()).loadSongs();
         SongAdapter songAdapter = new SongAdapter(view.getContext(), R.layout.song_item, songs);
         lv_songs.setAdapter(songAdapter);
 
@@ -52,7 +49,24 @@ public class SongsFrag extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ((MainActivity)getActivity()).songPicked(position);
+                changeSongItemDisplay(position);
             }
         });
+
     }
+
+    public void changeSongItemDisplay(int position) {
+        View itemview = lv_songs.getChildAt(position - lv_songs.getFirstVisiblePosition());
+        itemview.setBackgroundColor(itemview.getResources().getColor(R.color.colorAccent));
+        ImageView ivImg = itemview.findViewById(R.id.ivImg);
+        Glide.with(this).load(R.drawable.dvd_playing).into(ivImg);
+        if(lastClickView != null) {
+            lastClickView.setBackgroundColor(itemview.getResources().getColor(R.color.icons));
+            ivImg = lastClickView.findViewById(R.id.ivImg);
+            ivImg.setImageResource(R.drawable.dvd);
+        }
+        lastClickView = itemview;
+    }
+
+
 }
