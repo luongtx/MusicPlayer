@@ -63,4 +63,5 @@ public class SongAdapter extends ArrayAdapter {
         viewHolder.tvArtist.setText(song.getArtist());
         return convertView;
     }
+
 }

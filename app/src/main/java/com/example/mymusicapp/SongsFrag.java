@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -46,5 +47,12 @@ public class SongsFrag extends Fragment {
         ArrayList<Song> songs = ((MainActivity)getActivity()).getSongList();
         SongAdapter songAdapter = new SongAdapter(view.getContext(), R.layout.song_item, songs);
         lv_songs.setAdapter(songAdapter);
+
+        lv_songs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((MainActivity)getActivity()).songPicked(position);
+            }
+        });
     }
 }
