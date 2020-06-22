@@ -72,7 +72,31 @@
         android:layout_height="0dp"
         android:layout_weight="0.5"
         android:orientation="horizontal"
+        android:gravity="center"
         android:background="@color/colorPrimary">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_previous"
+            tools:ignore="NestedWeights">
+
+        </ImageView>
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/ic_pause">
+
+        </ImageView>
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_next">
+        </ImageView>
     </LinearLayout>
 
 </LinearLayout>
