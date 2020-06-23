@@ -68,5 +68,4 @@ public class SongsFrag extends Fragment {
         lastClickView = itemview;
     }
 
-
 }
