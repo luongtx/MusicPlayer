@@ -28,7 +28,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MusicService.ServiceCallbacks {
+public class MainActivity extends AppCompatActivity implements MusicService.ServiceCallbacks, SongAdapter.ItemClickListener {
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements MusicService.Serv
     LinearLayout layout_mini_play;
     ImageButton iv_prev, iv_play, iv_next;
 
-    SongsFrag songsFrag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,14 +77,12 @@ public class MainActivity extends AppCompatActivity implements MusicService.Serv
             @Override
             public void onClick(View v) {
                 musicSrv.playSong(musicSrv.getCurrSongIndex() - 1);
-                highlightSong();
             }
         });
         iv_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 musicSrv.playSong(musicSrv.getCurrSongIndex() + 1);
-                highlightSong();
             }
         });
     }
@@ -179,7 +177,13 @@ public class MainActivity extends AppCompatActivity implements MusicService.Serv
     }
 
     @Override
-    public void onSongIndexChanged() {
+    public void onPlayNewSong() {
+        highlightSong();
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        songPicked(position);
         highlightSong();
     }
 }

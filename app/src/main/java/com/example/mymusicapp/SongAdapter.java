@@ -1,69 +1,69 @@
 package com.example.mymusicapp;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-public class SongAdapter extends ArrayAdapter {
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
     private ArrayList<Song> songs;
-    private Context context;
-    private int resource;
+    static int lastClickPosition = -1;
 
-    public SongAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Song> songs) {
-        super(context, resource, songs);
-        this.context = context;
-        this.resource = resource;
-        this.songs = songs;
+    public interface ItemClickListener {
+        void onItemClick(int position);
     }
 
-    static class SongViewHolder {
+    static class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView ivImg;
         TextView tvTitle, tvArtist;
-        SongViewHolder(View v) {
+        ItemClickListener itemClickListener;
+
+        SongViewHolder(View v, ItemClickListener itemClickListener) {
+            super(v);
             ivImg = v.findViewById(R.id.ivImg);
             tvTitle = v.findViewById(R.id.tvTitle);
             tvArtist = v.findViewById(R.id.tvArtist);
+            this.itemClickListener = itemClickListener;
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            itemClickListener.onItemClick(getAdapterPosition());
         }
     }
 
-    @Override
-    public int getCount() {
-        return songs.size();
-    }
-
-    @Nullable
-    @Override
-    public Object getItem(int position) {
-        return songs.get(position);
+    public SongAdapter(ArrayList<Song> songs) {
+        this.songs = songs;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final SongViewHolder viewHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(resource, parent, false);
-            viewHolder = new SongViewHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (SongViewHolder) convertView.getTag();
-        }
-        Song song = songs.get(position);
-        viewHolder.ivImg.setImageResource(R.drawable.dvd);
-        viewHolder.tvTitle.setText(song.getTitle());
-        viewHolder.tvArtist.setText(song.getArtist());
-        return convertView;
+    public SongAdapter.SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_item, parent,false);
+        return new SongViewHolder(view, (ItemClickListener) parent.getContext());
     }
 
+    @Override
+    public void onBindViewHolder(SongViewHolder holder, int position) {
+        holder.ivImg.setImageResource(R.drawable.dvd);
+        Song song = songs.get(position);
+        holder.tvTitle.setText(song.getTitle());
+        holder.tvArtist.setText(song.getArtist());
+    }
+
+    @Override
+    public int getItemCount() {
+        return songs.size();
+    }
 
 }

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +25,8 @@ import java.util.ArrayList;
  */
 public class SongsFrag extends Fragment {
 
-    View lastClickView;
-    ListView lv_songs;
+    RecyclerView rcv_songs;
+    static int lastClickPosition;
     public SongsFrag() {
         // Required empty public constructor
     }
@@ -40,32 +42,24 @@ public class SongsFrag extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        lv_songs = view.findViewById(R.id.lv_songs);
+        rcv_songs = view.findViewById(R.id.rcv_songs);
         ArrayList<Song> songs = ((MainActivity)getActivity()).loadSongs();
-        SongAdapter songAdapter = new SongAdapter(view.getContext(), R.layout.song_item, songs);
-        lv_songs.setAdapter(songAdapter);
-
-        lv_songs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((MainActivity)getActivity()).songPicked(position);
-                changeSongItemDisplay(position);
-            }
-        });
-
+        rcv_songs.setHasFixedSize(true);
+        rcv_songs.setAdapter(new SongAdapter(songs));
+        rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
     }
 
     public void changeSongItemDisplay(int position) {
-        View itemview = lv_songs.getChildAt(position - lv_songs.getFirstVisiblePosition());
-        itemview.setBackgroundColor(itemview.getResources().getColor(R.color.colorAccent));
-        ImageView ivImg = itemview.findViewById(R.id.ivImg);
-        Glide.with(this).load(R.drawable.dvd_playing).into(ivImg);
-        if(lastClickView != null) {
-            lastClickView.setBackgroundColor(itemview.getResources().getColor(R.color.icons));
-            ivImg = lastClickView.findViewById(R.id.ivImg);
-            ivImg.setImageResource(R.drawable.dvd);
-        }
-        lastClickView = itemview;
-    }
+        View view = rcv_songs.getLayoutManager().findViewByPosition(position);
+        view.setBackgroundColor(view.getResources().getColor(R.color.colorAccent));
+        Glide.with(view).load(R.drawable.dvd_playing).into((ImageView)view.findViewById(R.id.ivImg));
 
+        view = rcv_songs.getLayoutManager().findViewByPosition(lastClickPosition);
+        if(view != null && lastClickPosition != position) {
+            view.setBackgroundColor(view.getResources().getColor(R.color.icons));
+            ImageView imageView = view.findViewById(R.id.ivImg);
+            imageView.setImageResource(R.drawable.dvd);
+        }
+        lastClickPosition = position;
+    }
 }

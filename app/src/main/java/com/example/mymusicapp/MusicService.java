@@ -25,10 +25,15 @@ public class MusicService extends Service implements
     private final IBinder musicBind = new MusicBinder();
 
     public interface ServiceCallbacks {
-        void onSongIndexChanged();
+        void onPlayNewSong();
     }
 
     private ServiceCallbacks SongItemChange;
+
+    public void setCallBacks(ServiceCallbacks callBacks){
+        SongItemChange = callBacks;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -37,11 +42,11 @@ public class MusicService extends Service implements
         initMusicPlayer();
     }
 
-    public class LocalBinder extends Binder {
-        MusicService getService() {
-            return MusicService.this;
-        }
-    }
+//    public class LocalBinder extends Binder {
+//        MusicService getService() {
+//            return MusicService.this;
+//        }
+//    }
 
     public void initMusicPlayer() {
 
@@ -63,10 +68,6 @@ public class MusicService extends Service implements
         MusicService getService() {
             return MusicService.this;
         }
-    }
-
-    public void setCallBacks(ServiceCallbacks callBacks){
-        SongItemChange = callBacks;
     }
 
     @Nullable
@@ -95,6 +96,7 @@ public class MusicService extends Service implements
                 Log.e("MUSIC SERVICE", "Error setting data source", e);
             }
             player.prepareAsync();
+            SongItemChange.onPlayNewSong();
         }
     }
 
@@ -113,7 +115,7 @@ public class MusicService extends Service implements
     @Override
     public void onCompletion(MediaPlayer mp) {
         playSong(currSongIndex + 1);
-        SongItemChange.onSongIndexChanged();
+        SongItemChange.onPlayNewSong();
     }
 
 
