@@ -22,21 +22,25 @@ import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MusicService.ServiceCallbacks, SongAdapter.ItemClickListener {
+public class ActivityMain extends AppCompatActivity implements MusicService.ServiceCallbacks,
+        AdapterSong.SongItemClickListeneer, AdapterArtist.ArtistItemClickListener {
+
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
     private MusicService musicSrv;
     private Intent playIntent;
-    private boolean musicBound=false;
+    private boolean musicBound = false;
     static ArrayList<Song> songs;
-
+    static ArrayList<Artist> artists;
     LinearLayout layout_mini_play;
     ImageButton iv_prev, iv_play, iv_next;
 
@@ -51,11 +55,11 @@ public class MainActivity extends AppCompatActivity implements MusicService.Serv
         viewPager = findViewById(R.id.pager);
 
         setSupportActionBar(toolbar);
-        MyPagerAdapter pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragment(new SongsFrag(), "SONGS");
-        pagerAdapter.addFragment(new ArtistsFrag(), "ARTISTS");
-        pagerAdapter.addFragment(new AlbumsFrag(), "ALBUMS");
-        pagerAdapter.addFragment(new PlaylistFrag(), "PLAYLIST");
+        AdapterMyPager pagerAdapter = new AdapterMyPager(getSupportFragmentManager());
+        pagerAdapter.addFragment(new FragmentSongs(), "SONGS");
+        pagerAdapter.addFragment(new FragmentArtists(), "ARTISTS");
+        pagerAdapter.addFragment(new FragmentAlbums(), "ALBUMS");
+        pagerAdapter.addFragment(new FragmentPlaylist(), "PLAYLIST");
 
 
         viewPager.setAdapter(pagerAdapter);
@@ -90,8 +94,8 @@ public class MainActivity extends AppCompatActivity implements MusicService.Serv
     public void highlightSong(){
         Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
         int currSongIndex = musicSrv.getCurrSongIndex();
-        if(viewPager.getCurrentItem() == 0 && page != null) {
-            ((SongsFrag)page).changeSongItemDisplay(currSongIndex);
+        if (viewPager.getCurrentItem() == 0 && page != null) {
+            ((FragmentSongs) page).changeSongItemDisplay(currSongIndex);
         }
     }
 
@@ -127,6 +131,51 @@ public class MainActivity extends AppCompatActivity implements MusicService.Serv
         return songs;
     }
 
+    public ArrayList<Song> loadSongsByArtist(String artistName) {
+        requestReadStorage();
+        ArrayList<Song> list_songs = new ArrayList<>();
+        ContentResolver musicResolver = getContentResolver();
+        Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[] columns = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM};
+        String selection = MediaStore.Audio.Artists.ARTIST + "=?";
+        Cursor musicCursor = musicResolver.query(musicUri, columns, selection, new String[]{artistName}, null);
+        if(musicCursor!=null && musicCursor.moveToFirst()){
+            do {
+                int id = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                String title = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                String artist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                String album = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                list_songs.add(new Song(id,title,artist,album));
+
+            } while(musicCursor.moveToNext());
+        }
+        assert musicCursor != null;
+        musicCursor.close();
+        songs = list_songs;
+        return songs;
+    }
+
+    public ArrayList<Artist> loadArtist() {
+        requestReadStorage();
+        ArrayList<Artist> list_artist = new ArrayList<>();
+        ContentResolver musicResolver = getContentResolver();
+        Uri artistUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+        String[] columns = {MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST, MediaStore.Audio.Artists.NUMBER_OF_TRACKS};
+        Cursor musicCursor = musicResolver.query(artistUri, columns, null, null, null);
+        if(musicCursor != null && musicCursor.moveToFirst()){
+            do {
+                int id = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Artists._ID));
+                String artist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST));
+                int numberOfSongs = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
+                list_artist.add(new Artist(id,artist,numberOfSongs));
+            } while(musicCursor.moveToNext());
+        }
+        assert musicCursor != null;
+        musicCursor.close();
+        artists = list_artist;
+        return artists;
+    }
+
     private ServiceConnection musicConnection = new ServiceConnection(){
 
         @Override
@@ -137,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements MusicService.Serv
             //pass list
             musicSrv.setList(songs);
             musicBound = true;
-            musicSrv.setCallBacks(MainActivity.this); //register service call back
+            musicSrv.setCallBacks(ActivityMain.this); //register service call back
         }
 
         @Override
@@ -182,8 +231,23 @@ public class MainActivity extends AppCompatActivity implements MusicService.Serv
     }
 
     @Override
-    public void onItemClick(int position) {
+    public void onSongItemClick(int position) {
         songPicked(position);
         highlightSong();
+    }
+
+
+    @Override
+    public void onClickArtistItem(int position) {
+        String artistName = artists.get(position).getName();
+        FragmentArtistDetail fragmentArtistDetail = new FragmentArtistDetail();
+        Bundle bundle = new Bundle();
+        bundle.putString("artist", artistName);
+        fragmentArtistDetail.setArguments(bundle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.layout_main, fragmentArtistDetail);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

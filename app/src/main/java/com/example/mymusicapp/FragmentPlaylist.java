@@ -13,9 +13,9 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PlaylistFrag extends Fragment {
+public class FragmentPlaylist extends Fragment {
 
-    public PlaylistFrag() {
+    public FragmentPlaylist() {
         // Required empty public constructor
     }
 

@@ -27,7 +27,7 @@
                 android:title="set timer" />
             <item
                 android:id="@+id/shuffle"
-                android:title="shuffle all" />
+                android:title="settings" />
         </menu>
     </item>
 

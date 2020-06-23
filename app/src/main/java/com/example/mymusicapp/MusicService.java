@@ -85,7 +85,7 @@ public class MusicService extends Service implements
 
     public void playSong(int songIndex) {
         player.reset();
-        if(songIndex + 1 <= MainActivity.songs.size() && songIndex >= 0) {
+        if(songIndex + 1 <= ActivityMain.songs.size() && songIndex >= 0) {
             currSongIndex = songIndex;
             Song playSong = songs.get(currSongIndex);
             int currSong = playSong.getId();

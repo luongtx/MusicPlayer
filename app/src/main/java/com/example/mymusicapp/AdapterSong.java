@@ -9,53 +9,50 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
+public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder> {
 
     private ArrayList<Song> songs;
-    static int lastClickPosition = -1;
 
-    public interface ItemClickListener {
-        void onItemClick(int position);
+    public interface SongItemClickListeneer {
+        void onSongItemClick(int position);
     }
 
     static class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView ivImg;
         TextView tvTitle, tvArtist;
-        ItemClickListener itemClickListener;
+        SongItemClickListeneer songItemClickListeneer;
 
-        SongViewHolder(View v, ItemClickListener itemClickListener) {
+        SongViewHolder(View v, SongItemClickListeneer songItemClickListeneer) {
             super(v);
-            ivImg = v.findViewById(R.id.ivImg);
+            ivImg = v.findViewById(R.id.ivSong);
             tvTitle = v.findViewById(R.id.tvTitle);
             tvArtist = v.findViewById(R.id.tvArtist);
-            this.itemClickListener = itemClickListener;
+            this.songItemClickListeneer = songItemClickListeneer;
             v.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            itemClickListener.onItemClick(getAdapterPosition());
+            songItemClickListeneer.onSongItemClick(getAdapterPosition());
         }
     }
 
-    public SongAdapter(ArrayList<Song> songs) {
+    public AdapterSong(ArrayList<Song> songs) {
         this.songs = songs;
     }
 
     @NonNull
     @Override
-    public SongAdapter.SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AdapterSong.SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_item, parent,false);
-        return new SongViewHolder(view, (ItemClickListener) parent.getContext());
+        return new SongViewHolder(view, (SongItemClickListeneer) parent.getContext());
     }
 
     @Override
     public void onBindViewHolder(SongViewHolder holder, int position) {
-        holder.ivImg.setImageResource(R.drawable.dvd);
+        holder.ivImg.setImageResource(R.drawable.img_dvd);
         Song song = songs.get(position);
         holder.tvTitle.setText(song.getTitle());
         holder.tvArtist.setText(song.getArtist());
