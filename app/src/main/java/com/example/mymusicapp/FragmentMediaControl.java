@@ -3,28 +3,31 @@ package com.example.mymusicapp;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
 
-public class FragmentMediaControl extends Fragment {
+public class FragmentMediaControl extends Fragment implements MusicService.ServiceCallbacks {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-    ImageView iv_end;
+    ImageView btn_end;
     ImageView iv_dvd;
     SeekBar postionBar, volumnBar;
     TextView tvStart, tvEnd;
     TextView tvArtist, tvTitle;
-//    ImageButton btn_shuffle, btn_prev, btn_play, btn_next, btn_loop;
+    ImageButton btn_next, btn_prev, btn_play, btn_shuffle, btn_loop;
+    LinearLayout layout_mini_play;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,17 +41,21 @@ public class FragmentMediaControl extends Fragment {
         tvTitle.setText(song_title);
         tvArtist.setText(artist);
 
+
         iv_dvd = view.findViewById(R.id.ivDVD);
-        iv_end = view.findViewById(R.id.iv_end);
-//        btn_shuffle = view.findViewById(R.id.iv_shuffle);
-//        btn_prev = view.findViewById(R.id.iv_prev);
-//        btn_play = view.findViewById(R.id.iv_play);
-//        btn_next = view.findViewById(R.id.iv_next);
-//        btn_loop = view.findViewById(R.id.iv_loop);
+        btn_end = view.findViewById(R.id.iv_end);
         postionBar = view.findViewById(R.id.positionBar);
         tvStart = view.findViewById(R.id.elapsedTimeLabel);
         tvEnd = view.findViewById(R.id.remainingTimeLabel);
         volumnBar = view.findViewById(R.id.volumeBar);
+        btn_next = view.findViewById(R.id.iv_next);
+        btn_prev = view.findViewById(R.id.iv_prev);
+        btn_play = view.findViewById(R.id.iv_play);
+        btn_shuffle = view.findViewById(R.id.iv_shuffle);
+        btn_loop = view.findViewById(R.id.iv_loop);
+
+        layout_mini_play = view.findViewById(R.id.layout_mini_play);
+        layout_mini_play.setClickable(false);
 
         Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
         postionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -90,47 +97,36 @@ public class FragmentMediaControl extends Fragment {
             }
         });
 
-//        btn_play.setPressed(true);
-//        btn_play.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ActivityMain.musicSrv.toggle_play();
-//                resetView();
-//            }
-//        });
-//
-//        btn_prev.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ActivityMain.musicSrv.playSong(ActivityMain.musicSrv.getCurrSongIndex() - 1);
-//                resetView();
-//            }
-//        });
-//        btn_next.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ActivityMain.musicSrv.playSong(ActivityMain.musicSrv.getCurrSongIndex() + 1);
-//                resetView();
-//            }
-//        });
-
-        iv_end.setOnClickListener(new View.OnClickListener() {
+        btn_end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((ActivityMain)getActivity()).popStackedFragment();
             }
         });
-
+        ActivityMain.musicSrv.setCallBacks(FragmentMediaControl.this);
         return view;
     }
 
     public void resetView() {
-        Song newSong = ActivityMain.songs.get(ActivityMain.musicSrv.getCurrSongIndex());
+        Song newSong = ActivityMain.songs.get(MusicService.currSongIndex);
         tvTitle.setText(newSong.getTitle());
         tvArtist.setText(newSong.getArtist());
         tvStart.setText("0:00");
         tvEnd.setText(MusicService.getHumanTime(MusicService.player.getDuration()));
-//        btn_play.setPressed(true);
     }
 
+    @Override
+    public void onPlayNewSong() {
+        resetView();
+    }
+
+    @Override
+    public void onMusicPause() {
+        Glide.with(getView()).load(R.drawable.img_dvd_pause).into(iv_dvd);
+    }
+
+    @Override
+    public void onMusicResume() {
+        Glide.with(getView()).load(R.drawable.img_dvd_spinning).into(iv_dvd);
+    }
 }

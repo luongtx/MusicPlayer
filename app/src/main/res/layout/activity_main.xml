@@ -68,8 +68,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
-        <include layout="@layout/mini_control"/>
+        android:background="@color/colorPrimary"
+        android:onClick="maximizeMediaControl">
+
+        <include layout="@layout/mini_control" />
     </LinearLayout>
 
 </LinearLayout>

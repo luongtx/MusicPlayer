@@ -21,7 +21,7 @@ public class MusicService extends Service implements
 
     static MediaPlayer player;
     private ArrayList<Song> songs;
-    private int currSongIndex;
+    static int currSongIndex;
     static boolean isLooping;
     static boolean isShuffling;
     private final IBinder musicBind = new MusicBinder();
@@ -34,7 +34,7 @@ public class MusicService extends Service implements
 
     private ServiceCallbacks serviceCallbacks;
 
-    public void setCallBacks(ServiceCallbacks callBacks){
+    public void setCallBacks(ServiceCallbacks callBacks) {
         serviceCallbacks = callBacks;
     }
 

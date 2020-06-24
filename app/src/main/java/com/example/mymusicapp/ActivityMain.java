@@ -80,6 +80,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     public void toggle_play(View view) {
+        iv_play = view.findViewById(R.id.iv_play);
         musicSrv.toggle_play();
     }
 
@@ -88,6 +89,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     public void shuffle(View view) {
+        iv_shuffle = view.findViewById(R.id.iv_shuffle);
         if (MusicService.isShuffling) {
             MusicService.isShuffling = false;
             iv_shuffle.setImageResource(R.drawable.ic_shuffle);
@@ -98,6 +100,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     public void loop(View view) {
+        iv_loop = view.findViewById(R.id.iv_loop);
         if (MusicService.isLooping) {
             MusicService.isLooping = false;
             iv_loop.setImageResource(R.drawable.ic_loop_black);
@@ -110,14 +113,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public void changSongDisplay() {
         FragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
     }
-
-//    public void highlightSong() {
-//        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
-//        int currSongIndex = musicSrv.getCurrSongIndex();
-//        if (viewPager.getCurrentItem() == 0 && page != null) {
-//            ((FragmentSongs) page).changeSongItemDisplay(currSongIndex);
-//        }
-//    }
 
     public void requestReadStorage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -299,11 +294,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         transaction.replace(R.id.layout_main, fragmentMediaControl);
         transaction.addToBackStack(null);
         transaction.commit();
+        layout_mini_play.setVisibility(View.GONE);
     }
 
     public void popStackedFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
+            layout_mini_play.setVisibility(View.VISIBLE);
         } else {
             super.onBackPressed();
         }

@@ -50,24 +50,26 @@ public class FragmentSongs extends Fragment {
 
     public static void changeSongItemDisplay(int position) {
         View view = rcv_songs.getLayoutManager().findViewByPosition(position);
-        ImageView imageView = view.findViewById(R.id.ivSong);
-        if (lastClickPosition == position) {
-            if (imageView.isActivated()) {
-                imageView.setActivated(false);
-                Glide.with(view).load(R.drawable.img_dvd).into(imageView);
+        if(view !=null ) {
+            ImageView imageView = view.findViewById(R.id.ivSong);
+            if (lastClickPosition == position) {
+                if (imageView.isActivated()) {
+                    imageView.setActivated(false);
+                    Glide.with(view).load(R.drawable.img_dvd).into(imageView);
+                } else {
+                    imageView.setActivated(true);
+                    Glide.with(view).load(R.drawable.img_dvd_playing).into(imageView);
+                }
             } else {
-                imageView.setActivated(true);
+                view.setBackgroundColor(Color.CYAN);
                 Glide.with(view).load(R.drawable.img_dvd_playing).into(imageView);
-            }
-        } else {
-            view.setBackgroundColor(Color.CYAN);
-            Glide.with(view).load(R.drawable.img_dvd_playing).into(imageView);
-            imageView.setActivated(true);
-            View oldView = rcv_songs.getLayoutManager().findViewByPosition(lastClickPosition);
-            if (oldView != null) {
-                oldView.setBackgroundColor(Color.WHITE);
-                ImageView oldImg = oldView.findViewById(R.id.ivSong);
-                Glide.with(view).load(R.drawable.img_dvd).into(oldImg);
+                imageView.setActivated(true);
+                View oldView = rcv_songs.getLayoutManager().findViewByPosition(lastClickPosition);
+                if (oldView != null) {
+                    oldView.setBackgroundColor(Color.WHITE);
+                    ImageView oldImg = oldView.findViewById(R.id.ivSong);
+                    Glide.with(view).load(R.drawable.img_dvd).into(oldImg);
+                }
             }
         }
         lastClickPosition = position;
