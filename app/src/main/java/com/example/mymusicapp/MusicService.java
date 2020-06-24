@@ -19,7 +19,7 @@ public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
-    static MediaPlayer player;
+    MediaPlayer player;
     private ArrayList<Song> songs;
     static int currSongIndex;
     static boolean isLooping;
@@ -92,9 +92,10 @@ public class MusicService extends Service implements
         player.reset();
         if(songs != null && songIndex + 1 <= songs.size() && songIndex >= 0) {
             currSongIndex = songIndex;
+            if(isShuffling) currSongIndex = (int) (Math.random() * songs.size());
             Song playSong = songs.get(currSongIndex);
-            int currSong = playSong.getId();
-            Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currSong);
+            int songId = playSong.getId();
+            Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId);
             try {
                 player.setDataSource(getApplicationContext(), trackUri);
             } catch (Exception e) {
@@ -102,6 +103,9 @@ public class MusicService extends Service implements
             }
             player.prepareAsync();
             serviceCallbacks.onPlayNewSong();
+        } else {
+            player.pause();
+            serviceCallbacks.onMusicPause();
         }
     }
 
@@ -145,22 +149,27 @@ public class MusicService extends Service implements
         mp.start();
     }
 
+
+    public void setSeekPosition(int progress) {
+        player.seekTo(progress);
+    }
+
     public int getSeekPosition() {
         return player.getCurrentPosition();
     }
 
-    public int getSongDuration() {
-        return player.getDuration();
+    public void setVolume(float volume) {
+        player.setVolume(volume,volume);
     }
 
     public static String getHumanTime(int milliseconds) {
         int seconds = milliseconds/1000;
         int minutes = seconds/60;
-        int r_seconds = seconds - minutes*60;
-        String min_toString = "";
-        String sec_toString = "";
-        if(minutes < 10) min_toString = "0"+minutes;
-        if(r_seconds < 10) sec_toString = "0"+r_seconds;
+        int r_seconds = seconds % 60;
+        String min_toString = Integer.toString(minutes);
+        String sec_toString = Integer.toString(r_seconds);
+        if (minutes < 10) min_toString = "0" + min_toString;
+        if (r_seconds < 10) sec_toString = "0" + sec_toString;
         return min_toString + ":" + sec_toString;
     }
 }

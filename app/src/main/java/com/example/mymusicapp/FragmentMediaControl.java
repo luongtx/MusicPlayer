@@ -33,13 +33,11 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_media_control, container, false);
-        Bundle bundle = getArguments();
-        String song_title = bundle.getString("title");
-        String artist = bundle.getString("artist");
+        Song song = ActivityMain.songs.get(MusicService.currSongIndex);
         tvTitle = view.findViewById(R.id.tvTitle);
         tvArtist = view.findViewById(R.id.tvArtist);
-        tvTitle.setText(song_title);
-        tvArtist.setText(artist);
+        tvTitle.setText(song.getTitle());
+        tvArtist.setText(song.getArtist());
 
 
         iv_dvd = view.findViewById(R.id.ivDVD);
@@ -61,7 +59,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         postionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                MusicService.player.seekTo(progress);
+                ActivityMain.musicSrv.setSeekPosition(progress);
                 postionBar.setProgress(progress);
             }
 
@@ -76,14 +74,14 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
             }
         });
 
-        tvStart.setText(bundle.getString("t_start"));
-        tvEnd.setText(bundle.getString("t_end"));
+        tvStart.setText(MusicService.getHumanTime(ActivityMain.musicSrv.getSeekPosition()));
+        tvEnd.setText(MusicService.getHumanTime(song.getDuration()));
 
         volumnBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float volumnNum = progress/100f;
-                MusicService.player.setVolume(volumnNum, volumnNum);
+                ActivityMain.musicSrv.setVolume(volumnNum);
             }
 
             @Override
@@ -112,21 +110,24 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvTitle.setText(newSong.getTitle());
         tvArtist.setText(newSong.getArtist());
         tvStart.setText("0:00");
-        tvEnd.setText(MusicService.getHumanTime(MusicService.player.getDuration()));
+        tvEnd.setText(MusicService.getHumanTime(newSong.getDuration()));
     }
 
     @Override
     public void onPlayNewSong() {
         resetView();
+        ((ActivityMain)getActivity()).onPlayNewSong();
     }
 
     @Override
     public void onMusicPause() {
         Glide.with(getView()).load(R.drawable.img_dvd_pause).into(iv_dvd);
+        ((ActivityMain)getActivity()).onMusicPause();
     }
 
     @Override
     public void onMusicResume() {
         Glide.with(getView()).load(R.drawable.img_dvd_spinning).into(iv_dvd);
+        ((ActivityMain)getActivity()).onMusicResume();
     }
 }

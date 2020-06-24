@@ -128,15 +128,16 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         ArrayList<Song> list_songs = new ArrayList<>();
         ContentResolver musicResolver = getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] columns = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM};
-        Cursor musicCursor = musicResolver.query(musicUri, columns, null, null, null);
+//        String[] columns = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM};
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
         if(musicCursor!=null && musicCursor.moveToFirst()){
             do {
                 int id = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Media._ID));
                 String title = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String artist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 String album = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                list_songs.add(new Song(id,title,artist,album));
+                int duration = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                list_songs.add(new Song(id,title,artist,album,duration));
 
             } while(musicCursor.moveToNext());
         }
@@ -151,16 +152,17 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         ArrayList<Song> list_songs = new ArrayList<>();
         ContentResolver musicResolver = getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] columns = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM};
+//        String[] columns = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM};
         String selection = MediaStore.Audio.Artists.ARTIST + "=?";
-        Cursor musicCursor = musicResolver.query(musicUri, columns, selection, new String[]{artistName}, null);
+        Cursor musicCursor = musicResolver.query(musicUri, null, selection, new String[]{artistName}, null);
         if(musicCursor!=null && musicCursor.moveToFirst()){
             do {
                 int id = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Media._ID));
                 String title = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String artist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 String album = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                list_songs.add(new Song(id,title,artist,album));
+                int duration = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                list_songs.add(new Song(id,title,artist,album,duration));
 
             } while(musicCursor.moveToNext());
         }
@@ -247,14 +249,14 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     @Override
     public void onMusicPause() {
-        iv_play.setImageResource(R.drawable.ic_play);
+        iv_play.setBackgroundResource(R.drawable.ic_play);
 //        Glide.with(getCurrentFocus()).load(R.drawable.ic_play).into(iv_play);
         changSongDisplay();
     }
 
     @Override
     public void onMusicResume() {
-        iv_play.setImageResource(R.drawable.ic_pause);
+        iv_play.setBackgroundResource(R.drawable.ic_pause);
 //        Glide.with(getCurrentFocus()).load(R.drawable.ic_pause).into(iv_play);
         changSongDisplay();
     }
@@ -281,14 +283,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     public void maximizeMediaControl(View view) {
         FragmentMediaControl fragmentMediaControl = new FragmentMediaControl();
-        Bundle bundle = new Bundle();
-        Song song = songs.get(musicSrv.getCurrSongIndex());
-        bundle.putString("title", song.getTitle());
-        bundle.putString("artist", song.getArtist());
-        bundle.putInt("seek_pos", musicSrv.getSeekPosition());
-        bundle.putString("t_start", MusicService.getHumanTime(musicSrv.getSeekPosition()));
-        bundle.putString("t_end", MusicService.getHumanTime(musicSrv.getSongDuration()));
-        fragmentMediaControl.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.layout_main, fragmentMediaControl);
@@ -301,6 +295,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
             layout_mini_play.setVisibility(View.VISIBLE);
+            musicSrv.setCallBacks(ActivityMain.this);
         } else {
             super.onBackPressed();
         }
