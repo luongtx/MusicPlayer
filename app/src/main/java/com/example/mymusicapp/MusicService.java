@@ -19,25 +19,31 @@ public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
-    private MediaPlayer player;
+    static MediaPlayer player;
     private ArrayList<Song> songs;
     private int currSongIndex;
+    static boolean isLooping;
+    static boolean isShuffling;
     private final IBinder musicBind = new MusicBinder();
 
     public interface ServiceCallbacks {
         void onPlayNewSong();
+        void onMusicPause();
+        void onMusicResume();
     }
 
-    private ServiceCallbacks SongItemChange;
+    private ServiceCallbacks serviceCallbacks;
 
     public void setCallBacks(ServiceCallbacks callBacks){
-        SongItemChange = callBacks;
+        serviceCallbacks = callBacks;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         currSongIndex = -1;
+        isLooping = false;
+        isShuffling = false;
         player = new MediaPlayer();
         initMusicPlayer();
     }
@@ -54,7 +60,6 @@ public class MusicService extends Service implements
         player.setWakeMode(getApplicationContext(),
                 PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
         player.setOnPreparedListener(this);
         player.setOnCompletionListener(this);
         player.setOnErrorListener(this);
@@ -85,7 +90,7 @@ public class MusicService extends Service implements
 
     public void playSong(int songIndex) {
         player.reset();
-        if(songIndex + 1 <= ActivityMain.songs.size() && songIndex >= 0) {
+        if(songs != null && songIndex + 1 <= songs.size() && songIndex >= 0) {
             currSongIndex = songIndex;
             Song playSong = songs.get(currSongIndex);
             int currSong = playSong.getId();
@@ -96,15 +101,17 @@ public class MusicService extends Service implements
                 Log.e("MUSIC SERVICE", "Error setting data source", e);
             }
             player.prepareAsync();
-            SongItemChange.onPlayNewSong();
+            serviceCallbacks.onPlayNewSong();
         }
     }
 
     public void toggle_play() {
         if (player.isPlaying()) {
             player.pause();
+            serviceCallbacks.onMusicPause();
         } else {
             player.start();
+            serviceCallbacks.onMusicResume();
         }
     }
 
@@ -114,8 +121,17 @@ public class MusicService extends Service implements
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        playSong(currSongIndex + 1);
-        SongItemChange.onPlayNewSong();
+        if (isLooping) {
+            playSong(currSongIndex);
+        } else {
+            if (isShuffling) {
+                currSongIndex = (int) (Math.random() * songs.size());
+                playSong(currSongIndex);
+            } else {
+                playSong(currSongIndex + 1);
+                serviceCallbacks.onPlayNewSong();
+            }
+        }
     }
 
 
@@ -129,4 +145,22 @@ public class MusicService extends Service implements
         mp.start();
     }
 
+    public int getSeekPosition() {
+        return player.getCurrentPosition();
+    }
+
+    public int getSongDuration() {
+        return player.getDuration();
+    }
+
+    public static String getHumanTime(int milliseconds) {
+        int seconds = milliseconds/1000;
+        int minutes = seconds/60;
+        int r_seconds = seconds - minutes*60;
+        String min_toString = "";
+        String sec_toString = "";
+        if(minutes < 10) min_toString = "0"+minutes;
+        if(r_seconds < 10) sec_toString = "0"+r_seconds;
+        return min_toString + ":" + sec_toString;
+    }
 }

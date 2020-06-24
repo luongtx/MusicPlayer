@@ -16,16 +16,17 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -36,14 +37,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
-    private MusicService musicSrv;
+    static MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound = false;
     static ArrayList<Song> songs;
     static ArrayList<Artist> artists;
     LinearLayout layout_mini_play;
-    ImageButton iv_prev, iv_play, iv_next;
-
+    ImageButton iv_prev, iv_play, iv_next, iv_loop, iv_shuffle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,34 +70,54 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         iv_prev = (ImageButton) findViewById(R.id.iv_prev);
         iv_play = (ImageButton) findViewById(R.id.iv_play);
         iv_next = (ImageButton) findViewById(R.id.iv_next);
-        iv_play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                musicSrv.toggle_play();
-            }
-        });
+        iv_loop = (ImageButton) findViewById(R.id.iv_loop);
+        iv_shuffle = (ImageButton) findViewById(R.id.iv_shuffle);
 
-        iv_prev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                musicSrv.playSong(musicSrv.getCurrSongIndex() - 1);
-            }
-        });
-        iv_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                musicSrv.playSong(musicSrv.getCurrSongIndex() + 1);
-            }
-        });
     }
 
-    public void highlightSong(){
-        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
-        int currSongIndex = musicSrv.getCurrSongIndex();
-        if (viewPager.getCurrentItem() == 0 && page != null) {
-            ((FragmentSongs) page).changeSongItemDisplay(currSongIndex);
+    public void previous(View view) {
+        musicSrv.playSong(musicSrv.getCurrSongIndex() - 1);
+    }
+
+    public void toggle_play(View view) {
+        musicSrv.toggle_play();
+    }
+
+    public void next(View view) {
+        musicSrv.playSong(musicSrv.getCurrSongIndex() + 1);
+    }
+
+    public void shuffle(View view) {
+        if (MusicService.isShuffling) {
+            MusicService.isShuffling = false;
+            iv_shuffle.setImageResource(R.drawable.ic_shuffle);
+        } else {
+            MusicService.isShuffling = true;
+            iv_shuffle.setImageResource(R.drawable.ic_shuffle_active);
         }
     }
+
+    public void loop(View view) {
+        if (MusicService.isLooping) {
+            MusicService.isLooping = false;
+            iv_loop.setImageResource(R.drawable.ic_loop_black);
+        } else {
+            MusicService.isLooping = true;
+            iv_loop.setImageResource(R.drawable.ic_loop_active);
+        }
+    }
+
+    public void changSongDisplay() {
+        FragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
+    }
+
+//    public void highlightSong() {
+//        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
+//        int currSongIndex = musicSrv.getCurrSongIndex();
+//        if (viewPager.getCurrentItem() == 0 && page != null) {
+//            ((FragmentSongs) page).changeSongItemDisplay(currSongIndex);
+//        }
+//    }
 
     public void requestReadStorage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -206,13 +226,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     public void songPicked(int position){
-        if(position != musicSrv.getCurrSongIndex()) {
+        if (position != musicSrv.getCurrSongIndex()) {
             musicSrv.playSong(position);
         } else {
             musicSrv.toggle_play();
         }
         layout_mini_play.setVisibility(View.VISIBLE);
-        iv_play.setPressed(true);
     }
 
     @Override
@@ -227,13 +246,27 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     @Override
     public void onPlayNewSong() {
-        highlightSong();
+        changSongDisplay();
+        iv_play.setPressed(true);
+    }
+
+    @Override
+    public void onMusicPause() {
+        iv_play.setImageResource(R.drawable.ic_play);
+//        Glide.with(getCurrentFocus()).load(R.drawable.ic_play).into(iv_play);
+        changSongDisplay();
+    }
+
+    @Override
+    public void onMusicResume() {
+        iv_play.setImageResource(R.drawable.ic_pause);
+//        Glide.with(getCurrentFocus()).load(R.drawable.ic_pause).into(iv_play);
+        changSongDisplay();
     }
 
     @Override
     public void onSongItemClick(int position) {
         songPicked(position);
-        highlightSong();
     }
 
 
@@ -250,4 +283,30 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+    public void maximizeMediaControl(View view) {
+        FragmentMediaControl fragmentMediaControl = new FragmentMediaControl();
+        Bundle bundle = new Bundle();
+        Song song = songs.get(musicSrv.getCurrSongIndex());
+        bundle.putString("title", song.getTitle());
+        bundle.putString("artist", song.getArtist());
+        bundle.putInt("seek_pos", musicSrv.getSeekPosition());
+        bundle.putString("t_start", MusicService.getHumanTime(musicSrv.getSeekPosition()));
+        bundle.putString("t_end", MusicService.getHumanTime(musicSrv.getSongDuration()));
+        fragmentMediaControl.setArguments(bundle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.layout_main, fragmentMediaControl);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void popStackedFragment() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
 }

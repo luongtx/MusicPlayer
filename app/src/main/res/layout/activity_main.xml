@@ -66,40 +66,10 @@
     </androidx.viewpager.widget.ViewPager>
 
     <LinearLayout
-        android:id="@+id/layout_mini_play"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.7"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/iv_prev"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/ic_previous"
-            tools:ignore="NestedWeights">
-
-        </ImageButton>
-
-        <ImageButton
-            android:id="@+id/iv_play"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:background="@drawable/check_play_pause">
-
-        </ImageButton>
-
-        <ImageButton
-            android:id="@+id/iv_next"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/ic_next">
-
-        </ImageButton>
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+        <include layout="@layout/mini_control"/>
     </LinearLayout>
 
 </LinearLayout>
