@@ -3,6 +3,8 @@ package com.example.mymusicapp;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -30,7 +32,8 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     LinearLayout layout_mini_play;
     Song currentSong;
     SeekBarTask seekBarTask;
-    static int startId = 1;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -41,7 +44,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvArtist = view.findViewById(R.id.tvArtist);
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
-
 
         iv_dvd = view.findViewById(R.id.ivDVD);
         btn_end = view.findViewById(R.id.iv_end);
@@ -78,7 +80,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
             }
         });
-        new SeekBarTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "new");
 
         tvStart.setText(MusicService.getHumanTime(ActivityMain.musicSrv.getSeekPosition()));
         tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
@@ -107,8 +108,18 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
                 ((ActivityMain)getActivity()).popStackedFragment();
             }
         });
-        ActivityMain.musicSrv.setCallBacks(FragmentMediaControl.this);
+        setRetainInstance(true);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ActivityMain.musicSrv.setCallBacks(FragmentMediaControl.this);
+        if(seekBarTask == null) {
+            seekBarTask = new SeekBarTask();
+            seekBarTask.execute();
+        }
     }
 
     public void resetView() {
@@ -118,41 +129,49 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvStart.setText("0:00");
         tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
         seekBarTask = new SeekBarTask();
-        new SeekBarTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "new");
+        seekBarTask.execute();
     }
 
     @Override
     public void onPlayNewSong() {
         resetView();
-        ((ActivityMain)getActivity()).onPlayNewSong();
+//        ((ActivityMain)getActivity()).onPlayNewSong();
     }
 
     @Override
     public void onMusicPause() {
-        Glide.with(getView()).load(R.drawable.img_dvd_pause).into(iv_dvd);
-        ((ActivityMain)getActivity()).onMusicPause();
+        Glide.with(getView()).load(R.drawable.img_dvd_video).into(iv_dvd);
+        btn_play.setBackgroundResource(R.drawable.ic_play);
+//        ((ActivityMain)getActivity()).onMusicPause();
     }
 
     @Override
     public void onMusicResume() {
         Glide.with(getView()).load(R.drawable.img_dvd_spinning).into(iv_dvd);
-        ((ActivityMain)getActivity()).onMusicResume();
+        btn_play.setBackgroundResource(R.drawable.ic_pause);
+//        ((ActivityMain)getActivity()).onMusicResume();
     }
 
     private class SeekBarTask extends AsyncTask<String, Integer, String> {
         int duration;
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
         protected String doInBackground(String... params) {
             duration = currentSong.getDuration();
-            while(MusicService.player != null){
+            //bug: never completed
+            while(MusicService.player.getCurrentPosition() < duration){
                 try {
                     publishProgress(MusicService.player.getCurrentPosition());
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
             }
-            return null;
+            return "done";
         }
 
         @Override
@@ -163,6 +182,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
         @Override
         protected void onPostExecute(String s) {
+            cancel(true);
             resetView();
         }
 

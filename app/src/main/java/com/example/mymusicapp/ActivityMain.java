@@ -301,4 +301,9 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(musicConnection);
+    }
 }

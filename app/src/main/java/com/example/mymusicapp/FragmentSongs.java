@@ -45,6 +45,7 @@ public class FragmentSongs extends Fragment {
         rcv_songs.setAdapter(new AdapterSong(songs));
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
+        setRetainInstance(true);
         return view;
     }
 
