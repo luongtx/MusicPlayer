@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -315,5 +316,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     protected void onDestroy() {
         super.onDestroy();
         unbindService(musicConnection);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        layout_mini_play.setVisibility(View.VISIBLE);
+        musicSrv.setCallBacks(ActivityMain.this);
     }
 }

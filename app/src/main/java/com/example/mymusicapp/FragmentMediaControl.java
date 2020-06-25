@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.Objects;
+
 
 public class FragmentMediaControl extends Fragment implements MusicService.ServiceCallbacks {
     // TODO: Rename parameter arguments, choose names that match
@@ -59,25 +61,25 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
         layout_mini_play = view.findViewById(R.id.layout_mini_play);
         Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
-        postionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser) {
-                    MusicService.player.seekTo(progress);
-                    postionBar.setProgress(progress);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+//        postionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                if(fromUser) {
+//                    MusicService.player.seekTo(progress);
+//                    postionBar.setProgress(progress);
+//                }
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
 
         tvStart.setText(MusicService.getHumanTime(ActivityMain.musicSrv.getSeekPosition()));
         tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
@@ -107,7 +109,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
                 ((ActivityMain)getActivity()).popStackedFragment();
             }
         });
-        setRetainInstance(true);
         return view;
     }
 
@@ -116,11 +117,12 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         super.onViewCreated(view, savedInstanceState);
         ActivityMain.musicSrv.setCallBacks(FragmentMediaControl.this);
         MusicService.player.setVolume(1,1);
+//        resetView();
         seekBarTask = new SeekBarTask();
         seekBarTask.execute();
     }
 
-    public void resetView() {
+    private void resetView() {
         currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
@@ -139,19 +141,38 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
     @Override
     public void onMusicPause() {
-        Glide.with(getView()).load(R.drawable.img_dvd_video).into(iv_dvd);
+
+        Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_video).into(iv_dvd);
         btn_play.setBackgroundResource(R.drawable.ic_play);
 //        ((ActivityMain)getActivity()).onMusicPause();
     }
 
     @Override
     public void onMusicResume() {
-        Glide.with(getView()).load(R.drawable.img_dvd_spinning).into(iv_dvd);
+        Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_spinning).into(iv_dvd);
         btn_play.setBackgroundResource(R.drawable.ic_pause);
 //        ((ActivityMain)getActivity()).onMusicResume();
     }
 
-    private class SeekBarTask extends AsyncTask<String, Integer, String> {
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(seekBarTask != null && isRemoving()) {
+            seekBarTask.cancel(false);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    class SeekBarTask extends AsyncTask<String, Integer, String> {
         int duration;
         @Override
         protected void onPreExecute() {
