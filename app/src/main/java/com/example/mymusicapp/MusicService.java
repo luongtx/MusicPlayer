@@ -19,7 +19,7 @@ public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
-    MediaPlayer player;
+    static MediaPlayer player;
     private ArrayList<Song> songs;
     static int currSongIndex;
     static boolean isLooping;

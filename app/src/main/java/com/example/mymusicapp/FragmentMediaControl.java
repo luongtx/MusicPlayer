@@ -1,9 +1,9 @@
 package com.example.mymusicapp;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,16 +28,19 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     TextView tvArtist, tvTitle;
     ImageButton btn_next, btn_prev, btn_play, btn_shuffle, btn_loop;
     LinearLayout layout_mini_play;
+    Song currentSong;
+    SeekBarTask seekBarTask;
+    static int startId = 1;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_media_control, container, false);
-        Song song = ActivityMain.songs.get(MusicService.currSongIndex);
+        currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
         tvTitle = view.findViewById(R.id.tvTitle);
         tvArtist = view.findViewById(R.id.tvArtist);
-        tvTitle.setText(song.getTitle());
-        tvArtist.setText(song.getArtist());
+        tvTitle.setText(currentSong.getTitle());
+        tvArtist.setText(currentSong.getArtist());
 
 
         iv_dvd = view.findViewById(R.id.ivDVD);
@@ -59,8 +62,10 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         postionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                ActivityMain.musicSrv.setSeekPosition(progress);
-                postionBar.setProgress(progress);
+                if(fromUser) {
+                    MusicService.player.seekTo(progress);
+                    postionBar.setProgress(progress);
+                }
             }
 
             @Override
@@ -73,15 +78,16 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
             }
         });
+        new SeekBarTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "new");
 
         tvStart.setText(MusicService.getHumanTime(ActivityMain.musicSrv.getSeekPosition()));
-        tvEnd.setText(MusicService.getHumanTime(song.getDuration()));
+        tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
 
         volumnBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float volumnNum = progress/100f;
-                ActivityMain.musicSrv.setVolume(volumnNum);
+                MusicService.player.setVolume(volumnNum,volumnNum);
             }
 
             @Override
@@ -106,11 +112,13 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     }
 
     public void resetView() {
-        Song newSong = ActivityMain.songs.get(MusicService.currSongIndex);
-        tvTitle.setText(newSong.getTitle());
-        tvArtist.setText(newSong.getArtist());
+        currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
+        tvTitle.setText(currentSong.getTitle());
+        tvArtist.setText(currentSong.getArtist());
         tvStart.setText("0:00");
-        tvEnd.setText(MusicService.getHumanTime(newSong.getDuration()));
+        tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
+        seekBarTask = new SeekBarTask();
+        new SeekBarTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "new");
     }
 
     @Override
@@ -129,5 +137,34 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     public void onMusicResume() {
         Glide.with(getView()).load(R.drawable.img_dvd_spinning).into(iv_dvd);
         ((ActivityMain)getActivity()).onMusicResume();
+    }
+
+    private class SeekBarTask extends AsyncTask<String, Integer, String> {
+        int duration;
+        @Override
+        protected String doInBackground(String... params) {
+            duration = currentSong.getDuration();
+            while(MusicService.player != null){
+                try {
+                    publishProgress(MusicService.player.getCurrentPosition());
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            postionBar.setProgress(100*values[0]/duration);
+            tvStart.setText(MusicService.getHumanTime(values[0]));
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            resetView();
+        }
+
     }
 }
