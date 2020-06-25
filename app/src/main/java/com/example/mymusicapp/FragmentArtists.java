@@ -34,7 +34,7 @@ public class FragmentArtists extends Fragment {
         View view = inflater.inflate(R.layout.fragment_artists, container, false);
 
         rcvArtist = view.findViewById(R.id.rcv_artist);
-        ArrayList<Artist> artists = ((ActivityMain)getActivity()).loadArtist();
+        ArrayList<Artist> artists = ActivityMain.musicProvider.loadArtist();
         rcvArtist.setAdapter(new AdapterArtist(artists));
         rcvArtist.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rcvArtist.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));

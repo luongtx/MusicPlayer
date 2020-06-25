@@ -40,7 +40,7 @@ public class FragmentSongs extends Fragment {
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
 
         rcv_songs = view.findViewById(R.id.rcv_songs);
-        ArrayList<Song> songs = ((ActivityMain)getActivity()).loadSongs();
+        ArrayList<Song> songs = ActivityMain.musicProvider.loadSongs();
         rcv_songs.setHasFixedSize(true);
         rcv_songs.setAdapter(new AdapterSong(songs));
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));

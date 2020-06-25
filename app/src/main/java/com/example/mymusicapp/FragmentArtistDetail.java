@@ -40,7 +40,7 @@ public class FragmentArtistDetail extends Fragment {
         rcv_songs = view.findViewById(R.id.rcv_songs);
         rcv_songs = view.findViewById(R.id.rcv_songs);
 
-        ArrayList<Song> songs = ((ActivityMain) getActivity()).loadSongsByArtist(artistName);
+        ArrayList<Song> songs = ActivityMain.musicProvider.loadSongsByArtist(artistName);
         rcv_songs.setAdapter(new AdapterSong(songs));
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));

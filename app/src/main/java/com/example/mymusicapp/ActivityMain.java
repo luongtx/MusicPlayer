@@ -46,7 +46,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     static ArrayList<Artist> artists;
     LinearLayout layout_mini_play;
     ImageButton iv_prev, iv_play, iv_next, iv_loop, iv_shuffle;
-
+    static MusicProvider musicProvider;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +63,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         pagerAdapter.addFragment(new FragmentAlbums(), "ALBUMS");
         pagerAdapter.addFragment(new FragmentPlaylist(), "PLAYLIST");
 
-
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -75,6 +74,9 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         iv_loop = (ImageButton) findViewById(R.id.iv_loop);
         iv_shuffle = (ImageButton) findViewById(R.id.iv_shuffle);
 
+        musicProvider = new MusicProvider(this);
+        songs = musicProvider.loadSongs();
+        artists = musicProvider.loadArtist();
     }
 
     public void previous(View view) {
@@ -112,10 +114,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
     }
 
-//    public void changSongDisplay() {
-//        FragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
-//    }
-
     public void changSongDisplay() {
         Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
         int currSongIndex = musicSrv.getCurrSongIndex();
@@ -124,94 +122,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
     }
 
-
-    public void requestReadStorage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            }
-        }
-    }
-
-    public ArrayList<Song> loadSongs() {
-        requestReadStorage();
-        ArrayList<Song> list_songs = new ArrayList<>();
-        ContentResolver musicResolver = getContentResolver();
-        Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//        String[] columns = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM};
-        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
-        if(musicCursor!=null && musicCursor.moveToFirst()){
-            do {
-                int id = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Media._ID));
-                String title = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                String artist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                String album = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                int duration = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                list_songs.add(new Song(id,title,artist,album,duration));
-
-            } while(musicCursor.moveToNext());
-        }
-        assert musicCursor != null;
-        musicCursor.close();
-        songs = list_songs;
-        return songs;
-    }
-
-    public ArrayList<Song> loadSongsByArtist(String artistName) {
-        requestReadStorage();
-        ArrayList<Song> list_songs = new ArrayList<>();
-        ContentResolver musicResolver = getContentResolver();
-        Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//        String[] columns = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM};
-        String selection = MediaStore.Audio.Artists.ARTIST + "=?";
-        Cursor musicCursor = musicResolver.query(musicUri, null, selection, new String[]{artistName}, null);
-        if(musicCursor!=null && musicCursor.moveToFirst()){
-            do {
-                int id = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Media._ID));
-                String title = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                String artist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                String album = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                int duration = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                list_songs.add(new Song(id,title,artist,album,duration));
-
-            } while(musicCursor.moveToNext());
-        }
-        assert musicCursor != null;
-        musicCursor.close();
-        songs = list_songs;
-        return songs;
-    }
-
-    public ArrayList<Artist> loadArtist() {
-        requestReadStorage();
-        ArrayList<Artist> list_artist = new ArrayList<>();
-        ContentResolver musicResolver = getContentResolver();
-        Uri artistUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
-        String[] columns = {MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST, MediaStore.Audio.Artists.NUMBER_OF_TRACKS};
-        Cursor musicCursor = musicResolver.query(artistUri, columns, null, null, null);
-        if(musicCursor != null && musicCursor.moveToFirst()){
-            do {
-                int id = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Artists._ID));
-                String artist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST));
-                int numberOfSongs = musicCursor.getInt(musicCursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
-                list_artist.add(new Artist(id,artist,numberOfSongs));
-            } while(musicCursor.moveToNext());
-        }
-        assert musicCursor != null;
-        musicCursor.close();
-        artists = list_artist;
-        return artists;
-    }
-
     private ServiceConnection musicConnection = new ServiceConnection(){
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
-            //get service
             musicSrv = binder.getService();
-            //pass list
             musicSrv.setList(songs);
             musicBound = true;
             musicSrv.setCallBacks(ActivityMain.this); //register service call back
@@ -248,10 +164,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         return true;
     }
 
-    public ArrayList<Song> getSongs() {
-        return songs;
-    }
-
     @Override
     public void onPlayNewSong() {
         changSongDisplay();
@@ -261,14 +173,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onMusicPause() {
         iv_play.setBackgroundResource(R.drawable.ic_play);
-//        Glide.with(getCurrentFocus()).load(R.drawable.ic_play).into(iv_play);
         changSongDisplay();
     }
 
     @Override
     public void onMusicResume() {
         iv_play.setBackgroundResource(R.drawable.ic_pause);
-//        Glide.with(getCurrentFocus()).load(R.drawable.ic_pause).into(iv_play);
         changSongDisplay();
     }
 
