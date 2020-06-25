@@ -26,7 +26,7 @@ import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
  */
 public class FragmentSongs extends Fragment {
 
-    static RecyclerView rcv_songs;
+    RecyclerView rcv_songs;
 
     static int lastClickPosition = -1;
     public FragmentSongs() {
@@ -49,7 +49,7 @@ public class FragmentSongs extends Fragment {
         return view;
     }
 
-    public static void changeSongItemDisplay(int position) {
+    public void changeSongItemDisplay(int position) {
         View view = rcv_songs.getLayoutManager().findViewByPosition(position);
         if(view !=null ) {
             ImageView imageView = view.findViewById(R.id.ivSong);
@@ -75,33 +75,6 @@ public class FragmentSongs extends Fragment {
         }
         lastClickPosition = position;
     }
-//    public static void changeSongItemDisplay(int position) {
-//        View view = rcv_songs.getLayoutManager().findViewByPosition(position);
-//        if (view != null) {
-//            view.setBackgroundColor(Color.CYAN);
-//            ImageView imageView = view.findViewById(R.id.ivSong);
-//            Glide.with(view).load(R.drawable.img_dvd_playing).into(imageView);
-//            view = rcv_songs.getLayoutManager().findViewByPosition(lastClickPosition);
-////            if(imageView.isPressed()) imageView.setPressed(false);
-////            else imageView.setPressed(true);
-//            if (view != null) {
-//                imageView = view.findViewById(R.id.ivSong);
-//                if (lastClickPosition != position) {
-//                    view.setBackgroundColor(Color.WHITE);
-//                    imageView.setImageResource(R.drawable.img_dvd);
-//                } else {
-//                    if (imageView.isPressed()) {
-//                        imageView.setPressed(false);
-//                        imageView.setImageResource(R.drawable.img_dvd);
-//                    } else {
-//                        imageView.setPressed(true);
-//                        Glide.with(view).load(R.drawable.img_dvd_playing).into(imageView);
-//                    }
-//                }
-//            }
-//            lastClickPosition = position;
-//        }
-//    }
 
 //    public static void changeSongItemDisplay(int position) {
 //        AdapterSong.SongViewHolder songViewHolder = (AdapterSong.SongViewHolder) rcv_songs.findViewHolderForAdapterPosition(position);

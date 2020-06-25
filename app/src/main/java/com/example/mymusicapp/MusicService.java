@@ -92,7 +92,7 @@ public class MusicService extends Service implements
         player.reset();
         if(songs != null && songIndex + 1 <= songs.size() && songIndex >= 0) {
             currSongIndex = songIndex;
-            if(isShuffling) currSongIndex = (int) (Math.random() * songs.size());
+            if (isShuffling) currSongIndex = generateRandomIdx();
             Song playSong = songs.get(currSongIndex);
             int songId = playSong.getId();
             Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId);
@@ -114,13 +114,26 @@ public class MusicService extends Service implements
             player.pause();
             serviceCallbacks.onMusicPause();
         } else {
-            player.start();
-            serviceCallbacks.onMusicResume();
+            if (currSongIndex >= songs.size() - 1) {
+                playSong(songs.size() - 1);
+                serviceCallbacks.onMusicResume();
+            } else {
+                player.start();
+                serviceCallbacks.onMusicResume();
+            }
         }
     }
 
     public int getCurrSongIndex() {
         return currSongIndex;
+    }
+
+    public int generateRandomIdx() {
+        int newIndex = (int) (Math.random() * songs.size());
+        while (newIndex == currSongIndex) {
+            newIndex = (int) (Math.random() * songs.size());
+        }
+        return newIndex;
     }
 
     @Override
@@ -129,7 +142,7 @@ public class MusicService extends Service implements
             playSong(currSongIndex);
         } else {
             if (isShuffling) {
-                currSongIndex = (int) (Math.random() * songs.size());
+                currSongIndex = generateRandomIdx();
                 playSong(currSongIndex);
             } else {
                 playSong(currSongIndex + 1);

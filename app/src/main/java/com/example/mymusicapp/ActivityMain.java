@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
@@ -110,9 +111,18 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
     }
 
+//    public void changSongDisplay() {
+//        FragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
+//    }
+
     public void changSongDisplay() {
-        FragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
+        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
+        int currSongIndex = musicSrv.getCurrSongIndex();
+        if (viewPager.getCurrentItem() == 0 && page != null) {
+            ((FragmentSongs) page).changeSongItemDisplay(currSongIndex);
+        }
     }
+
 
     public void requestReadStorage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

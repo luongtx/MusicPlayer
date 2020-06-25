@@ -58,8 +58,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         btn_loop = view.findViewById(R.id.iv_loop);
 
         layout_mini_play = view.findViewById(R.id.layout_mini_play);
-        layout_mini_play.setClickable(false);
-
         Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
         postionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -84,6 +82,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvStart.setText(MusicService.getHumanTime(ActivityMain.musicSrv.getSeekPosition()));
         tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
 
+        volumnBar.setProgress(100);
         volumnBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -116,10 +115,9 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ActivityMain.musicSrv.setCallBacks(FragmentMediaControl.this);
-        if(seekBarTask == null) {
-            seekBarTask = new SeekBarTask();
-            seekBarTask.execute();
-        }
+        MusicService.player.setVolume(1,1);
+        seekBarTask = new SeekBarTask();
+        seekBarTask.execute();
     }
 
     public void resetView() {
@@ -128,6 +126,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvArtist.setText(currentSong.getArtist());
         tvStart.setText("0:00");
         tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
+
         seekBarTask = new SeekBarTask();
         seekBarTask.execute();
     }
@@ -180,11 +179,11 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
             tvStart.setText(MusicService.getHumanTime(values[0]));
         }
 
+        //bug: never used
         @Override
         protected void onPostExecute(String s) {
             cancel(true);
             resetView();
         }
-
     }
 }
