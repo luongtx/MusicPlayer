@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.fragment;
 
 import android.os.Bundle;
 
@@ -11,6 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.R;
+import com.example.mymusicapp.entity.Song;
+import com.example.mymusicapp.adapter.AdapterSong;
 
 import java.util.ArrayList;
 

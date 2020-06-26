@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.entity;
 
 public class Song {
     private int id;

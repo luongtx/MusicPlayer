@@ -1,20 +1,23 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.mymusicapp.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentAlbums extends Fragment {
+public class FragmentPlaylist extends Fragment {
 
-    public FragmentAlbums() {
+    public FragmentPlaylist() {
         // Required empty public constructor
     }
 
@@ -23,6 +26,6 @@ public class FragmentAlbums extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_albums, container, false);
+        return inflater.inflate(R.layout.fragment_playlist, container, false);
     }
 }

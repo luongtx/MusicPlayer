@@ -2,16 +2,15 @@ package com.example.mymusicapp;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentProvider;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.mymusicapp.entity.Artist;
+import com.example.mymusicapp.entity.Song;
 
 import java.util.ArrayList;
 

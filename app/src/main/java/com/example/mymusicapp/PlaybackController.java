@@ -3,7 +3,7 @@ package com.example.mymusicapp;
 import android.view.View;
 import android.widget.ImageButton;
 
-import static com.example.mymusicapp.ActivityMain.musicSrv;
+import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 public class PlaybackController {
 
@@ -11,7 +11,7 @@ public class PlaybackController {
     View view;
     ImageButton iv_prev, iv_play, iv_next, iv_shuffle, iv_loop;
 
-    PlaybackController(View view) {
+    public PlaybackController(View view) {
         this.view = view;
         iv_prev = (ImageButton) view.findViewById(R.id.iv_prev);
         iv_play = (ImageButton) view.findViewById(R.id.iv_play);
@@ -95,7 +95,7 @@ public class PlaybackController {
         }
     }
 
-    void songPicked(int position){
+    public void songPicked(int position){
         if (position != musicSrv.getCurrSongIndex()) {
             musicSrv.playSong(position);
         } else {

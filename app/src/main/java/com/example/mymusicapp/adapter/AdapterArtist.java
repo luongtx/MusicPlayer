@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mymusicapp.entity.Artist;
+import com.example.mymusicapp.R;
 
 import java.util.ArrayList;
 

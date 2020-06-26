@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

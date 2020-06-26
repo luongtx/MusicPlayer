@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.fragment;
 
 import android.os.Bundle;
 
@@ -10,6 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.entity.Artist;
+import com.example.mymusicapp.R;
+import com.example.mymusicapp.adapter.AdapterArtist;
 
 import java.util.ArrayList;
 

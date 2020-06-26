@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.activity;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +17,21 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.mymusicapp.entity.Artist;
+import com.example.mymusicapp.MusicProvider;
+import com.example.mymusicapp.MusicService;
+import com.example.mymusicapp.PlaybackController;
+import com.example.mymusicapp.R;
+import com.example.mymusicapp.entity.Song;
+import com.example.mymusicapp.adapter.AdapterArtist;
+import com.example.mymusicapp.adapter.AdapterMyPager;
+import com.example.mymusicapp.adapter.AdapterSong;
+import com.example.mymusicapp.fragment.FragmentAlbums;
+import com.example.mymusicapp.fragment.FragmentArtistDetail;
+import com.example.mymusicapp.fragment.FragmentArtists;
+import com.example.mymusicapp.fragment.FragmentMediaControl;
+import com.example.mymusicapp.fragment.FragmentPlaylist;
+import com.example.mymusicapp.fragment.FragmentSongs;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;

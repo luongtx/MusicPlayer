@@ -1,14 +1,16 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mymusicapp.R;
+import com.example.mymusicapp.entity.Song;
 
 import java.util.ArrayList;
 

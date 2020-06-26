@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,9 +16,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.MusicService;
+import com.example.mymusicapp.PlaybackController;
+import com.example.mymusicapp.R;
+import com.example.mymusicapp.entity.Song;
 
 import java.util.Objects;
-import static com.example.mymusicapp.ActivityMain.musicSrv;
+import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 public class FragmentMediaControl extends Fragment implements MusicService.ServiceCallbacks {
     // TODO: Rename parameter arguments, choose names that match

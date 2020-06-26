@@ -15,6 +15,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.mymusicapp.entity.Song;
+
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
@@ -70,7 +72,7 @@ public class MusicService extends Service implements
     }
 
     public class MusicBinder extends Binder {
-        MusicService getService() {
+        public MusicService getService() {
             return MusicService.this;
         }
     }
@@ -108,21 +110,6 @@ public class MusicService extends Service implements
             serviceCallbacks.onMusicPause();
         }
     }
-
-//    public void toggle_play() {
-//        if (player.isPlaying()) {
-//            player.pause();
-//            serviceCallbacks.onMusicPause();
-//        } else {
-//            if (currSongIndex >= songs.size() - 1) {
-//                playSong(songs.size() - 1);
-//                serviceCallbacks.onMusicResume();
-//            } else {
-//                player.start();
-//                serviceCallbacks.onMusicResume();
-//            }
-//        }
-//    }
 
     public void pause() {
         player.pause();

@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,9 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
+import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.R;
+import com.example.mymusicapp.entity.Song;
+import com.example.mymusicapp.adapter.AdapterSong;
 
 import java.util.ArrayList;
 
