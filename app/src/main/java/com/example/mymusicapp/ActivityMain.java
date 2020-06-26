@@ -1,34 +1,22 @@
 package com.example.mymusicapp;
 
-import android.Manifest;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -45,8 +33,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     static ArrayList<Song> songs;
     static ArrayList<Artist> artists;
     LinearLayout layout_mini_play;
-    ImageButton iv_prev, iv_play, iv_next, iv_loop, iv_shuffle;
     static MusicProvider musicProvider;
+    PlaybackController playbackController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,50 +56,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         layout_mini_play = findViewById(R.id.layout_mini_play);
         layout_mini_play.setVisibility(View.GONE);
-        iv_prev = (ImageButton) findViewById(R.id.iv_prev);
-        iv_play = (ImageButton) findViewById(R.id.iv_play);
-        iv_next = (ImageButton) findViewById(R.id.iv_next);
-        iv_loop = (ImageButton) findViewById(R.id.iv_loop);
-        iv_shuffle = (ImageButton) findViewById(R.id.iv_shuffle);
 
         musicProvider = new MusicProvider(this);
         songs = musicProvider.loadSongs();
         artists = musicProvider.loadArtist();
-    }
 
-    public void previous(View view) {
-        musicSrv.playSong(musicSrv.getCurrSongIndex() - 1);
-    }
-
-    public void toggle_play(View view) {
-        iv_play = view.findViewById(R.id.iv_play);
-        musicSrv.toggle_play();
-    }
-
-    public void next(View view) {
-        musicSrv.playSong(musicSrv.getCurrSongIndex() + 1);
-    }
-
-    public void shuffle(View view) {
-        iv_shuffle = view.findViewById(R.id.iv_shuffle);
-        if (MusicService.isShuffling) {
-            MusicService.isShuffling = false;
-            iv_shuffle.setImageResource(R.drawable.ic_shuffle);
-        } else {
-            MusicService.isShuffling = true;
-            iv_shuffle.setImageResource(R.drawable.ic_shuffle_active);
-        }
-    }
-
-    public void loop(View view) {
-        iv_loop = view.findViewById(R.id.iv_loop);
-        if (MusicService.isLooping) {
-            MusicService.isLooping = false;
-            iv_loop.setImageResource(R.drawable.ic_loop_black);
-        } else {
-            MusicService.isLooping = true;
-            iv_loop.setImageResource(R.drawable.ic_loop_active);
-        }
+        playbackController = new PlaybackController(layout_mini_play);
     }
 
     public void changSongDisplay() {
@@ -149,15 +99,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
     }
 
-    public void songPicked(int position){
-        if (position != musicSrv.getCurrSongIndex()) {
-            musicSrv.playSong(position);
-        } else {
-            musicSrv.toggle_play();
-        }
-        layout_mini_play.setVisibility(View.VISIBLE);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -167,24 +108,21 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onPlayNewSong() {
         changSongDisplay();
-        iv_play.setPressed(true);
     }
 
     @Override
     public void onMusicPause() {
-        iv_play.setBackgroundResource(R.drawable.ic_play);
         changSongDisplay();
     }
 
     @Override
     public void onMusicResume() {
-        iv_play.setBackgroundResource(R.drawable.ic_pause);
         changSongDisplay();
     }
 
     @Override
     public void onSongItemClick(int position) {
-        songPicked(position);
+        playbackController.songPicked(position);
     }
 
 

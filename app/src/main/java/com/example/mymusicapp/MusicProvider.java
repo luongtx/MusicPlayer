@@ -2,6 +2,7 @@ package com.example.mymusicapp;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;

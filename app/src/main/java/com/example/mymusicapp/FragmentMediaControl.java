@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -19,7 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.Objects;
-
+import static com.example.mymusicapp.ActivityMain.musicSrv;
 
 public class FragmentMediaControl extends Fragment implements MusicService.ServiceCallbacks {
     // TODO: Rename parameter arguments, choose names that match
@@ -30,11 +29,11 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     SeekBar postionBar, volumnBar;
     TextView tvStart, tvEnd;
     TextView tvArtist, tvTitle;
-    ImageButton btn_next, btn_prev, btn_play, btn_shuffle, btn_loop;
+//    ImageButton btn_next, btn_prev, btn_play, btn_shuffle, btn_loop;
     LinearLayout layout_mini_play;
     Song currentSong;
     SeekBarTask seekBarTask;
-
+    PlaybackController playbackController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,35 +52,14 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvStart = view.findViewById(R.id.elapsedTimeLabel);
         tvEnd = view.findViewById(R.id.remainingTimeLabel);
         volumnBar = view.findViewById(R.id.volumeBar);
-        btn_next = view.findViewById(R.id.iv_next);
-        btn_prev = view.findViewById(R.id.iv_prev);
-        btn_play = view.findViewById(R.id.iv_play);
-        btn_shuffle = view.findViewById(R.id.iv_shuffle);
-        btn_loop = view.findViewById(R.id.iv_loop);
+
 
         layout_mini_play = view.findViewById(R.id.layout_mini_play);
-        Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
-//        postionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                if(fromUser) {
-//                    MusicService.player.seekTo(progress);
-//                    postionBar.setProgress(progress);
-//                }
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//        });
+        playbackController = new PlaybackController(layout_mini_play);
 
-        tvStart.setText(MusicService.getHumanTime(ActivityMain.musicSrv.getSeekPosition()));
+        Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
+
+        tvStart.setText(MusicService.getHumanTime(musicSrv.getSeekPosition()));
         tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
 
         volumnBar.setProgress(100);
@@ -115,7 +93,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ActivityMain.musicSrv.setCallBacks(FragmentMediaControl.this);
+        musicSrv.setCallBacks(FragmentMediaControl.this);
         MusicService.player.setVolume(1,1);
 //        resetView();
         seekBarTask = new SeekBarTask();
@@ -143,14 +121,14 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     public void onMusicPause() {
 
         Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_video).into(iv_dvd);
-        btn_play.setBackgroundResource(R.drawable.ic_play);
+//        btn_play.setBackgroundResource(R.drawable.ic_play);
 //        ((ActivityMain)getActivity()).onMusicPause();
     }
 
     @Override
     public void onMusicResume() {
         Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_spinning).into(iv_dvd);
-        btn_play.setBackgroundResource(R.drawable.ic_pause);
+//        btn_play.setBackgroundResource(R.drawable.ic_pause);
 //        ((ActivityMain)getActivity()).onMusicResume();
     }
 

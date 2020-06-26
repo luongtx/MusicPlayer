@@ -109,19 +109,33 @@ public class MusicService extends Service implements
         }
     }
 
-    public void toggle_play() {
-        if (player.isPlaying()) {
-            player.pause();
-            serviceCallbacks.onMusicPause();
+//    public void toggle_play() {
+//        if (player.isPlaying()) {
+//            player.pause();
+//            serviceCallbacks.onMusicPause();
+//        } else {
+//            if (currSongIndex >= songs.size() - 1) {
+//                playSong(songs.size() - 1);
+//                serviceCallbacks.onMusicResume();
+//            } else {
+//                player.start();
+//                serviceCallbacks.onMusicResume();
+//            }
+//        }
+//    }
+
+    public void pause() {
+        player.pause();
+        serviceCallbacks.onMusicPause();
+    }
+
+    public void resume() {
+        if (currSongIndex >= songs.size() - 1) {
+            playSong(songs.size() - 1);
         } else {
-            if (currSongIndex >= songs.size() - 1) {
-                playSong(songs.size() - 1);
-                serviceCallbacks.onMusicResume();
-            } else {
-                player.start();
-                serviceCallbacks.onMusicResume();
-            }
+            player.start();
         }
+        serviceCallbacks.onMusicResume();
     }
 
     public int getCurrSongIndex() {
