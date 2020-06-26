@@ -31,7 +31,6 @@ import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 public class FragmentSongs extends Fragment {
 
     static RecyclerView rcv_songs;
-
     static int lastClickPosition = -1;
     public FragmentSongs() {
         // Required empty public constructor
@@ -50,7 +49,6 @@ public class FragmentSongs extends Fragment {
         rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
         return view;
     }
-
 
     public static void changeSongItemDisplay(int position) {
         View view = rcv_songs.getLayoutManager().findViewByPosition(position);
