@@ -3,8 +3,6 @@ package com.example.mymusicapp.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -12,14 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.mymusicapp.MusicProvider;
 import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.entity.Song;
-import com.example.mymusicapp.adapter.AdapterSong;
-
-import java.util.ArrayList;
-
-import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
 
 /**
@@ -28,6 +21,7 @@ import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 public class FragmentArtistDetail extends Fragment {
 
     RecyclerView rcv_songs;
+
     public FragmentArtistDetail() {
         // Required empty public constructor
     }
@@ -38,17 +32,16 @@ public class FragmentArtistDetail extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_artist_detail, container, false);
+        rcv_songs = view.findViewById(R.id.rcv_songs);
 
         TextView tvArtist = view.findViewById(R.id.tvArtist);
         String artistName = getArguments().getString("artist");
         tvArtist.setText(artistName);
-        rcv_songs = view.findViewById(R.id.rcv_songs);
-        rcv_songs = view.findViewById(R.id.rcv_songs);
-
-        ArrayList<Song> songs = ActivityMain.musicProvider.loadSongsByArtist(artistName);
-        rcv_songs.setAdapter(new AdapterSong(songs));
-        rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
+        MusicProvider provider = new MusicProvider(getActivity());
+        ActivityMain.songs = provider.loadSongsByArtist(artistName);
+        ActivityMain.adapterSong.setList(ActivityMain.songs);
+        ActivityMain.musicSrv.setList(ActivityMain.songs);
+        rcv_songs.setAdapter(ActivityMain.adapterSong);
         return view;
     }
 }

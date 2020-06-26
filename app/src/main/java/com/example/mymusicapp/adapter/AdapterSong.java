@@ -22,6 +22,10 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
         void onSongItemClick(int position);
     }
 
+    public void setList(ArrayList<Song> songs) {
+        this.songs = songs;
+    }
+
     static class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView ivImg;
         TextView tvTitle, tvArtist;

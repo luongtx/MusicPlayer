@@ -21,9 +21,9 @@ public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
-    static MediaPlayer player;
+    public static MediaPlayer player;
     private ArrayList<Song> songs;
-    static int currSongIndex;
+    public static int currSongIndex;
     static boolean isLooping;
     static boolean isShuffling;
     private final IBinder musicBind = new MusicBinder();
@@ -92,8 +92,8 @@ public class MusicService extends Service implements
 
     public void playSong(int songIndex) {
         player.reset();
-        if(songs != null && songIndex + 1 <= songs.size() && songIndex >= 0) {
-            currSongIndex = songIndex;
+        currSongIndex = songIndex;
+        if (songs != null && currSongIndex + 1 <= songs.size() && currSongIndex >= 0) {
             if (isShuffling) currSongIndex = generateRandomIdx();
             Song playSong = songs.get(currSongIndex);
             int songId = playSong.getId();
@@ -117,7 +117,7 @@ public class MusicService extends Service implements
     }
 
     public void resume() {
-        if (currSongIndex >= songs.size() - 1) {
+        if (currSongIndex >= songs.size()) {
             playSong(songs.size() - 1);
         } else {
             player.start();
@@ -161,19 +161,6 @@ public class MusicService extends Service implements
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
-    }
-
-
-    public void setSeekPosition(int progress) {
-        player.seekTo(progress);
-    }
-
-    public int getSeekPosition() {
-        return player.getCurrentPosition();
-    }
-
-    public void setVolume(float volume) {
-        player.setVolume(volume,volume);
     }
 
     public static String getHumanTime(int milliseconds) {

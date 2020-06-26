@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.ListFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +30,7 @@ import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
  */
 public class FragmentSongs extends Fragment {
 
-    RecyclerView rcv_songs;
+    static RecyclerView rcv_songs;
 
     static int lastClickPosition = -1;
     public FragmentSongs() {
@@ -43,16 +44,15 @@ public class FragmentSongs extends Fragment {
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
 
         rcv_songs = view.findViewById(R.id.rcv_songs);
-        ArrayList<Song> songs = ActivityMain.musicProvider.loadSongs();
+        rcv_songs.setAdapter(ActivityMain.adapterSong);
         rcv_songs.setHasFixedSize(true);
-        rcv_songs.setAdapter(new AdapterSong(songs));
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
-        setRetainInstance(true);
         return view;
     }
 
-    public void changeSongItemDisplay(int position) {
+
+    public static void changeSongItemDisplay(int position) {
         View view = rcv_songs.getLayoutManager().findViewByPosition(position);
         if(view !=null ) {
             ImageView imageView = view.findViewById(R.id.ivSong);
@@ -78,18 +78,4 @@ public class FragmentSongs extends Fragment {
         }
         lastClickPosition = position;
     }
-
-//    public static void changeSongItemDisplay(int position) {
-//        AdapterSong.SongViewHolder songViewHolder = (AdapterSong.SongViewHolder) rcv_songs.findViewHolderForAdapterPosition(position);
-//        if (songViewHolder.view != null) {
-//            Glide.with(songViewHolder.view).load(R.drawable.img_dvd_playing).into(songViewHolder.ivImg);
-//            songViewHolder.view.setBackgroundColor(Color.CYAN);
-//            if (lastClickPosition != position) {
-//                songViewHolder = (AdapterSong.SongViewHolder) rcv_songs.findViewHolderForAdapterPosition(lastClickPosition);
-//                songViewHolder.view.setBackgroundColor(Color.WHITE);
-//                songViewHolder.ivImg.setImageResource(R.drawable.img_dvd);
-//            }
-//            lastClickPosition = position;
-//        }
-//    }
 }

@@ -3,6 +3,7 @@ package com.example.mymusicapp.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.ListFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,7 +40,7 @@ public class FragmentArtists extends Fragment {
         View view = inflater.inflate(R.layout.fragment_artists, container, false);
 
         rcvArtist = view.findViewById(R.id.rcv_artist);
-        ArrayList<Artist> artists = ActivityMain.musicProvider.loadArtist();
+        ArrayList<Artist> artists = ActivityMain.artists;
         rcvArtist.setAdapter(new AdapterArtist(artists));
         rcvArtist.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rcvArtist.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));

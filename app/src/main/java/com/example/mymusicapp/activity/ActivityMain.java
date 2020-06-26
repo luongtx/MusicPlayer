@@ -42,11 +42,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
-    static MusicService musicSrv;
+    public static MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound = false;
-    static ArrayList<Song> songs;
-    static ArrayList<Artist> artists;
+    public static ArrayList<Song> songs;
+    public static AdapterSong adapterSong;
+    public static ArrayList<Artist> artists;
     LinearLayout layout_mini_play;
     static MusicProvider musicProvider;
     PlaybackController playbackController;
@@ -75,16 +76,21 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         musicProvider = new MusicProvider(this);
         songs = musicProvider.loadSongs();
         artists = musicProvider.loadArtist();
+        adapterSong = new AdapterSong(songs);
 
         playbackController = new PlaybackController(layout_mini_play);
     }
 
+//    public void changSongDisplay() {
+//        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
+//        int currSongIndex = musicSrv.getCurrSongIndex();
+//        if (viewPager.getCurrentItem() == 0 && page != null) {
+//            ((FragmentSongs) page).changeSongItemDisplay(currSongIndex);
+//        }
+//    }
+
     public void changSongDisplay() {
-        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
-        int currSongIndex = musicSrv.getCurrSongIndex();
-        if (viewPager.getCurrentItem() == 0 && page != null) {
-            ((FragmentSongs) page).changeSongItemDisplay(currSongIndex);
-        }
+        FragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
     }
 
     private ServiceConnection musicConnection = new ServiceConnection(){
@@ -153,6 +159,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         transaction.replace(R.id.layout_main, fragmentArtistDetail);
         transaction.addToBackStack(null);
         transaction.commit();
+        layout_mini_play.setVisibility(View.GONE);
     }
 
     public void maximizeMediaControl(View view) {
@@ -186,5 +193,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         super.onBackPressed();
         layout_mini_play.setVisibility(View.VISIBLE);
         musicSrv.setCallBacks(ActivityMain.this);
+        songs = musicProvider.loadSongs();
+        musicSrv.setList(songs);
+        adapterSong.setList(songs);
     }
 }

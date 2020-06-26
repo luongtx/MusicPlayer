@@ -45,7 +45,10 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_media_control, container, false);
-        currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
+
+        if (MusicService.currSongIndex <= ActivityMain.songs.size()) {
+            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
+        }
         tvTitle = view.findViewById(R.id.tvTitle);
         tvArtist = view.findViewById(R.id.tvArtist);
         tvTitle.setText(currentSong.getTitle());
@@ -64,7 +67,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
         Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
 
-        tvStart.setText(MusicService.getHumanTime(musicSrv.getSeekPosition()));
+        tvStart.setText(MusicService.getHumanTime(MusicService.player.getCurrentPosition()));
         tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
 
         volumnBar.setProgress(100);
@@ -106,7 +109,9 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     }
 
     private void resetView() {
-        currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
+        if (MusicService.currSongIndex <= ActivityMain.songs.size()) {
+            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
+        }
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
         tvStart.setText("0:00");
@@ -119,7 +124,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     @Override
     public void onPlayNewSong() {
         resetView();
-//        ((ActivityMain)getActivity()).onPlayNewSong();
     }
 
     @Override
