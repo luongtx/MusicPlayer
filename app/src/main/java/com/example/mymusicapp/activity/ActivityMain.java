@@ -1,5 +1,6 @@
 package com.example.mymusicapp.activity;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import com.example.mymusicapp.MusicProvider;
 import com.example.mymusicapp.MusicService;
 import com.example.mymusicapp.PlaybackController;
 import com.example.mymusicapp.R;
+import com.example.mymusicapp.entity.Playlist;
 import com.example.mymusicapp.entity.Song;
 import com.example.mymusicapp.adapter.AdapterArtist;
 import com.example.mymusicapp.adapter.AdapterMyPager;
@@ -32,6 +34,7 @@ import com.example.mymusicapp.fragment.FragmentArtists;
 import com.example.mymusicapp.fragment.FragmentMediaControl;
 import com.example.mymusicapp.fragment.FragmentPlaylist;
 import com.example.mymusicapp.fragment.FragmentSongs;
+import com.example.mymusicapp.repository.DBMusicHelper;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -48,8 +51,10 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public static ArrayList<Song> songs;
     public static AdapterSong adapterSong;
     public static ArrayList<Artist> artists;
+    public static ArrayList<Playlist> playLists;
     LinearLayout layout_mini_play;
     static MusicProvider musicProvider;
+    static DBMusicHelper dbMusicHelper;
     PlaybackController playbackController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +80,11 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         musicProvider = new MusicProvider(this);
         songs = musicProvider.loadSongs();
-        artists = musicProvider.loadArtist();
         adapterSong = new AdapterSong(songs);
+        artists = musicProvider.loadArtist();
+
+        DBMusicHelper dbMusicHelper = new DBMusicHelper(ActivityMain.this);
+        playLists = dbMusicHelper.getAllPlaylists();
 
         playbackController = new PlaybackController(layout_mini_play);
     }

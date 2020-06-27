@@ -5,8 +5,12 @@ public class Song {
     private String title;
     private String artist;
     private String album;
+    private int playlist_id;
     private int duration;
 
+    public Song() {
+
+    }
     public Song(int id, String title, String artist, String album, int duration) {
         this.id = id;
         this.title = title;
@@ -53,5 +57,13 @@ public class Song {
 
     public int getDuration() {
         return duration;
+    }
+
+    public int getPlaylist_id() {
+        return playlist_id;
+    }
+
+    public void setPlaylist_id(int playlist_id) {
+        this.playlist_id = playlist_id;
     }
 }

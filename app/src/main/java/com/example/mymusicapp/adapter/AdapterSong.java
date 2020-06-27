@@ -18,6 +18,10 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
 
     private ArrayList<Song> songs;
 
+    public AdapterSong(ArrayList<Song> songs) {
+        this.songs = songs;
+    }
+
     public interface SongItemClickListeneer {
         void onSongItemClick(int position);
     }
@@ -44,10 +48,6 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
         public void onClick(View v) {
             songItemClickListeneer.onSongItemClick(getAdapterPosition());
         }
-    }
-
-    public AdapterSong(ArrayList<Song> songs) {
-        this.songs = songs;
     }
 
     @NonNull
