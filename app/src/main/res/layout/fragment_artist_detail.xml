@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="ALL SONGS"
+            android:text="@string/all_songs"
             android:textSize="20sp">
 
         </TextView>
@@ -50,5 +50,6 @@
         </fragment>
 
     </LinearLayout>
+<!--    <include layout="@layout/mini_control" />-->
 
 </LinearLayout>

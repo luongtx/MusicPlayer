@@ -30,7 +30,8 @@ import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
  */
 public class FragmentSongs extends Fragment {
 
-    static RecyclerView rcv_songs;
+    RecyclerView rcv_songs;
+    AdapterSong adapterSong;
     static int lastClickPosition = -1;
     public FragmentSongs() {
         // Required empty public constructor
@@ -43,14 +44,15 @@ public class FragmentSongs extends Fragment {
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
 
         rcv_songs = view.findViewById(R.id.rcv_songs);
-        rcv_songs.setAdapter(ActivityMain.adapterSong);
+        adapterSong = new AdapterSong(ActivityMain.songs);
+        rcv_songs.setAdapter(adapterSong);
         rcv_songs.setHasFixedSize(true);
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
         return view;
     }
 
-    public static void changeSongItemDisplay(int position) {
+    public void changeSongItemDisplay(int position) {
         View view = rcv_songs.getLayoutManager().findViewByPosition(position);
         if(view !=null ) {
             ImageView imageView = view.findViewById(R.id.ivSong);

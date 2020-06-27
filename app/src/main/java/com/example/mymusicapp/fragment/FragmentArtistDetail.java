@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.mymusicapp.MusicProvider;
 import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.R;
+import com.example.mymusicapp.adapter.AdapterSong;
 
 
 /**
@@ -21,7 +22,7 @@ import com.example.mymusicapp.R;
 public class FragmentArtistDetail extends Fragment {
 
     RecyclerView rcv_songs;
-
+    AdapterSong adapterSong;
     public FragmentArtistDetail() {
         // Required empty public constructor
     }
@@ -39,9 +40,10 @@ public class FragmentArtistDetail extends Fragment {
         tvArtist.setText(artistName);
         MusicProvider provider = new MusicProvider(getActivity());
         ActivityMain.songs = provider.loadSongsByArtist(artistName);
-        ActivityMain.adapterSong.setList(ActivityMain.songs);
+        adapterSong = new AdapterSong(ActivityMain.songs);
         ActivityMain.musicSrv.setList(ActivityMain.songs);
-        rcv_songs.setAdapter(ActivityMain.adapterSong);
+        rcv_songs.setAdapter(adapterSong);
         return view;
     }
+
 }

@@ -45,17 +45,19 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
+    AdapterMyPager pagerAdapter;
     public static MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound = false;
     public static ArrayList<Song> songs;
-    public static AdapterSong adapterSong;
     public static ArrayList<Artist> artists;
     public static ArrayList<Playlist> playLists;
     LinearLayout layout_mini_play;
     static MusicProvider musicProvider;
     static DBMusicHelper dbMusicHelper;
     PlaybackController playbackController;
+
+    FragmentSongs fragmentSongs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +68,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         viewPager = findViewById(R.id.pager);
 
         setSupportActionBar(toolbar);
-        AdapterMyPager pagerAdapter = new AdapterMyPager(getSupportFragmentManager());
+        pagerAdapter = new AdapterMyPager(getSupportFragmentManager());
         pagerAdapter.addFragment(new FragmentSongs(), "SONGS");
         pagerAdapter.addFragment(new FragmentArtists(), "ARTISTS");
         pagerAdapter.addFragment(new FragmentAlbums(), "ALBUMS");
@@ -80,13 +82,14 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         musicProvider = new MusicProvider(this);
         songs = musicProvider.loadSongs();
-        adapterSong = new AdapterSong(songs);
         artists = musicProvider.loadArtist();
 
-        DBMusicHelper dbMusicHelper = new DBMusicHelper(ActivityMain.this);
+        dbMusicHelper = new DBMusicHelper(ActivityMain.this);
         playLists = dbMusicHelper.getAllPlaylists();
-
         playbackController = new PlaybackController(layout_mini_play);
+
+        fragmentSongs = (FragmentSongs) pagerAdapter.getItem(0);
+
     }
 
 //    public void changSongDisplay() {
@@ -98,7 +101,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 //    }
 
     public void changSongDisplay() {
-        FragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
+        fragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
     }
 
     private ServiceConnection musicConnection = new ServiceConnection(){
@@ -167,7 +170,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         transaction.replace(R.id.layout_main, fragmentArtistDetail);
         transaction.addToBackStack(null);
         transaction.commit();
-        layout_mini_play.setVisibility(View.GONE);
+//        layout_mini_play.setVisibility(View.GONE);
     }
 
     public void maximizeMediaControl(View view) {
@@ -203,6 +206,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         musicSrv.setCallBacks(ActivityMain.this);
         songs = musicProvider.loadSongs();
         musicSrv.setList(songs);
-        adapterSong.setList(songs);
+//        adapterSong.setList(songs);
     }
 }

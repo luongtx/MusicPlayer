@@ -1,5 +1,7 @@
 package com.example.mymusicapp.adapter;
 
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -7,9 +9,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import com.example.mymusicapp.fragment.FragmentSongs;
+
 import java.util.ArrayList;
 
-public class AdapterMyPager extends FragmentPagerAdapter {
+public class AdapterMyPager extends FragmentStatePagerAdapter {
 
     private ArrayList<String> list_page_title;
     private ArrayList<Fragment> list_page_fragment;
