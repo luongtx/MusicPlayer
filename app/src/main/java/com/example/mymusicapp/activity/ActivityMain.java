@@ -1,6 +1,5 @@
 package com.example.mymusicapp.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.InputType;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
@@ -48,7 +45,8 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 
 public class ActivityMain extends AppCompatActivity implements MusicService.ServiceCallbacks,
-        AdapterSong.SongItemClickListeneer, AdapterArtist.ArtistItemClickListener {
+        AdapterSong.SongItemClickListeneer, AdapterArtist.ArtistItemClickListener,
+        AdapterPlayList.PlaylistClickListener {
 
     Toolbar toolbar;
     TabLayout tabLayout;
@@ -79,10 +77,10 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         setSupportActionBar(toolbar);
         pagerAdapter = new AdapterMyPager(getSupportFragmentManager());
-        pagerAdapter.addFragment(new FragmentSongs(), "SONGS");
-        pagerAdapter.addFragment(new FragmentArtists(), "ARTISTS");
-        pagerAdapter.addFragment(new FragmentAlbums(), "ALBUMS");
-        pagerAdapter.addFragment(new FragmentPlaylist(), "PLAYLIST");
+        pagerAdapter.addFragment(new FragmentSongs(), getString(R.string.songs));
+        pagerAdapter.addFragment(new FragmentArtists(), getString(R.string.artists));
+        pagerAdapter.addFragment(new FragmentAlbums(), getString(R.string.albums));
+        pagerAdapter.addFragment(new FragmentPlaylist(), getString(R.string.playlists));
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -170,12 +168,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         pagerAdapter.get_list_fragment().remove(1);
         pagerAdapter.get_list_fragment().add(1, fragmentArtistDetail);
         pagerAdapter.notifyDataSetChanged();
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-////        transaction.replace(R.id.layout_main, fragmentArtistDetail);
-//        transaction.add(R.id.layout_artists, fragmentArtistDetail, "fragment artist details");
-//        transaction.addToBackStack(null);
-//        transaction.commit();
     }
 
     public void maximizeMediaControl(View view) {
@@ -191,7 +183,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public void popStackedFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
-//            layout_mini_play.setVisibility(View.VISIBLE);
             musicSrv.setCallBacks(ActivityMain.this);
         } else {
             super.onBackPressed();
@@ -207,16 +198,17 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        layout_mini_play.setVisibility(View.VISIBLE);
 //        musicSrv.setCallBacks(ActivityMain.this);
 //        songs = musicProvider.loadSongs();
         pressBack(null);
     }
 
     public void pressBack(View view) {
-        pagerAdapter.get_list_fragment().remove(1);
-        pagerAdapter.get_list_fragment().add(1, fragmentArtists);
-        pagerAdapter.notifyDataSetChanged();
+        if(viewPager.getCurrentItem() == 1) {
+            pagerAdapter.get_list_fragment().remove(1);
+            pagerAdapter.get_list_fragment().add(1, fragmentArtists);
+            pagerAdapter.notifyDataSetChanged();
+        }
     }
 
     String playlist_name = "";
@@ -233,7 +225,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             public void onClick(DialogInterface dialog, int which) {
                 playlist_name = input.getText().toString();
                 if(playlist_name.length() == 0) {
-                    Toast.makeText(ActivityMain.this, "Please enter playlist name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActivityMain.this, R.string.enter_playlist_name, Toast.LENGTH_SHORT).show();
                 } else {
                     //add playlist
                     Playlist playlist = new Playlist();
@@ -253,4 +245,16 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         builder.show();
 
     }
+
+    @Override
+    public void onClickPlaylistItem(int position) {
+        pagerAdapter.get_list_fragment().remove(3);
+        pagerAdapter.get_list_fragment().add(3, fragmentSongs);
+        pagerAdapter.notifyDataSetChanged();
+
+        Playlist playlist = playLists.get(position);
+        songs = dbMusicHelper.getPlaylistSongs(playlist.getId());
+        fragmentSongs.getAdapterSong().notifyDataSetChanged();
+    }
+
 }

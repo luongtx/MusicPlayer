@@ -30,9 +30,9 @@ import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
  */
 public class FragmentSongs extends Fragment {
 
-    RecyclerView rcv_songs;
-    AdapterSong adapterSong;
-    static int lastClickPosition = -1;
+    private RecyclerView rcv_songs;
+    private AdapterSong adapterSong;
+    private static int lastClickPosition = -1;
     public FragmentSongs() {
         // Required empty public constructor
     }
@@ -77,5 +77,9 @@ public class FragmentSongs extends Fragment {
             }
         }
         lastClickPosition = position;
+    }
+
+    public AdapterSong getAdapterSong() {
+        return adapterSong;
     }
 }

@@ -16,4 +16,9 @@
     <string name="delete">delete</string>
     <string name="add_songs">add song</string>
     <string name="play">play</string>
+    <string name="songs">SONGS</string>
+    <string name="artists">ARTISTS</string>
+    <string name="albums">ALBUMS</string>
+    <string name="playlists">PLAYLISTS</string>
+    <string name="enter_playlist_name">Please enter playlist name</string>
 </resources>

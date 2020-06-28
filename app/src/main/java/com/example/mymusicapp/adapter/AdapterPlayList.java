@@ -27,15 +27,20 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
         this.playlists = playlists;
     }
 
+    public interface PlaylistClickListener {
+        void onClickPlaylistItem(int position);
+    }
+
+
     @NonNull
     @Override
     public PlayListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.playlist_item, parent, false);
-        return new PlayListHolder(view);
+        return new PlayListHolder(view, (PlaylistClickListener) parent.getContext());
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final PlayListHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final PlayListHolder holder, final int position) {
         final Playlist playList = playlists.get(position);
         holder.tv_name.setText(playList.getName());
         holder.iv_more.setOnClickListener(new View.OnClickListener() {
@@ -51,6 +56,7 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
                         switch (item.getItemId()) {
                             case R.id.delete:
                                 ActivityMain.dbMusicHelper.deletePlaylist(playList.getId());
+                                ActivityMain.playLists.remove(position);
                                 notifyDataSetChanged();
                                 return true;
                             case R.id.add_song:
@@ -70,15 +76,23 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
         return playlists.size();
     }
 
-    static class PlayListHolder extends RecyclerView.ViewHolder {
+    static class PlayListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView iv_playlist, iv_more;
         TextView tv_name;
-        public PlayListHolder(@NonNull View itemView) {
+        PlaylistClickListener playlistClickListener;
+        public PlayListHolder(@NonNull View itemView, PlaylistClickListener playlistClickListener) {
             super(itemView);
             iv_playlist = itemView.findViewById(R.id.iv_playlist);
             iv_more = itemView.findViewById(R.id.iv_more);
             tv_name = itemView.findViewById(R.id.tv_playlist_name);
+            this.playlistClickListener = playlistClickListener;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            playlistClickListener.onClickPlaylistItem(getAdapterPosition());
         }
     }
 }
