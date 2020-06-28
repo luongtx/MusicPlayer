@@ -36,6 +36,11 @@ public class AdapterMyPager extends FragmentStatePagerAdapter {
     }
 
     @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
+    }
+
+    @Override
     public int getCount() {
         return list_page_fragment.size();
     }
@@ -45,4 +50,7 @@ public class AdapterMyPager extends FragmentStatePagerAdapter {
         list_page_title.add(title);
     }
 
+    public ArrayList<Fragment> get_list_fragment() {
+        return list_page_fragment;
+    }
 }

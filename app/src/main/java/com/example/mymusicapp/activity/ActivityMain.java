@@ -58,6 +58,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     PlaybackController playbackController;
 
     FragmentSongs fragmentSongs;
+    FragmentArtists fragmentArtists;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +74,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         pagerAdapter.addFragment(new FragmentArtists(), "ARTISTS");
         pagerAdapter.addFragment(new FragmentAlbums(), "ALBUMS");
         pagerAdapter.addFragment(new FragmentPlaylist(), "PLAYLIST");
-
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -89,7 +89,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         playbackController = new PlaybackController(layout_mini_play);
 
         fragmentSongs = (FragmentSongs) pagerAdapter.getItem(0);
-
+        fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
     }
 
 //    public void changSongDisplay() {
@@ -165,12 +165,15 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         Bundle bundle = new Bundle();
         bundle.putString("artist", artistName);
         fragmentArtistDetail.setArguments(bundle);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.layout_main, fragmentArtistDetail);
-        transaction.addToBackStack(null);
-        transaction.commit();
-//        layout_mini_play.setVisibility(View.GONE);
+        pagerAdapter.get_list_fragment().remove(1);
+        pagerAdapter.get_list_fragment().add(1, fragmentArtistDetail);
+        pagerAdapter.notifyDataSetChanged();
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+////        transaction.replace(R.id.layout_main, fragmentArtistDetail);
+//        transaction.add(R.id.layout_artists, fragmentArtistDetail, "fragment artist details");
+//        transaction.addToBackStack(null);
+//        transaction.commit();
     }
 
     public void maximizeMediaControl(View view) {
@@ -186,7 +189,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public void popStackedFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
-            layout_mini_play.setVisibility(View.VISIBLE);
+//            layout_mini_play.setVisibility(View.VISIBLE);
             musicSrv.setCallBacks(ActivityMain.this);
         } else {
             super.onBackPressed();
@@ -202,10 +205,15 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        layout_mini_play.setVisibility(View.VISIBLE);
-        musicSrv.setCallBacks(ActivityMain.this);
-        songs = musicProvider.loadSongs();
-        musicSrv.setList(songs);
-//        adapterSong.setList(songs);
+//        layout_mini_play.setVisibility(View.VISIBLE);
+//        musicSrv.setCallBacks(ActivityMain.this);
+//        songs = musicProvider.loadSongs();
+        pressBack(null);
+    }
+
+    public void pressBack(View view) {
+        pagerAdapter.get_list_fragment().remove(1);
+        pagerAdapter.get_list_fragment().add(1, fragmentArtists);
+        pagerAdapter.notifyDataSetChanged();
     }
 }

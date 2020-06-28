@@ -1,5 +1,9 @@
 package com.example.mymusicapp.fragment;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -7,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +44,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     Song currentSong;
     SeekBarTask seekBarTask;
     PlaybackController playbackController;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -128,7 +132,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
     @Override
     public void onMusicPause() {
-
         Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_video).into(iv_dvd);
 //        btn_play.setBackgroundResource(R.drawable.ic_play);
 //        ((ActivityMain)getActivity()).onMusicPause();
@@ -151,12 +154,8 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
     @Override
     public void onDestroy() {
+        musicSrv.setList(ActivityMain.songs);
         super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     class SeekBarTask extends AsyncTask<String, Integer, String> {
@@ -194,4 +193,5 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
             resetView();
         }
     }
+
 }

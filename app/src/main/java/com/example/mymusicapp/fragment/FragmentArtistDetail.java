@@ -14,6 +14,11 @@ import com.example.mymusicapp.MusicProvider;
 import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.adapter.AdapterSong;
+import com.example.mymusicapp.entity.Song;
+
+import java.util.ArrayList;
+
+import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 
 /**
@@ -39,11 +44,17 @@ public class FragmentArtistDetail extends Fragment {
         String artistName = getArguments().getString("artist");
         tvArtist.setText(artistName);
         MusicProvider provider = new MusicProvider(getActivity());
-        ActivityMain.songs = provider.loadSongsByArtist(artistName);
-        adapterSong = new AdapterSong(ActivityMain.songs);
-        ActivityMain.musicSrv.setList(ActivityMain.songs);
+        ArrayList<Song> songs = provider.loadSongsByArtist(artistName);
+        adapterSong = new AdapterSong(songs);
+        musicSrv.setList(songs);
         rcv_songs.setAdapter(adapterSong);
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        musicSrv.setList(ActivityMain.songs);
+        musicSrv.setCallBacks((ActivityMain)getActivity());
+        super.onDestroy();
+    }
 }
