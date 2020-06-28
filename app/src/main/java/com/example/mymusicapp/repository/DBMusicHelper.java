@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.mymusicapp.MusicProvider;
 import com.example.mymusicapp.entity.Song;
@@ -55,6 +56,7 @@ public class DBMusicHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(DBMusicSchema.TablePlaylist.COL_NAME, playList.getName());
         db.insert(DBMusicSchema.TablePlaylist.TABLE_NAME, null, values);
+        Toast.makeText(context, "add playlist successfully!", Toast.LENGTH_SHORT).show();
     }
 
     public void addSongToPlaylist(Song song) {
@@ -70,6 +72,7 @@ public class DBMusicHelper extends SQLiteOpenHelper {
         String where_cls = DBMusicSchema.TablePlaylist.COL_ID + "=?";
         String[] where_args = new String[] {String.valueOf(playlistId)};
         db.delete(DBMusicSchema.TablePlaylist.TABLE_NAME, where_cls, where_args);
+        Toast.makeText(context, "delete playlist successfully!", Toast.LENGTH_SHORT).show();
     }
 
     public void deleteSongFromPlaylist(int playlistId, int songId) {
@@ -93,6 +96,8 @@ public class DBMusicHelper extends SQLiteOpenHelper {
                 playlists.add(playlist);
             }while (queryCursor.moveToNext());
         }
+        queryCursor.close();
+        Toast.makeText(context, "got all playlists!", Toast.LENGTH_SHORT).show();
         return playlists;
     }
 

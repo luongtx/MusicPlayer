@@ -3,31 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_main_setting"
+        android:id="@+id/menu_search"
         android:icon="@drawable/ic_search"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
-        android:title="Search" />
+        android:title="@string/search" />
 
     <item
-        android:id="@+id/menu_main_setting2"
+        android:id="@+id/menu_main_setting"
         android:icon="@drawable/ic_option_menu"
         android:orderInCategory="200"
         app:showAsAction="ifRoom"
-        android:title="Options" >
+        android:title="@string/options" >
         <menu>
             <item
                 android:id="@+id/refresh"
-                android:title="refresh" />
+                android:title="@string/refresh" />
             <item
                 android:id="@+id/new_playlist"
-                android:title="new playlist" />
+                android:onClick="addNewPlaylist"
+                android:title="@string/new_playlist" />
             <item
                 android:id="@+id/sleep_timer"
-                android:title="set timer" />
+                android:title="@string/set_timer" />
             <item
                 android:id="@+id/shuffle"
-                android:title="settings" />
+                android:title="@string/settings" />
         </menu>
     </item>
 

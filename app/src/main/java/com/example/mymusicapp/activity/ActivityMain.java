@@ -1,15 +1,22 @@
 package com.example.mymusicapp.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.InputType;
+import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,6 +25,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.mymusicapp.adapter.AdapterPlayList;
 import com.example.mymusicapp.entity.Artist;
 import com.example.mymusicapp.MusicProvider;
 import com.example.mymusicapp.MusicService;
@@ -53,12 +61,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public static ArrayList<Artist> artists;
     public static ArrayList<Playlist> playLists;
     LinearLayout layout_mini_play;
-    static MusicProvider musicProvider;
-    static DBMusicHelper dbMusicHelper;
+    public static MusicProvider musicProvider;
+    public static DBMusicHelper dbMusicHelper;
     PlaybackController playbackController;
 
     FragmentSongs fragmentSongs;
     FragmentArtists fragmentArtists;
+    FragmentPlaylist fragmentPlaylist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,15 +99,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         fragmentSongs = (FragmentSongs) pagerAdapter.getItem(0);
         fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
+        fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(3);
     }
-
-//    public void changSongDisplay() {
-//        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
-//        int currSongIndex = musicSrv.getCurrSongIndex();
-//        if (viewPager.getCurrentItem() == 0 && page != null) {
-//            ((FragmentSongs) page).changeSongItemDisplay(currSongIndex);
-//        }
-//    }
 
     public void changSongDisplay() {
         fragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
@@ -215,5 +217,40 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         pagerAdapter.get_list_fragment().remove(1);
         pagerAdapter.get_list_fragment().add(1, fragmentArtists);
         pagerAdapter.notifyDataSetChanged();
+    }
+
+    String playlist_name = "";
+    public void addNewPlaylist(MenuItem item) {
+        //show input dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("New playlist");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setPadding(20,20,20,20);
+        builder.setView(input);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                playlist_name = input.getText().toString();
+                if(playlist_name.length() == 0) {
+                    Toast.makeText(ActivityMain.this, "Please enter playlist name", Toast.LENGTH_SHORT).show();
+                } else {
+                    //add playlist
+                    Playlist playlist = new Playlist();
+                    playlist.setName(playlist_name);
+                    playLists.add(playlist);
+                    dbMusicHelper.addPlaylist(playlist);
+                    fragmentPlaylist.getAdapterPlayList().notifyDataSetChanged();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
     }
 }

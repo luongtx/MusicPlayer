@@ -7,4 +7,13 @@
     <string name="favorite">Favorite</string>
     <string name="num_song">\"Songs: \"</string>
     <string name="all_songs">ALL SONGS</string>
+    <string name="search">Search</string>
+    <string name="options">Options</string>
+    <string name="refresh">refresh</string>
+    <string name="new_playlist">new playlist</string>
+    <string name="set_timer">set timer</string>
+    <string name="settings">settings</string>
+    <string name="delete">delete</string>
+    <string name="add_songs">add song</string>
+    <string name="play">play</string>
 </resources>
