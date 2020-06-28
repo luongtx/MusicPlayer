@@ -59,8 +59,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public static ArrayList<Artist> artists;
     public static ArrayList<Playlist> playLists;
     LinearLayout layout_mini_play;
-    public static MusicProvider musicProvider;
-    public static DBMusicHelper dbMusicHelper;
+    MusicProvider musicProvider;
+    DBMusicHelper dbMusicHelper;
     PlaybackController playbackController;
 
     FragmentSongs fragmentSongs;
@@ -257,4 +257,11 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         fragmentSongs.getAdapterSong().notifyDataSetChanged();
     }
 
+    public DBMusicHelper getDbMusicHelper() {
+        return dbMusicHelper;
+    }
+
+    public MusicProvider getMusicProvider() {
+        return musicProvider;
+    }
 }

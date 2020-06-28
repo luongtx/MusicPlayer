@@ -59,7 +59,7 @@ public class AdapterArtist extends RecyclerView.Adapter<AdapterArtist.ArtistHold
         Artist artist = artists.get(position);
         holder.ivArtist.setImageResource(R.drawable.img_piano);
         holder.tvArtist.setText(artist.getName());
-        holder.tvNoSongs.setText(artist.getNumberOfSongs()+ " songs");
+        holder.tvNoSongs.setText(artist.getNumberOfSongs() + " songs");
     }
 
     @Override
