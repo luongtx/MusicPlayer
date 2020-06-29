@@ -21,4 +21,8 @@
     <string name="albums">albums</string>
     <string name="playlists">playlists</string>
     <string name="enter_playlist_name">Please enter playlist name</string>
+    <string name="success_add_playlist">add playlist successfully!</string>
+    <string name="success_add_songs">all selected song added to playlist!</string>
+    <string name="success_delete_playlist">delete playlist successfully!</string>
+    <string name="confirm">CONFIRM</string>
 </resources>

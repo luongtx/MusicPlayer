@@ -96,7 +96,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         btn_end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ActivityMain)getActivity()).popStackedFragment();
+                ((ActivityMain)getActivity()).onBackPressed();
             }
         });
         return view;
@@ -154,7 +154,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
     @Override
     public void onDestroy() {
-        musicSrv.setList(ActivityMain.songs);
+        musicSrv.setCallBacks((ActivityMain)getActivity());
         super.onDestroy();
     }
 

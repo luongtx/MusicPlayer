@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.InputType;
@@ -13,9 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -38,11 +41,14 @@ import com.example.mymusicapp.fragment.FragmentArtistDetail;
 import com.example.mymusicapp.fragment.FragmentArtists;
 import com.example.mymusicapp.fragment.FragmentMediaControl;
 import com.example.mymusicapp.fragment.FragmentPlaylist;
+import com.example.mymusicapp.fragment.FragmentSelectedSongs;
 import com.example.mymusicapp.fragment.FragmentSongs;
+import com.example.mymusicapp.model.ModelSelectedItem;
 import com.example.mymusicapp.repository.DBMusicHelper;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ActivityMain extends AppCompatActivity implements MusicService.ServiceCallbacks,
         AdapterSong.SongItemClickListeneer, AdapterArtist.ArtistItemClickListener,
@@ -58,6 +64,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public static ArrayList<Song> songs;
     public static ArrayList<Artist> artists;
     public static ArrayList<Playlist> playLists;
+
+    public static ArrayList<ModelSelectedItem> modelSelectedItems;
     LinearLayout layout_mini_play;
     MusicProvider musicProvider;
     DBMusicHelper dbMusicHelper;
@@ -66,6 +74,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentSongs fragmentSongs;
     FragmentArtists fragmentArtists;
     FragmentPlaylist fragmentPlaylist;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +107,11 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         fragmentSongs = (FragmentSongs) pagerAdapter.getItem(0);
         fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
         fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(3);
+
+        modelSelectedItems = new ArrayList<>(songs.size());
+        for(int i = 0; i< songs.size();i++) {
+            modelSelectedItems.add(new ModelSelectedItem(i,false));
+        }
     }
 
     public void changSongDisplay() {
@@ -183,9 +197,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public void popStackedFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
-            musicSrv.setCallBacks(ActivityMain.this);
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -198,15 +209,18 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        musicSrv.setCallBacks(ActivityMain.this);
-//        songs = musicProvider.loadSongs();
-        pressBack(null);
+        popStackedFragment();
+        recoverFragment();
     }
 
-    public void pressBack(View view) {
+    public void recoverFragment() {
         if(viewPager.getCurrentItem() == 1) {
             pagerAdapter.get_list_fragment().remove(1);
             pagerAdapter.get_list_fragment().add(1, fragmentArtists);
+            pagerAdapter.notifyDataSetChanged();
+        } else if(viewPager.getCurrentItem() == 3) {
+            pagerAdapter.get_list_fragment().remove(3);
+            pagerAdapter.get_list_fragment().add(3, fragmentPlaylist);
             pagerAdapter.notifyDataSetChanged();
         }
     }
@@ -243,18 +257,19 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             }
         });
         builder.show();
-
+        layout_mini_play.setVisibility(View.GONE);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClickPlaylistItem(int position) {
-        pagerAdapter.get_list_fragment().remove(3);
-        pagerAdapter.get_list_fragment().add(3, fragmentSongs);
-        pagerAdapter.notifyDataSetChanged();
-
         Playlist playlist = playLists.get(position);
         songs = dbMusicHelper.getPlaylistSongs(playlist.getId());
         fragmentSongs.getAdapterSong().notifyDataSetChanged();
+        musicSrv.setList(songs);
+        pagerAdapter.get_list_fragment().remove(3);
+        pagerAdapter.get_list_fragment().add(3, fragmentSongs);
+        pagerAdapter.notifyDataSetChanged();
     }
 
     public DBMusicHelper getDbMusicHelper() {
@@ -263,5 +278,35 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     public MusicProvider getMusicProvider() {
         return musicProvider;
+    }
+
+    public void addSelectedSongToPlaylist(int position) {
+        int playlistId = playLists.get(position).getId();
+        ArrayList<Song> selectedSongs = new ArrayList<>();
+        for(ModelSelectedItem item: modelSelectedItems) {
+            if(item.isSelectd()) {
+                selectedSongs.add(songs.get(item.getPosition()));
+            }
+        }
+        dbMusicHelper.addSongsToPlaylist(selectedSongs, playlistId);
+        popStackedFragment();
+    }
+
+    public void deletePlaylist(int position) {
+        int playlistId = playLists.get(position).getId();
+        playLists.remove(position);
+        dbMusicHelper.deletePlaylist(playlistId);
+    }
+
+    public void onClickOptionAddSongs(int position) {
+        FragmentSelectedSongs fragmentSelectedSongs = new FragmentSelectedSongs();
+        Bundle bundle = new Bundle();
+        bundle.putInt("playlist_pos", position);
+        fragmentSelectedSongs.setArguments(bundle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.layout_main, fragmentSelectedSongs);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

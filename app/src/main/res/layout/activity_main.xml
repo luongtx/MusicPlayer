@@ -30,6 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            app:tabPaddingStart="-1dp"
+            app:tabPaddingEnd="-1dp"
             app:tabSelectedTextColor="@color/colorAccent"
             app:tabTextColor="@color/icons">
 

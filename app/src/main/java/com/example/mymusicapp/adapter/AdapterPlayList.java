@@ -55,11 +55,11 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.delete:
-                                ((ActivityMain)context).getDbMusicHelper().deletePlaylist(playList.getId());
-                                ActivityMain.playLists.remove(position);
+                                ((ActivityMain)context).deletePlaylist(position);
                                 notifyDataSetChanged();
                                 return true;
                             case R.id.add_song:
+                                ((ActivityMain)context).onClickOptionAddSongs(position);
                             case R.id.play:
                             default:
                                 return false;

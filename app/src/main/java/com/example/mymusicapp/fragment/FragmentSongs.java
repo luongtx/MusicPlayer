@@ -23,6 +23,7 @@ import com.example.mymusicapp.adapter.AdapterSong;
 import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
+import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 
 /**
@@ -45,6 +46,7 @@ public class FragmentSongs extends Fragment {
 
         rcv_songs = view.findViewById(R.id.rcv_songs);
         adapterSong = new AdapterSong(ActivityMain.songs);
+        adapterSong.setMultiSelected(false);
         rcv_songs.setAdapter(adapterSong);
         rcv_songs.setHasFixedSize(true);
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -81,5 +83,13 @@ public class FragmentSongs extends Fragment {
 
     public AdapterSong getAdapterSong() {
         return adapterSong;
+    }
+
+    @Override
+    public void onDestroy() {
+        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
+        musicSrv.setList(ActivityMain.songs);
+        musicSrv.setCallBacks((ActivityMain)getActivity());
+        super.onDestroy();
     }
 }

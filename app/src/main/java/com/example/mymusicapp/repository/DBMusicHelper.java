@@ -6,14 +6,19 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+
 import com.example.mymusicapp.MusicProvider;
+import com.example.mymusicapp.R;
 import com.example.mymusicapp.entity.Song;
 import com.example.mymusicapp.entity.Playlist;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class DBMusicHelper extends SQLiteOpenHelper {
 
@@ -22,7 +27,7 @@ public class DBMusicHelper extends SQLiteOpenHelper {
     MusicProvider musicProvider;
     ArrayList<Song> all_songs;
     public DBMusicHelper(Context context) {
-        super(context, DBMusicSchema.DB_NAME, null, 1);
+        super(context, DBMusicSchema.DB_NAME, null, 3);
         this.context = context;
         musicProvider = new MusicProvider((Activity) context);
         all_songs = musicProvider.loadSongs();
@@ -37,18 +42,19 @@ public class DBMusicHelper extends SQLiteOpenHelper {
         db.execSQL(sql1);
         String sql2 = "CREATE TABLE " + DBMusicSchema.TablePlaylistSong.TABLE_NAME + " ("
                 + DBMusicSchema.TablePlaylistSong.COL_ID + " integer primary key autoincrement" + ","
-                + DBMusicSchema.TablePlaylistSong.COL_SONG_ID + "integer" + ","
-                + DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID + "integer"
+                + DBMusicSchema.TablePlaylistSong.COL_SONG_ID + " INTEGER" + ","
+                + DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID + " INTEGER"
                 + ");";
         db.execSQL(sql2);
+        Toast.makeText(context, "Create Database successfully", Toast.LENGTH_SHORT).show();
         Log.d("DB CREATION", "db created successfully");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db = this.getWritableDatabase();
-        String sql = "DROP TABLE IF EXISTS "+ DBMusicSchema.TablePlaylist.TABLE_NAME;
-        db.execSQL(sql);
+        db.execSQL("DROP TABLE IF EXISTS "+ DBMusicSchema.TablePlaylist.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS "+ DBMusicSchema.TablePlaylistSong.TABLE_NAME);
+        onCreate(db);
     }
 
     public void addPlaylist(Playlist playList) {
@@ -56,23 +62,40 @@ public class DBMusicHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(DBMusicSchema.TablePlaylist.COL_NAME, playList.getName());
         db.insert(DBMusicSchema.TablePlaylist.TABLE_NAME, null, values);
-        Toast.makeText(context, "add playlist successfully!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, R.string.success_add_playlist, Toast.LENGTH_SHORT).show();
     }
+//
+//    public void addSongToPlaylist(Song song) {
+//        db = this.getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//        values.put(DBMusicSchema.TablePlaylistSong.COL_SONG_ID, song.getId());
+//        values.put(DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID, song.getPlaylist_id());
+//        db.insert(DBMusicSchema.TablePlaylistSong.TABLE_NAME, null, values);
+//    }
 
-    public void addSongToPlaylist(Song song) {
+    public void addSongsToPlaylist(ArrayList<Song> songs, int playlistId) {
         db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(DBMusicSchema.TablePlaylistSong.COL_SONG_ID, song.getId());
-        values.put(DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID, song.getPlaylist_id());
-        db.insert(DBMusicSchema.TablePlaylistSong.TABLE_NAME, null, values);
+        ContentValues values;
+        for(Song song: songs) {
+            values = new ContentValues();
+            values.put(DBMusicSchema.TablePlaylistSong.COL_SONG_ID, song.getId());
+            values.put(DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID, playlistId);
+            db.insert(DBMusicSchema.TablePlaylistSong.TABLE_NAME, null, values);
+        }
+        Toast.makeText(context, R.string.success_add_songs, Toast.LENGTH_SHORT).show();
     }
 
     public void deletePlaylist(int playlistId) {
         db = this.getWritableDatabase();
+        //delete playlist
         String where_cls = DBMusicSchema.TablePlaylist.COL_ID + "=?";
         String[] where_args = new String[] {String.valueOf(playlistId)};
         db.delete(DBMusicSchema.TablePlaylist.TABLE_NAME, where_cls, where_args);
-        Toast.makeText(context, "delete playlist successfully!", Toast.LENGTH_SHORT).show();
+        //delete all song from deleted playlist
+        where_cls = DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID + "=?";
+        where_args = new String[] {String.valueOf(playlistId)};
+        db.delete(DBMusicSchema.TablePlaylistSong.TABLE_NAME, where_cls, where_args);
+        Toast.makeText(context, R.string.success_delete_playlist, Toast.LENGTH_SHORT).show();
     }
 
     public void deleteSongFromPlaylist(int playlistId, int songId) {
@@ -97,26 +120,25 @@ public class DBMusicHelper extends SQLiteOpenHelper {
             }while (queryCursor.moveToNext());
         }
         queryCursor.close();
-        Toast.makeText(context, "got all playlists!", Toast.LENGTH_SHORT).show();
         return playlists;
     }
 
-
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public ArrayList<Song> getPlaylistSongs(int playlistId) {
-        ArrayList<Song> songs = new ArrayList<>();
+        ArrayList<Integer> list_song_ids = new ArrayList<>();
         db = this.getWritableDatabase();
-        String query = "SELECT * FROM " + DBMusicSchema.TablePlaylistSong.TABLE_NAME +
-                " WHERE " + DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID + "=?";
-        String[] selectionArgs = new String[] {String.valueOf(playlistId)};
-        Cursor queryCursor = db.rawQuery(query, selectionArgs);
-        Song song;
-        if(queryCursor.moveToFirst()) {
+        String query = "SELECT " + DBMusicSchema.TablePlaylistSong.COL_SONG_ID + " FROM " + DBMusicSchema.TablePlaylistSong.TABLE_NAME +
+                " WHERE " + DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID + "=" + playlistId;
+        Cursor queryCursor = db.rawQuery(query, null);
+        if (queryCursor.moveToFirst()) {
             do {
                 int song_id = queryCursor.getInt(queryCursor.getColumnIndex(DBMusicSchema.TablePlaylistSong.COL_SONG_ID));
-                song = all_songs.get(song_id);
-                songs.add(song);
-            } while(queryCursor.moveToNext());
+                list_song_ids.add(song_id);
+            } while (queryCursor.moveToNext());
         }
+        ArrayList<Song> songs = (ArrayList<Song>) all_songs.stream()
+                .filter((song) -> list_song_ids.contains(song.getId()))
+                .collect(Collectors.toList());
         return songs;
     }
 
