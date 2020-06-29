@@ -93,12 +93,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
             }
         });
 
-        btn_end.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ActivityMain)getActivity()).onBackPressed();
-            }
-        });
+        btn_end.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
         return view;
     }
 
@@ -107,7 +102,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         super.onViewCreated(view, savedInstanceState);
         musicSrv.setCallBacks(FragmentMediaControl.this);
         MusicService.player.setVolume(1,1);
-//        resetView();
         seekBarTask = new SeekBarTask();
         seekBarTask.execute();
     }
