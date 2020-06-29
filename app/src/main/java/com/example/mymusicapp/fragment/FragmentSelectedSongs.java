@@ -59,14 +59,13 @@ public class FragmentSelectedSongs extends Fragment {
                 ((ActivityMain) getActivity()).addSelectedSongToPlaylist(playlist_pos);
             }
         });
-        iv_arrow_back.setOnClickListener(v -> ((ActivityMain)getActivity()).popStackedFragment());
+        iv_arrow_back.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
         return view;
     }
     @Override
     public void onDestroy() {
         ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
         musicSrv.setList(ActivityMain.songs);
-        musicSrv.setCallBacks((ActivityMain)getActivity());
         super.onDestroy();
     }
 }

@@ -74,12 +74,12 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvStart.setText(MusicService.getHumanTime(MusicService.player.getCurrentPosition()));
         tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
 
-        volumnBar.setProgress(100);
+        volumnBar.setProgress(50);
         volumnBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float volumnNum = progress/100f;
-                MusicService.player.setVolume(volumnNum,volumnNum);
+                float volumnNum = progress / 100f;
+                MusicService.player.setVolume(volumnNum, volumnNum);
             }
 
             @Override
@@ -101,7 +101,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         musicSrv.setCallBacks(FragmentMediaControl.this);
-        MusicService.player.setVolume(1,1);
         seekBarTask = new SeekBarTask();
         seekBarTask.execute();
     }
@@ -127,14 +126,12 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     @Override
     public void onMusicPause() {
         Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_video).into(iv_dvd);
-//        btn_play.setBackgroundResource(R.drawable.ic_play);
 //        ((ActivityMain)getActivity()).onMusicPause();
     }
 
     @Override
     public void onMusicResume() {
         Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_spinning).into(iv_dvd);
-//        btn_play.setBackgroundResource(R.drawable.ic_pause);
 //        ((ActivityMain)getActivity()).onMusicResume();
     }
 

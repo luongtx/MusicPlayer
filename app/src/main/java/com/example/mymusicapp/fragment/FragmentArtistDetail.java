@@ -50,7 +50,7 @@ public class FragmentArtistDetail extends Fragment {
         rcv_songs.setAdapter(adapterSong);
 
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
-        iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).recoverFragment());
+        iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
 
         return view;
     }

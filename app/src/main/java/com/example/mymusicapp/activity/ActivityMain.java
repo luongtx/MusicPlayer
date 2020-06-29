@@ -209,8 +209,11 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
-        popStackedFragment();
-        recoverFragment();
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            recoverFragment();
+        }
     }
 
     public void recoverFragment() {

@@ -89,7 +89,6 @@ public class FragmentSongs extends Fragment {
     public void onDestroy() {
         ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
         musicSrv.setList(ActivityMain.songs);
-        musicSrv.setCallBacks((ActivityMain)getActivity());
         super.onDestroy();
     }
 }
