@@ -5,13 +5,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
+import static com.example.mymusicapp.activity.ActivityMain.songs;
 
 public class PlaybackController {
 
 
     View view;
     ImageButton iv_prev, iv_play, iv_next, iv_shuffle, iv_loop;
-
+    static int prev_song_id, curr_song_id;
     public PlaybackController(View view) {
         this.view = view;
         iv_prev = (ImageButton) view.findViewById(R.id.iv_prev);
@@ -20,40 +21,15 @@ public class PlaybackController {
         iv_loop = (ImageButton) view.findViewById(R.id.iv_loop);
         iv_shuffle = (ImageButton) view.findViewById(R.id.iv_shuffle);
 
-        iv_prev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                previous(v);
-            }
-        });
+        iv_prev.setOnClickListener(this::previous);
 
-        iv_play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggle_play(v);
-            }
-        });
+        iv_play.setOnClickListener(this::toggle_play);
 
-        iv_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                next(v);
-            }
-        });
+        iv_next.setOnClickListener(this::next);
 
-        iv_shuffle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shuffle(v);
-            }
-        });
+        iv_shuffle.setOnClickListener(this::shuffle);
 
-        iv_loop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loop(v);
-            }
-        });
+        iv_loop.setOnClickListener(this::loop);
     }
 
     void previous(View view) {
@@ -96,12 +72,14 @@ public class PlaybackController {
         }
     }
 
-    public void songPicked(int position){
-        if (position != musicSrv.getCurrSongIndex()) {
+    public void songPicked(int position) {
+        curr_song_id = songs.get(position).getId();
+        if (curr_song_id != prev_song_id) {
             musicSrv.playSong(position);
         } else {
             toggle_play(view);
         }
+        prev_song_id = curr_song_id;
         view.setVisibility(View.VISIBLE);
     }
 }

@@ -302,6 +302,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     public void onClickOptionAddSongs(int position) {
+        layout_mini_play.setVisibility(View.GONE);
         FragmentSelectedSongs fragmentSelectedSongs = new FragmentSelectedSongs();
         Bundle bundle = new Bundle();
         bundle.putInt("playlist_pos", position);
@@ -311,5 +312,9 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         transaction.replace(R.id.layout_main, fragmentSelectedSongs);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public FragmentSongs getFragmentSongs() {
+        return fragmentSongs;
     }
 }

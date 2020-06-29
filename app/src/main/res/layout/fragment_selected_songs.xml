@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_toEndOf="@+id/iv_arrow"
-            android:text="n Selected"
+            android:text="@string/songs_to_add"
             android:textColor="@color/icons"
             android:textSize="17sp"
             android:textStyle="bold" />

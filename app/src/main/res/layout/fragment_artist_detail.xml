@@ -54,8 +54,7 @@
             class="com.example.mymusicapp.fragment.FragmentSongs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout="@layout/fragment_songs">
-        </fragment>
+            tools:layout="@layout/fragment_songs" />
 
     </LinearLayout>
 <!--    <include layout="@layout/mini_control" />-->
