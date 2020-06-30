@@ -98,11 +98,22 @@ public class DBMusicHelper extends SQLiteOpenHelper {
         Toast.makeText(context, R.string.success_delete_playlist, Toast.LENGTH_SHORT).show();
     }
 
-    public void deleteSongFromPlaylist(int playlistId, int songId) {
+//    public void deleteSongFromPlaylist(int playlistId, int songId) {
+//        db = this.getWritableDatabase();
+//        String where_cls = DBMusicSchema.TablePlaylistSong.COL_SONG_ID + "=?" + " AND " + DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID + "=?";
+//        String[] where_args = new String[]{String.valueOf(playlistId), String.valueOf(songId)};
+//        db.delete(DBMusicSchema.TablePlaylistSong.TABLE_NAME, where_cls, where_args);
+//    }
+
+    public void deleteSongsFromPlaylist(int playlistId, ArrayList<Song> songs) {
         db = this.getWritableDatabase();
-        String where_cls = DBMusicSchema.TablePlaylistSong.COL_SONG_ID + "=?" + " AND " + DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID + "=?";
-        String[] where_args = new String[]{String.valueOf(playlistId), String.valueOf(songId)};
-        db.delete(DBMusicSchema.TablePlaylistSong.TABLE_NAME, where_cls, where_args);
+        String where_cls = DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID + "=" + playlistId + " AND " + DBMusicSchema.TablePlaylistSong.COL_SONG_ID + "=?";
+        String[] where_args;
+        for (Song song : songs) {
+            where_args = new String[]{String.valueOf(song.getId())};
+            db.delete(DBMusicSchema.TablePlaylistSong.TABLE_NAME, where_cls, where_args);
+        }
+        Toast.makeText(context, R.string.seleted_playlist_song_deleted, Toast.LENGTH_SHORT).show();
     }
 
     public ArrayList<Playlist> getAllPlaylists () {

@@ -17,18 +17,31 @@
         android:title="@string/options" >
         <menu>
             <item
-                android:id="@+id/refresh"
+                android:id="@+id/it_refresh"
                 android:title="@string/refresh" />
             <item
-                android:id="@+id/new_playlist"
+                android:id="@+id/it_new_playlist"
                 android:onClick="addNewPlaylist"
                 android:title="@string/new_playlist" />
             <item
-                android:id="@+id/sleep_timer"
+                android:id="@+id/it_sleep_timer"
                 android:title="@string/set_timer" />
             <item
-                android:id="@+id/shuffle"
+                android:id="@+id/it_shuffle"
                 android:title="@string/settings" />
+            <item
+                android:id="@+id/it_delete_from_playlist"
+                android:onClick="deleteFromPlaylist"
+                android:title="@string/delete_from_playlist"
+                android:visible="false" />
+            <item
+                android:id="@+id/it_add_to_playlist"
+                android:title="@string/add_to_playlist"
+                android:visible="false" />
+            <item
+                android:id="@+id/it_deselect_item"
+                android:title="@string/deselect_selected_item"
+                android:visible="false" />
         </menu>
     </item>
 

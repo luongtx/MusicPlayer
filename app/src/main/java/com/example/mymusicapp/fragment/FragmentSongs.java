@@ -23,6 +23,7 @@ import com.example.mymusicapp.adapter.AdapterSong;
 import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
+import static com.example.mymusicapp.activity.ActivityMain.modelSelectedItems;
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 
@@ -34,6 +35,7 @@ public class FragmentSongs extends Fragment {
     private RecyclerView rcv_songs;
     private AdapterSong adapterSong;
     private static int lastClickPosition = -1;
+    private int playlist_pos = -1;
     public FragmentSongs() {
         // Required empty public constructor
     }
@@ -46,6 +48,7 @@ public class FragmentSongs extends Fragment {
 
         rcv_songs = view.findViewById(R.id.rcv_songs);
         adapterSong = new AdapterSong(ActivityMain.songs);
+        adapterSong.setModel(modelSelectedItems);
         adapterSong.setMultiSelected(false);
         rcv_songs.setAdapter(adapterSong);
         rcv_songs.setHasFixedSize(true);
@@ -90,5 +93,13 @@ public class FragmentSongs extends Fragment {
         ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
         musicSrv.setList(ActivityMain.songs);
         super.onDestroy();
+    }
+
+    public void setPlaylist_pos(int playlist_pos) {
+        this.playlist_pos = playlist_pos;
+    }
+
+    public int getPlaylist_pos() {
+        return playlist_pos;
     }
 }

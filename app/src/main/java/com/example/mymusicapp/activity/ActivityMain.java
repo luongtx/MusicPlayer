@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -108,6 +110,9 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
         fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(3);
 
+    }
+
+    public void initModelSelectedItems() {
         modelSelectedItems = new ArrayList<>(songs.size());
         for(int i = 0; i< songs.size();i++) {
             modelSelectedItems.add(new ModelSelectedItem(i,false));
@@ -145,10 +150,33 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
     }
 
+    private Menu menu;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
         return true;
+    }
+
+    public void changeMenuWhenLongClickItem() {
+        menu.findItem(R.id.it_refresh).setVisible(false);
+        menu.findItem(R.id.it_new_playlist).setVisible(false);
+        menu.findItem(R.id.it_shuffle).setVisible(false);
+        menu.findItem(R.id.it_sleep_timer).setVisible(false);
+        menu.findItem(R.id.it_add_to_playlist).setVisible(true);
+        menu.findItem(R.id.it_delete_from_playlist).setVisible(true);
+        menu.findItem(R.id.it_deselect_item).setVisible(true);
+    }
+    
+    public void recoverMenu() {
+        menu.findItem(R.id.it_refresh).setVisible(true);
+        menu.findItem(R.id.it_new_playlist).setVisible(true);
+        menu.findItem(R.id.it_shuffle).setVisible(true);
+        menu.findItem(R.id.it_sleep_timer).setVisible(true);
+        menu.findItem(R.id.it_add_to_playlist).setVisible(false);
+        menu.findItem(R.id.it_delete_from_playlist).setVisible(false);
+        menu.findItem(R.id.it_deselect_item).setVisible(false);
     }
 
     @Override
@@ -169,6 +197,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onSongItemClick(int position) {
         playbackController.songPicked(position);
+    }
+
+    @Override
+    public void onSongItemLongClicked() {
+        if (fragmentSongs.getPlaylist_pos() != -1) {
+            changeMenuWhenLongClickItem();
+        }
     }
 
 
@@ -266,9 +301,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClickPlaylistItem(int position) {
+//        getMenuInflater().inflate(R.menu.item_option_menu, menu);
+        initModelSelectedItems();
         Playlist playlist = playLists.get(position);
         songs = dbMusicHelper.getPlaylistSongs(playlist.getId());
         fragmentSongs.getAdapterSong().notifyDataSetChanged();
+        fragmentSongs.setPlaylist_pos(position);
         musicSrv.setList(songs);
         pagerAdapter.get_list_fragment().remove(3);
         pagerAdapter.get_list_fragment().add(3, fragmentSongs);
@@ -316,5 +354,23 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     public FragmentSongs getFragmentSongs() {
         return fragmentSongs;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void deleteFromPlaylist(MenuItem item) {
+        ArrayList<Song> selectedSongs = new ArrayList<>();
+        Song song;
+        for(ModelSelectedItem modelSelectedItem: modelSelectedItems) {
+            if(modelSelectedItem.isSelectd()) {
+                song = songs.get(modelSelectedItem.getPosition());
+                selectedSongs.add(song);
+            }
+        }
+        int playlistId = playLists.get(fragmentSongs.getPlaylist_pos()).getId();
+        dbMusicHelper.deleteSongsFromPlaylist(playlistId, selectedSongs);
+        songs = dbMusicHelper.getPlaylistSongs(playlistId);
+        fragmentSongs.getAdapterSong().notifyDataSetChanged();
+        musicSrv.setList(songs);
+        recoverMenu();
     }
 }
