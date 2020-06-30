@@ -60,7 +60,7 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
                                 return true;
                             case R.id.add_song:
                                 ((ActivityMain)context).onClickOptionAddSongs(position);
-                            case R.id.play:
+                            case R.id.rename:
                             default:
                                 return false;
                         }
@@ -76,7 +76,7 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
         return playlists.size();
     }
 
-    static class PlayListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class PlayListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView iv_playlist, iv_more;
         TextView tv_name;

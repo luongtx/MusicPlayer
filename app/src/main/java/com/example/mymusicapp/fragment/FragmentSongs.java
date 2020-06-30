@@ -2,25 +2,20 @@ package com.example.mymusicapp.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.ListFragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.example.mymusicapp.activity.ActivityMain;
-import com.example.mymusicapp.R;
-import com.example.mymusicapp.entity.Song;
-import com.example.mymusicapp.adapter.AdapterSong;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.bumptech.glide.Glide;
+import com.example.mymusicapp.R;
+import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.adapter.AdapterSong;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 import static com.example.mymusicapp.activity.ActivityMain.modelSelectedItems;
@@ -45,9 +40,9 @@ public class FragmentSongs extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
-
         rcv_songs = view.findViewById(R.id.rcv_songs);
         adapterSong = new AdapterSong(ActivityMain.songs);
+        ((ActivityMain)getActivity()).initModelSelectedItems();
         adapterSong.setModel(modelSelectedItems);
         adapterSong.setMultiSelected(false);
         rcv_songs.setAdapter(adapterSong);
@@ -84,6 +79,10 @@ public class FragmentSongs extends Fragment {
         lastClickPosition = position;
     }
 
+    public void setAdapterSong(AdapterSong adapterSong) {
+        this.adapterSong = adapterSong;
+    }
+
     public AdapterSong getAdapterSong() {
         return adapterSong;
     }
@@ -95,6 +94,11 @@ public class FragmentSongs extends Fragment {
         super.onDestroy();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     public void setPlaylist_pos(int playlist_pos) {
         this.playlist_pos = playlist_pos;
     }
@@ -102,4 +106,6 @@ public class FragmentSongs extends Fragment {
     public int getPlaylist_pos() {
         return playlist_pos;
     }
+
+
 }

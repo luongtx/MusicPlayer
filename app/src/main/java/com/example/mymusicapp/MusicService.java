@@ -1,7 +1,5 @@
 package com.example.mymusicapp;
 
-import java.util.ArrayList;
-
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -16,6 +14,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.mymusicapp.entity.Song;
+
+import java.util.ArrayList;
 
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -67,8 +67,8 @@ public class MusicService extends Service implements
         player.setOnErrorListener(this);
     }
 
-    public void setList(ArrayList<Song> theSongs){
-        songs=theSongs;
+    public void setList(ArrayList<Song> theSongs) {
+        songs = theSongs;
     }
 
     public class MusicBinder extends Binder {

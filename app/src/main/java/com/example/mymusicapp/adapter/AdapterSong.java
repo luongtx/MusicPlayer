@@ -1,25 +1,31 @@
 package com.example.mymusicapp.adapter;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.entity.Song;
 import com.example.mymusicapp.model.ModelSelectedItem;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder> {
+public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder> implements Filterable {
 
     private ArrayList<Song> songs;
+    private ArrayList<Song> backup_songs;
     private ArrayList<ModelSelectedItem> modelSelectedItems;
 
     private boolean isMultiSelected = false;
@@ -27,6 +33,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
 
     public AdapterSong(ArrayList<Song> songs) {
         this.songs = songs;
+        backup_songs = new ArrayList<>(songs);
     }
 
     public interface SongItemClickListeneer {
@@ -60,9 +67,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
             tvArtist = itemView.findViewById(R.id.tvArtist);
             this.songItemClickListeneer = songItemClickListeneer;
             itemView.setOnLongClickListener(this);
-            if(!isLongClicked) {
-                itemView.setOnClickListener(this);
-            }
+            itemView.setOnClickListener(this);
         }
 
         @Override
@@ -108,4 +113,34 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
         return songs.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+
+    private Filter exampleFilter = new Filter() {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Song> filteredList;
+            if (constraint == null || constraint.length() == 0) {
+                filteredList = new ArrayList<>(backup_songs);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                filteredList = backup_songs.stream()
+                        .filter((item) -> item.getTitle().toLowerCase().contains(filterPattern))
+                        .collect(Collectors.toList());
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            songs.clear();
+            songs.addAll((ArrayList<Song>) results.values);
+            notifyDataSetChanged();
+        }
+    };
 }

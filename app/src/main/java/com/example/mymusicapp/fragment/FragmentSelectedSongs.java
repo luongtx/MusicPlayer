@@ -1,17 +1,16 @@
 package com.example.mymusicapp.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.activity.ActivityMain;
@@ -41,6 +40,7 @@ public class FragmentSelectedSongs extends Fragment {
         View view = inflater.inflate(R.layout.fragment_selected_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
         adapterSong = new AdapterSong(ActivityMain.songs);
+        ((ActivityMain)getActivity()).initModelSelectedItems();
         adapterSong.setModel(ActivityMain.modelSelectedItems);
         adapterSong.setMultiSelected(true);
         rcv_songs.setAdapter(adapterSong);
@@ -53,12 +53,7 @@ public class FragmentSelectedSongs extends Fragment {
         tv_confirm = view.findViewById(R.id.tv_confirm);
 
         final int playlist_pos = getArguments().getInt("playlist_pos");
-        tv_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ActivityMain) getActivity()).addSelectedSongToPlaylist(playlist_pos);
-            }
-        });
+        tv_confirm.setOnClickListener(v -> ((ActivityMain) getActivity()).addSelectedSongToPlaylist(playlist_pos));
         iv_arrow_back.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
         return view;
     }

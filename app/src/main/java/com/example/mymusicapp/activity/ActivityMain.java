@@ -13,13 +13,12 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,17 +26,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.mymusicapp.adapter.AdapterPlayList;
-import com.example.mymusicapp.entity.Artist;
 import com.example.mymusicapp.MusicProvider;
 import com.example.mymusicapp.MusicService;
 import com.example.mymusicapp.PlaybackController;
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.entity.Playlist;
-import com.example.mymusicapp.entity.Song;
 import com.example.mymusicapp.adapter.AdapterArtist;
 import com.example.mymusicapp.adapter.AdapterMyPager;
+import com.example.mymusicapp.adapter.AdapterPlayList;
 import com.example.mymusicapp.adapter.AdapterSong;
+import com.example.mymusicapp.entity.Artist;
+import com.example.mymusicapp.entity.Playlist;
+import com.example.mymusicapp.entity.Song;
 import com.example.mymusicapp.fragment.FragmentAlbums;
 import com.example.mymusicapp.fragment.FragmentArtistDetail;
 import com.example.mymusicapp.fragment.FragmentArtists;
@@ -50,7 +49,6 @@ import com.example.mymusicapp.repository.DBMusicHelper;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class ActivityMain extends AppCompatActivity implements MusicService.ServiceCallbacks,
         AdapterSong.SongItemClickListeneer, AdapterArtist.ArtistItemClickListener,
@@ -90,8 +88,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         pagerAdapter = new AdapterMyPager(getSupportFragmentManager());
         pagerAdapter.addFragment(new FragmentSongs(), getString(R.string.songs));
         pagerAdapter.addFragment(new FragmentArtists(), getString(R.string.artists));
-        pagerAdapter.addFragment(new FragmentAlbums(), getString(R.string.albums));
         pagerAdapter.addFragment(new FragmentPlaylist(), getString(R.string.playlists));
+        pagerAdapter.addFragment(new FragmentAlbums(), getString(R.string.albums));
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -108,8 +106,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         fragmentSongs = (FragmentSongs) pagerAdapter.getItem(0);
         fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
-        fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(3);
-
+        fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(2);
     }
 
     public void initModelSelectedItems() {
@@ -155,7 +152,22 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.menu_search);
 
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                fragmentSongs.getAdapterSong().getFilter().filter(newText);
+                return false;
+            }
+        });
         return true;
     }
 
@@ -248,6 +260,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             getSupportFragmentManager().popBackStack();
         } else {
             recoverFragment();
+            recoverMenu();
         }
     }
 
@@ -256,9 +269,9 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             pagerAdapter.get_list_fragment().remove(1);
             pagerAdapter.get_list_fragment().add(1, fragmentArtists);
             pagerAdapter.notifyDataSetChanged();
-        } else if(viewPager.getCurrentItem() == 3) {
-            pagerAdapter.get_list_fragment().remove(3);
-            pagerAdapter.get_list_fragment().add(3, fragmentPlaylist);
+        } else if(viewPager.getCurrentItem() == 2) {
+            pagerAdapter.get_list_fragment().remove(2);
+            pagerAdapter.get_list_fragment().add(2, fragmentPlaylist);
             pagerAdapter.notifyDataSetChanged();
         }
     }
@@ -301,15 +314,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClickPlaylistItem(int position) {
-//        getMenuInflater().inflate(R.menu.item_option_menu, menu);
-        initModelSelectedItems();
         Playlist playlist = playLists.get(position);
         songs = dbMusicHelper.getPlaylistSongs(playlist.getId());
         fragmentSongs.getAdapterSong().notifyDataSetChanged();
         fragmentSongs.setPlaylist_pos(position);
         musicSrv.setList(songs);
-        pagerAdapter.get_list_fragment().remove(3);
-        pagerAdapter.get_list_fragment().add(3, fragmentSongs);
+        pagerAdapter.get_list_fragment().remove(2);
+        pagerAdapter.get_list_fragment().add(2, fragmentSongs);
         pagerAdapter.notifyDataSetChanged();
     }
 
@@ -371,6 +382,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         songs = dbMusicHelper.getPlaylistSongs(playlistId);
         fragmentSongs.getAdapterSong().notifyDataSetChanged();
         musicSrv.setList(songs);
-        recoverMenu();
     }
+
 }
