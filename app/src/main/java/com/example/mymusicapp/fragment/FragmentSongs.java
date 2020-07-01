@@ -16,6 +16,9 @@ import com.bumptech.glide.Glide;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterSong;
+import com.example.mymusicapp.entity.Song;
+
+import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
@@ -29,7 +32,7 @@ public class FragmentSongs extends Fragment {
     private RecyclerView rcv_songs;
     private AdapterSong adapterSong;
     private static int lastClickPosition = -1;
-    private int playlist_pos = -1;
+    private ArrayList<Song> songs;
     public FragmentSongs() {
         // Required empty public constructor
     }
@@ -40,8 +43,9 @@ public class FragmentSongs extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
-        adapterSong = new AdapterSong(ActivityMain.songs);
-        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems());
+        songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
+        adapterSong = new AdapterSong(songs);
+        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         adapterSong.setMultiSelected(false);
         rcv_songs.setAdapter(adapterSong);
         rcv_songs.setHasFixedSize(true);
@@ -79,8 +83,6 @@ public class FragmentSongs extends Fragment {
 
     public void setAdapterSong(AdapterSong adapterSong) {
         this.adapterSong = adapterSong;
-        this.rcv_songs.setAdapter(adapterSong);
-        adapterSong.notifyDataSetChanged();
     }
 
     public AdapterSong getAdapterSong() {
@@ -93,19 +95,5 @@ public class FragmentSongs extends Fragment {
         musicSrv.setList(ActivityMain.songs);
         super.onDestroy();
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    public void setPlaylist_pos(int playlist_pos) {
-        this.playlist_pos = playlist_pos;
-    }
-
-    public int getPlaylist_pos() {
-        return playlist_pos;
-    }
-
 
 }

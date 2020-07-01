@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -15,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterSong;
+import com.example.mymusicapp.entity.Song;
+
+import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
@@ -22,13 +24,13 @@ import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentSelectedSongs extends Fragment {
+public class FragmentSelectSongs extends Fragment {
 
     private RecyclerView rcv_songs;
     private AdapterSong adapterSong;
     private ImageView iv_arrow_back;
-    private TextView tv_num_selected, tv_confirm;
-    public FragmentSelectedSongs() {
+    private ImageView iv_confirm;
+    public FragmentSelectSongs() {
         // Required empty public constructor
     }
 
@@ -39,8 +41,10 @@ public class FragmentSelectedSongs extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_selected_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
-        adapterSong = new AdapterSong(ActivityMain.songs);
-        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems());
+
+        ArrayList<Song> songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
+        adapterSong = new AdapterSong(songs);
+        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         adapterSong.setMultiSelected(true);
         rcv_songs.setAdapter(adapterSong);
         rcv_songs.setHasFixedSize(true);
@@ -48,11 +52,10 @@ public class FragmentSelectedSongs extends Fragment {
         rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
 
         iv_arrow_back = view.findViewById(R.id.iv_arrow);
-        tv_num_selected = view.findViewById(R.id.tv_num_selected);
-        tv_confirm = view.findViewById(R.id.tv_confirm);
+        iv_confirm = view.findViewById(R.id.iv_confirm);
 
         final int playlist_pos = getArguments().getInt("playlist_pos");
-        tv_confirm.setOnClickListener(v -> ((ActivityMain) getActivity()).addSelectedSongToPlaylist(playlist_pos));
+        iv_confirm.setOnClickListener(v -> ((ActivityMain) getActivity()).addSelectedSongToPlaylist(playlist_pos));
         iv_arrow_back.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
         return view;
     }

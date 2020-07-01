@@ -1,18 +1,16 @@
 package com.example.mymusicapp;
 
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
-import static com.example.mymusicapp.activity.ActivityMain.songs;
 
 public class PlaybackController {
 
 
     View view;
     ImageButton iv_prev, iv_play, iv_next, iv_shuffle, iv_loop;
-    static int prev_song_id, curr_song_id;
+    static int prev_song_id = -1, curr_song_id = -1;
     public PlaybackController(View view) {
         this.view = view;
         iv_prev = (ImageButton) view.findViewById(R.id.iv_prev);
@@ -73,7 +71,7 @@ public class PlaybackController {
     }
 
     public void songPicked(int position) {
-        curr_song_id = songs.get(position).getId();
+        curr_song_id = musicSrv.getSongs().get(position).getId();
         if (curr_song_id != prev_song_id) {
             musicSrv.playSong(position);
         } else {

@@ -16,7 +16,10 @@ import com.example.mymusicapp.R;
 import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterSong;
 import com.example.mymusicapp.entity.Playlist;
+import com.example.mymusicapp.entity.Song;
 import com.example.mymusicapp.repository.DBMusicHelper;
+
+import java.util.ArrayList;
 
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
@@ -27,6 +30,7 @@ public class FragmentPlaylistDetails extends Fragment {
 
     RecyclerView rcv_songs;
     AdapterSong adapterSong;
+    ArrayList<Song> songs;
     int playlist_pos;
     public FragmentPlaylistDetails() {
         // Required empty public constructor
@@ -47,10 +51,10 @@ public class FragmentPlaylistDetails extends Fragment {
         tv_playlist_name.setText(playlist.getName());
 
         DBMusicHelper dbMusicHelper = new DBMusicHelper(getActivity());
-        ActivityMain.songs = dbMusicHelper.getPlaylistSongs(playlistId);
-        adapterSong = new AdapterSong(ActivityMain.songs);
-        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems());
-        musicSrv.setList(ActivityMain.songs );
+        songs = dbMusicHelper.getPlaylistSongs(playlistId);
+        adapterSong = new AdapterSong(songs);
+        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
+        musicSrv.setList(songs);
         rcv_songs.setAdapter(adapterSong);
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
         iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());

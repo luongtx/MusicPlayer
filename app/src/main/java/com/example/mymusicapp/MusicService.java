@@ -173,4 +173,8 @@ public class MusicService extends Service implements
         if (r_seconds < 10) sec_toString = "0" + sec_toString;
         return min_toString + ":" + sec_toString;
     }
+
+    public ArrayList<Song> getSongs() {
+        return songs;
+    }
 }

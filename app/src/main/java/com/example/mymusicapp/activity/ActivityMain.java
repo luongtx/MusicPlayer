@@ -43,7 +43,7 @@ import com.example.mymusicapp.fragment.FragmentArtists;
 import com.example.mymusicapp.fragment.FragmentMediaControl;
 import com.example.mymusicapp.fragment.FragmentPlaylist;
 import com.example.mymusicapp.fragment.FragmentPlaylistDetails;
-import com.example.mymusicapp.fragment.FragmentSelectedSongs;
+import com.example.mymusicapp.fragment.FragmentSelectSongs;
 import com.example.mymusicapp.fragment.FragmentSongs;
 import com.example.mymusicapp.model.ModelSelectedItem;
 import com.example.mymusicapp.repository.DBMusicHelper;
@@ -109,7 +109,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         fragmentSongs = (FragmentSongs) pagerAdapter.getItem(0);
         fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
         fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(2);
-        initModelSelectedItems();
+        initModelSelectedItems(songs.size());
 //        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 //            @Override
 //            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -128,10 +128,10 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 //        });
     }
 
-    public ArrayList<ModelSelectedItem> initModelSelectedItems() {
-        modelSelectedItems = new ArrayList<>(songs.size());
-        for(int i = 0; i< songs.size();i++) {
-            modelSelectedItems.add(new ModelSelectedItem(i,false));
+    public ArrayList<ModelSelectedItem> initModelSelectedItems(int size) {
+        modelSelectedItems = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            modelSelectedItems.add(new ModelSelectedItem(i, false));
         }
         return modelSelectedItems;
     }
@@ -389,6 +389,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         return musicProvider;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void addSelectedSongToPlaylist(int position){
         int playlistId = playLists.get(position).getId();
         ArrayList<Song> selectedSongs = new ArrayList<>();
@@ -398,6 +399,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             }
         }
         dbMusicHelper.addSongsToPlaylist(selectedSongs, playlistId);
+        fragmentPlaylistDetails.getAdapterSong().setList(dbMusicHelper.getPlaylistSongs(playlistId));
         popStackedFragment();
     }
 
@@ -409,19 +411,15 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     public void onClickOptionAddSongs(int position) {
         layout_mini_play.setVisibility(View.GONE);
-        FragmentSelectedSongs fragmentSelectedSongs = new FragmentSelectedSongs();
+        FragmentSelectSongs fragmentSelectSongs = new FragmentSelectSongs();
         Bundle bundle = new Bundle();
         bundle.putInt("playlist_pos", position);
-        fragmentSelectedSongs.setArguments(bundle);
+        fragmentSelectSongs.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.layout_main, fragmentSelectedSongs);
+        transaction.replace(R.id.layout_main, fragmentSelectSongs);
         transaction.addToBackStack(null);
         transaction.commit();
-    }
-
-    public FragmentSongs getFragmentSongs() {
-        return fragmentSongs;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -444,6 +442,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public void cancelSelected() {
         fragmentPlaylistDetails.getAdapterSong().setLongClicked(false);
         fragmentPlaylistDetails.getAdapterSong().setMultiSelected(false);
-        fragmentPlaylistDetails.getAdapterSong().setModel(initModelSelectedItems());
+        fragmentPlaylistDetails.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
     }
 }

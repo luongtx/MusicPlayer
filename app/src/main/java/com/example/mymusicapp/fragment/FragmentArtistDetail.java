@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterSong;
+import com.example.mymusicapp.entity.Song;
+
+import java.util.ArrayList;
 
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
@@ -24,6 +27,7 @@ public class FragmentArtistDetail extends Fragment {
 
     RecyclerView rcv_songs;
     AdapterSong adapterSong;
+    ArrayList<Song> songs;
     public FragmentArtistDetail() {
         // Required empty public constructor
     }
@@ -39,10 +43,10 @@ public class FragmentArtistDetail extends Fragment {
         String artistName = getArguments().getString("artist");
         tvArtist.setText(artistName);
 //        MusicProvider provider = new MusicProvider(getActivity());
-        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongsByArtist(artistName);
-        adapterSong = new AdapterSong(ActivityMain.songs);
-        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems());
-        musicSrv.setList(ActivityMain.songs);
+        songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongsByArtist(artistName);
+        adapterSong = new AdapterSong(songs);
+        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
+        musicSrv.setList(songs);
         rcv_songs.setAdapter(adapterSong);
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
         iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
