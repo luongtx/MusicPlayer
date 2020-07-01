@@ -17,15 +17,21 @@
         android:title="@string/options" >
         <menu>
             <item
+                android:id="@+id/it_my_account"
+                android:icon="@drawable/ic_person"
+                android:title="@string/my_account" />
+            <item
                 android:id="@+id/it_refresh"
+                android:icon="@drawable/ic_refresh"
                 android:title="@string/refresh" />
             <item
                 android:id="@+id/it_new_playlist"
+                android:icon="@drawable/ic_playlist_add"
                 android:title="@string/new_playlist" />
             <item
                 android:id="@+id/it_sleep_timer"
+                android:icon="@drawable/ic_timer_on"
                 android:title="@string/set_timer" />
-
             <item
                 android:id="@+id/it_delete_from_playlist"
                 android:title="@string/delete_from_playlist"
@@ -42,6 +48,7 @@
                 android:id="@+id/it_deselect_item"
                 android:title="@string/deselect_selected_item"
                 android:visible="false" />
+
         </menu>
     </item>
 

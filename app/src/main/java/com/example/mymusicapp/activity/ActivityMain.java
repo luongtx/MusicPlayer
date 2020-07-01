@@ -35,7 +35,6 @@ import com.example.mymusicapp.adapter.AdapterSong;
 import com.example.mymusicapp.entity.Artist;
 import com.example.mymusicapp.entity.Playlist;
 import com.example.mymusicapp.entity.Song;
-import com.example.mymusicapp.fragment.FragmentAlbums;
 import com.example.mymusicapp.fragment.FragmentArtistDetail;
 import com.example.mymusicapp.fragment.FragmentArtists;
 import com.example.mymusicapp.fragment.FragmentMediaControl;
@@ -50,7 +49,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 
 public class ActivityMain extends AppCompatActivity implements MusicService.ServiceCallbacks,
-        AdapterSong.SongItemClickListeneer, AdapterArtist.ArtistItemClickListener,
+        AdapterSong.SongItemClickListener, AdapterArtist.ArtistItemClickListener,
         AdapterPlayList.PlaylistClickListener {
 
     Toolbar toolbar;
@@ -75,7 +74,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentPlaylist fragmentPlaylist;
     FragmentPlaylistDetails fragmentPlaylistDetails;
     FragmentArtistDetail fragmentArtistDetail;
-
+    String name, check;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,10 +89,9 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         pagerAdapter.addFragment(new FragmentSongs(), getString(R.string.songs));
         pagerAdapter.addFragment(new FragmentArtists(), getString(R.string.artists));
         pagerAdapter.addFragment(new FragmentPlaylist(), getString(R.string.playlists));
-        pagerAdapter.addFragment(new FragmentAlbums(), getString(R.string.albums));
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-
+        setTabIcon();
         layout_mini_play = findViewById(R.id.layout_mini_play);
         layout_mini_play.setVisibility(View.GONE);
 
@@ -125,6 +123,14 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 //
 //            }
 //        });
+        name = getIntent().getStringExtra("name");
+        check = getIntent().getStringExtra("check");
+    }
+
+    private void setTabIcon() {
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_audiotrack);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_artist_title);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_featured_play_list);
     }
 
     public ArrayList<ModelSelectedItem> initModelSelectedItems(int size) {
@@ -167,12 +173,15 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     private Menu menu;
-    MenuItem it_refresh, it_new_playlist, it_sleep_timer, it_add_to_other_playlist, it_add_to_this_playlist, it_delete_from_playlist , it_deselect_item;
+    MenuItem it_refresh, it_new_playlist, it_sleep_timer, it_add_to_other_playlist,
+            it_add_to_this_playlist, it_delete_from_playlist , it_deselect_item, it_my_account;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.menu_search);
+        it_my_account = menu.findItem(R.id.it_my_account);
+        it_my_account.setTitle(name);
         it_refresh = menu.findItem(R.id.it_refresh);
         it_new_playlist = menu.findItem(R.id.it_new_playlist);
         it_sleep_timer = menu.findItem(R.id.it_sleep_timer);
@@ -197,7 +206,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
                     fragmentPlaylistDetails.getAdapterSong().getFilter().filter(newText);
                 }
                 if (fragmentArtistDetail != null) {
-                    fragmentArtistDetail.getAdapterSong().getFilter().filter(newText)
+                    fragmentArtistDetail.getAdapterSong().getFilter().filter(newText);
                 }
                 return false;
             }
@@ -206,6 +215,14 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     private void setOnClickListenerForMenuItem() {
+        it_my_account.setOnMenuItemClickListener( menuItem -> {
+            Intent accountIntent = new Intent(ActivityMain.this, ActivityAccount.class);
+            accountIntent.putExtra("name", name);
+            accountIntent.putExtra("check", check);
+            startActivity(accountIntent);
+            finish();
+            return true;
+        });
         it_new_playlist.setOnMenuItemClickListener( menuItem -> {
             addNewPlaylist();
             return true;
@@ -321,6 +338,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         } else {
             recoverFragment();
             recoverMenu();
+            setTabIcon();
         }
     }
 
