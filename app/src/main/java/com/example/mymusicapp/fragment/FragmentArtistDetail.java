@@ -25,9 +25,9 @@ import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
  */
 public class FragmentArtistDetail extends Fragment {
 
-    RecyclerView rcv_songs;
-    AdapterSong adapterSong;
-    ArrayList<Song> songs;
+    private RecyclerView rcv_songs;
+    private AdapterSong adapterSong;
+    private ArrayList<Song> songs;
     public FragmentArtistDetail() {
         // Required empty public constructor
     }
@@ -59,5 +59,9 @@ public class FragmentArtistDetail extends Fragment {
         ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
         musicSrv.setList(ActivityMain.songs);
         super.onDestroy();
+    }
+
+    public AdapterSong getAdapterSong() {
+        return adapterSong;
     }
 }

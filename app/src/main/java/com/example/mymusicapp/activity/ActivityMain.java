@@ -74,6 +74,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentArtists fragmentArtists;
     FragmentPlaylist fragmentPlaylist;
     FragmentPlaylistDetails fragmentPlaylistDetails;
+    FragmentArtistDetail fragmentArtistDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,7 +192,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                fragmentPlaylistDetails.getAdapterSong().getFilter().filter(newText);
+                fragmentSongs.getAdapterSong().getFilter().filter(newText);
+                if (fragmentPlaylistDetails != null) {
+                    fragmentPlaylistDetails.getAdapterSong().getFilter().filter(newText);
+                }
+                if (fragmentArtistDetail != null) {
+                    fragmentArtistDetail.getAdapterSong().getFilter().filter(newText)
+                }
                 return false;
             }
         });
@@ -275,7 +282,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onClickArtistItem(int position) {
         String artistName = artists.get(position).getName();
-        FragmentArtistDetail fragmentArtistDetail = new FragmentArtistDetail();
+        fragmentArtistDetail = new FragmentArtistDetail();
         Bundle bundle = new Bundle();
         bundle.putString("artist", artistName);
         fragmentArtistDetail.setArguments(bundle);
