@@ -21,22 +21,22 @@
                 android:title="@string/refresh" />
             <item
                 android:id="@+id/it_new_playlist"
-                android:onClick="addNewPlaylist"
                 android:title="@string/new_playlist" />
             <item
                 android:id="@+id/it_sleep_timer"
                 android:title="@string/set_timer" />
-            <item
-                android:id="@+id/it_shuffle"
-                android:title="@string/settings" />
+
             <item
                 android:id="@+id/it_delete_from_playlist"
-                android:onClick="deleteFromPlaylist"
                 android:title="@string/delete_from_playlist"
                 android:visible="false" />
             <item
-                android:id="@+id/it_add_to_playlist"
+                android:id="@+id/it_add_to_other_playlist"
                 android:title="@string/add_to_playlist"
+                android:visible="false" />
+            <item
+                android:id="@+id/it_add_song_to_this_playlist"
+                android:title="@string/add_song_to_this_playlist"
                 android:visible="false" />
             <item
                 android:id="@+id/it_deselect_item"

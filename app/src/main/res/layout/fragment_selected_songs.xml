@@ -38,8 +38,10 @@
             android:layout_alignParentEnd="true"
             android:text="@string/confirm"
             android:clickable="true"
+            android:onClick=""
             android:textStyle="bold"
-            android:textColor="@color/icons" />
+            android:textColor="@color/icons"
+            android:focusable="true" />
     </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView

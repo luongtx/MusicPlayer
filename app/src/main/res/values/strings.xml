@@ -13,8 +13,8 @@
     <string name="new_playlist">new playlist</string>
     <string name="set_timer">set timer</string>
     <string name="settings">settings</string>
-    <string name="delete">delete</string>
-    <string name="add_songs">add song</string>
+    <string name="delete_playlist">delete playlist</string>
+    <string name="add_songs">add song to playlist</string>
     <string name="play">play</string>
     <string name="songs">songs</string>
     <string name="artists">artists</string>
@@ -26,9 +26,10 @@
     <string name="success_delete_playlist">delete playlist successfully!</string>
     <string name="confirm">CONFIRM</string>
     <string name="songs_to_add">SELECT SONGS</string>
-    <string name="rename">rename</string>
+    <string name="rename_playlist">rename playlist</string>
     <string name="delete_from_playlist">delete from playlist</string>
-    <string name="add_to_playlist">add to playlist</string>
-    <string name="deselect_selected_item">deselect selected item</string>
+    <string name="add_to_playlist">add to other playlist</string>
+    <string name="deselect_selected_item">cancel selected item</string>
     <string name="seleted_playlist_song_deleted">Deleted selected songs from playlist</string>
+    <string name="add_song_to_this_playlist">add song to this playlist</string>
 </resources>

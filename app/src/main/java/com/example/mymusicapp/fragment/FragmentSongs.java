@@ -18,7 +18,6 @@ import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterSong;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
-import static com.example.mymusicapp.activity.ActivityMain.modelSelectedItems;
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 
@@ -42,8 +41,7 @@ public class FragmentSongs extends Fragment {
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
         adapterSong = new AdapterSong(ActivityMain.songs);
-        ((ActivityMain)getActivity()).initModelSelectedItems();
-        adapterSong.setModel(modelSelectedItems);
+        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems());
         adapterSong.setMultiSelected(false);
         rcv_songs.setAdapter(adapterSong);
         rcv_songs.setHasFixedSize(true);
@@ -81,6 +79,8 @@ public class FragmentSongs extends Fragment {
 
     public void setAdapterSong(AdapterSong adapterSong) {
         this.adapterSong = adapterSong;
+        this.rcv_songs.setAdapter(adapterSong);
+        adapterSong.notifyDataSetChanged();
     }
 
     public AdapterSong getAdapterSong() {

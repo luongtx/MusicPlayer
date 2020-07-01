@@ -36,6 +36,11 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
         backup_songs = new ArrayList<>(songs);
     }
 
+    public void setList(ArrayList<Song> songs) {
+        this.songs = songs;
+        notifyDataSetChanged();
+    }
+
     public interface SongItemClickListeneer {
         void onSongItemClick(int position);
         void onSongItemLongClicked();
@@ -51,6 +56,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
 
     public void setModel(ArrayList<ModelSelectedItem> modelSelectedItems) {
         this.modelSelectedItems = modelSelectedItems;
+        notifyDataSetChanged();
     }
 
     class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
@@ -101,11 +107,12 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
     }
 
     @Override
-    public void onBindViewHolder(final SongViewHolder holder, int position) {
+    public void onBindViewHolder(SongViewHolder holder, int position) {
         holder.ivImg.setImageResource(R.drawable.img_dvd);
         Song song = songs.get(position);
         holder.tvTitle.setText(song.getTitle());
         holder.tvArtist.setText(song.getArtist());
+        holder.view.setBackgroundColor(Color.WHITE);
     }
 
     @Override
