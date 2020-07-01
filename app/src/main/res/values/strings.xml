@@ -1,6 +1,17 @@
 <resources>
     <string name="app_name">Simple Music Player</string>
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="login">Đăng nhập</string>
+    <string name="signup">Đăng ký</string>
+    <string name="ten_dn">Điền tên đăng nhập</string>
+    <string name="mk_dn">Điền mật khẩu</string>
+    <string name="mk_dn_lai">Điền lại mật khẩu</string>
+    <string name="facebook_app_id">277789886668240</string>
+    <string name="fb_login_protocol_scheme">fb277789886668240</string>
+    <string name="update_success">Update successfully!</string>
+    <string name="wrong_password">Wrong password!</string>
+    <string name="wrong_new_password">New password is wrong</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="last_added">Last added</string>
     <string name="recently_played">Recently played</string>
