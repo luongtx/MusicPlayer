@@ -6,17 +6,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
-
 import com.example.mymusicapp.MusicProvider;
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.activity.ActivityMain;
-import com.example.mymusicapp.entity.Song;
 import com.example.mymusicapp.entity.Playlist;
+import com.example.mymusicapp.entity.Song;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -135,7 +131,6 @@ public class DBMusicHelper extends SQLiteOpenHelper {
         return playlists;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public ArrayList<Song> getPlaylistSongs(int playlistId) {
         ArrayList<Integer> list_song_ids = new ArrayList<>();
         db = this.getWritableDatabase();

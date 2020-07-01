@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.InputType;
@@ -19,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -169,7 +167,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     private Menu menu;
     MenuItem it_refresh, it_new_playlist, it_sleep_timer, it_add_to_other_playlist, it_add_to_this_playlist, it_delete_from_playlist , it_deselect_item;
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
@@ -201,7 +198,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         return true;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setOnClickListenerForMenuItem() {
         it_new_playlist.setOnMenuItemClickListener( menuItem -> {
             addNewPlaylist();
@@ -368,7 +364,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         layout_mini_play.setVisibility(View.GONE);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClickPlaylistItem(int position) {
         changeMenuInPlaylistDetails();
@@ -389,7 +384,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         return musicProvider;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void addSelectedSongToPlaylist(int position){
         int playlistId = playLists.get(position).getId();
         ArrayList<Song> selectedSongs = new ArrayList<>();
@@ -422,7 +416,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         transaction.commit();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void deleteFromPlaylist() {
         ArrayList<Song> selectedSongs = new ArrayList<>();
         Song song;
