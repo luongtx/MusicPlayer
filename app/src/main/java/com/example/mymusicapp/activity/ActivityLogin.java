@@ -55,7 +55,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
-                    Toast.makeText(ActivityLogin.this, "Đã đăng xuất tài khoản Facebook của bạn!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActivityLogin.this, R.string.facebook_logout, Toast.LENGTH_SHORT).show();
                 } else {
                     loaduserProfile(currentAccessToken);
                 }
@@ -104,7 +104,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         String name = etNameLogin.getText().toString().trim();
         String pass = etPass.getText().toString().trim();
         if (name.isEmpty() || pass.isEmpty()) {
-            Toast.makeText(this, "Nhập đầy đủ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.enter_full, Toast.LENGTH_SHORT).show();
         } else {
             try {
                 DBAccountHelper db = new DBAccountHelper(this);
@@ -120,7 +120,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     etNameLogin.setText("");
                     etPass.setText("");
                 } else {
-                    Toast.makeText(this, "Sai Tài Khoản" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.wrong_account , Toast.LENGTH_SHORT).show();
                 }
             } catch (SQLException e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -152,7 +152,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
             if(resultCode == RESULT_CANCELED)
             {
-                Toast.makeText(this, "Không đăng nhập được với Google", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
             }
             else
             {
@@ -172,7 +172,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
             if (resultCode == RESULT_OK) {
                 signOut();
                 LoginManager.getInstance().logOut();
-                Toast.makeText(this, "Đăng xuất thành công " + data.getStringExtra("tvn"), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.logout_success) + data.getStringExtra("tvn"), Toast.LENGTH_SHORT).show();
             }
 
         }

@@ -29,7 +29,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:ems="10"
-        android:hint="Nhập lại mật khẩu hiện tại"
+        android:hint="@string/enter_password"
         android:inputType="textPassword"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
@@ -46,7 +46,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:ems="10"
-        android:hint="Nhập mật khẩu mới"
+        android:hint="@string/enter_new_pass"
         android:inputType="textPassword"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
@@ -63,7 +63,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:ems="10"
-        android:hint="Nhập lại mật khẩu mới"
+        android:hint="@string/enter_pass_again"
         android:inputType="textPassword"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
@@ -80,7 +80,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:background="#3F51B5"
-        android:text="Đổi Mật Khẩu"
+        android:text="@string/change_password"
         android:textColor="#FFFFFF"
         android:textStyle="bold" />
 
@@ -94,7 +94,7 @@
         android:layout_marginBottom="10dp"
         android:background="#3F51B5"
         android:onClick="UpdateAcc"
-        android:text="Đổi Mật Khẩu"
+        android:text="@string/change_password"
         android:textColor="#FFFFFF"
         android:textStyle="bold" />
 
@@ -107,7 +107,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:background="#3F51B5"
-        android:text="Đăng Xuất"
+        android:text="@string/logout"
         android:textColor="#FFFFFF"
         android:textStyle="bold" />
 
@@ -129,7 +129,7 @@
             android:clickable="true"
             android:lineSpacingExtra="24sp"
             android:onClick="DN"
-            android:text="Đăng nhập"
+            android:text="@string/login"
             android:textAlignment="textEnd"
             android:textColor="#3F51B5"
             android:textSize="24sp" />
@@ -152,7 +152,7 @@
             android:layout_weight="1"
             android:clickable="true"
             android:onClick="DK"
-            android:text="Đăng ký"
+            android:text="@string/register"
             android:textColor="#3F51B5"
             android:textSize="24sp" />
     </LinearLayout>

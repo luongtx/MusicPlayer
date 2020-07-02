@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Simple Music Player</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="login">Đăng nhập</string>
-    <string name="signup">Đăng ký</string>
-    <string name="ten_dn">Điền tên đăng nhập</string>
-    <string name="mk_dn">Điền mật khẩu</string>
-    <string name="mk_dn_lai">Điền lại mật khẩu</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign up</string>
+<!--    <string name="ten_dn">Điền tên đăng nhập</string>-->
+<!--    <string name="mk_dn">Điền mật khẩu</string>-->
+<!--    <string name="mk_dn_lai">Điền lại mật khẩu</string>-->
     <string name="facebook_app_id">277789886668240</string>
     <string name="fb_login_protocol_scheme">fb277789886668240</string>
     <string name="update_success">Update successfully!</string>
@@ -44,4 +44,21 @@
     <string name="seleted_playlist_song_deleted">Deleted selected songs from playlist</string>
     <string name="add_song_to_this_playlist">add new songs to playlist</string>
     <string name="my_account">my account</string>
+    <string name="enter_full">Please enter all fields</string>
+    <string name="welcome">"Welcome "</string>
+    <string name="facebook_logout">Your facebook account has logout!</string>
+    <string name="wrong_account">Wrong account!</string>
+    <string name="google_login_failed">Can\'t login with google</string>
+    <string name="logout_success">Logout successfully</string>
+    <string name="add_account_success">Account added successfully</string>
+    <string name="account_existed">Account is existed!</string>
+    <string name="wrong_again_pass">please retype password</string>
+    <string name="enter_password">Enter password</string>
+    <string name="enter_new_pass">Enter new password</string>
+    <string name="enter_pass_again">Enter new password again</string>
+    <string name="change_password">Change password</string>
+    <string name="register">Register</string>
+    <string name="logout">Logout</string>
+    <string name="enter_account_name">Enter account name</string>
+    <string name="have_no_account">Have no account?</string>
 </resources>

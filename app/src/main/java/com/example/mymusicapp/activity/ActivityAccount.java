@@ -1,5 +1,6 @@
 package com.example.mymusicapp.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.SQLException;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ public class ActivityAccount extends AppCompatActivity {
     private String name , check ="";
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +57,7 @@ public class ActivityAccount extends AppCompatActivity {
         }
         else
         {
-            tvName.setText("Chào bạn " + name);
+            tvName.setText(getString(R.string.welcome) + name);
             tv1.setVisibility(View.GONE);
             tv2.setVisibility(View.GONE);
             tv3.setVisibility(View.GONE);
@@ -122,7 +124,7 @@ public class ActivityAccount extends AppCompatActivity {
 
     public void UpdateAcc(View v) {
         if (etOldPass.getText().toString().isEmpty() || etNewPass.getText().toString().isEmpty() || etNewPassAgain.getText().toString().isEmpty()) {
-            Toast.makeText(ActivityAccount.this, "Nhập đầy đủ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ActivityAccount.this, R.string.enter_full, Toast.LENGTH_SHORT).show();
         } else if (etNewPass.getText().toString().equals(etNewPassAgain.getText().toString())) {
             try {
                 String pass = etOldPass.getText().toString().trim();

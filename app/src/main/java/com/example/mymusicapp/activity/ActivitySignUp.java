@@ -30,7 +30,7 @@ public class ActivitySignUp extends AppCompatActivity {
         String pass2 = etPass2.getText().toString().trim();
         if(etPass1.getText().toString().isEmpty()||etPass2.getText().toString().isEmpty()||etNameSignUp.getText().toString().isEmpty())
         {
-            Toast.makeText(this, "Điền đầy đủ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.enter_full, Toast.LENGTH_SHORT).show();
         }
         else if(pass1.equals(pass2))
         {
@@ -42,7 +42,7 @@ public class ActivitySignUp extends AppCompatActivity {
                 if(check){
                     db.createEntry(name, pass1);
                     db.close();
-                    Toast.makeText(this, "Thêm tài khoản thành công", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.add_account_success, Toast.LENGTH_SHORT).show();
                     etNameSignUp.setText("");
                     etPass1.setText("");
                     etPass2.setText("");
@@ -55,7 +55,7 @@ public class ActivitySignUp extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(this, "Tài khoản đã tồn tại!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.account_existed, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -67,7 +67,7 @@ public class ActivitySignUp extends AppCompatActivity {
 
         else
         {
-            Toast.makeText(this, "Pass Nhập lại không đúng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.wrong_again_pass, Toast.LENGTH_SHORT).show();
             etPass2.setText("");
         }
 
