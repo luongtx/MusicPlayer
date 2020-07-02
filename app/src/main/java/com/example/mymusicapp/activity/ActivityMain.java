@@ -476,9 +476,19 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     public void cancelSelected() {
-        fragmentPlaylistDetails.getAdapterSong().setLongClicked(false);
-        fragmentPlaylistDetails.getAdapterSong().setMultiSelected(false);
-        fragmentPlaylistDetails.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
+        if (viewPager.getCurrentItem() == 0) {
+            fragmentSongs.getAdapterSong().setLongClicked(false);
+            fragmentSongs.getAdapterSong().setMultiSelected(false);
+            fragmentSongs.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
+        } else if (viewPager.getCurrentItem() == 1) {
+            fragmentArtistDetail.getAdapterSong().setLongClicked(false);
+            fragmentArtistDetail.getAdapterSong().setMultiSelected(false);
+            fragmentArtistDetail.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
+        } else {
+            fragmentPlaylistDetails.getAdapterSong().setLongClicked(false);
+            fragmentPlaylistDetails.getAdapterSong().setMultiSelected(false);
+            fragmentPlaylistDetails.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
+        }
     }
 
     public DBMusicHelper getDbMusicHelper() {

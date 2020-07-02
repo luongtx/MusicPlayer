@@ -38,10 +38,10 @@
     <string name="confirm">CONFIRM</string>
     <string name="songs_to_add">SELECT SONGS</string>
     <string name="rename_playlist">rename playlist</string>
-    <string name="delete_from_playlist">delete from playlist</string>
+    <string name="delete_from_playlist">delete selected songs</string>
     <string name="add_to_playlist">add to playlist</string>
     <string name="deselect_selected_item">cancel selected item</string>
-    <string name="seleted_playlist_song_deleted">Deleted selected songs from playlist</string>
+    <string name="seleted_playlist_song_deleted">Deleted selected songs from playlist!</string>
     <string name="add_song_to_this_playlist">add new songs to playlist</string>
     <string name="my_account">my account</string>
     <string name="enter_full">Please enter all fields</string>
