@@ -8,7 +8,6 @@
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
-
     <item
         android:id="@+id/menu_main_setting"
         android:icon="@drawable/ic_option_menu"
@@ -17,8 +16,8 @@
         android:title="@string/options" >
         <menu>
             <item
-                android:id="@+id/it_my_account"
-                android:icon="@drawable/ic_person"
+                android:id="@+id/menu_my_account"
+                android:icon="@drawable/ic_account_circle"
                 android:title="@string/my_account" />
             <item
                 android:id="@+id/it_refresh"
