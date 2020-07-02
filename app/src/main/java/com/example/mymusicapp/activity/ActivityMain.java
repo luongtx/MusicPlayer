@@ -114,26 +114,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         name = getIntent().getStringExtra("name");
         check = getIntent().getStringExtra("check");
 
-//        tabLayout.getTabAt(0).getIcon().setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN);
-//        tabLayout.getTabAt(1).getIcon().setColorFilter(getResources().getColor(R.color.icons), PorterDuff.Mode.SRC_IN);
-//        tabLayout.getTabAt(2).getIcon().setColorFilter(getResources().getColor(R.color.icons), PorterDuff.Mode.SRC_IN);
-//
-//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                tabLayout.getTabAt(0).getIcon().setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN);
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//                tabLayout.getTabAt(2).getIcon().setColorFilter(getResources().getColor(R.color.icons), PorterDuff.Mode.SRC_IN);
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//
-//            }
-//        });
     }
 
     private void setIconForTabTitle() {
@@ -361,7 +341,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         builder.setTitle(R.string.enter_new_playlist);
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setPadding(20,20,20,20);
         builder.setView(input);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
@@ -375,6 +354,39 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
                     playlist.setName(playlist_name);
                     playLists.add(playlist);
                     dbMusicHelper.addPlaylist(playlist);
+                    fragmentPlaylist.getAdapterPlayList().notifyDataSetChanged();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+        layout_mini_play.setVisibility(View.GONE);
+    }
+
+    public void updatePlaylistName(int position) {
+        Playlist playlist = playLists.get(position);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.enter_new_playlist);
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setPadding(50,50,50,50);
+        input.setText(playlist.getName());
+        builder.setView(input);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                playlist_name = input.getText().toString();
+                if (playlist_name.length() == 0) {
+                    Toast.makeText(ActivityMain.this, R.string.enter_playlist_name, Toast.LENGTH_SHORT).show();
+                } else {
+                    //rename playlist
+                    playlist.setName(playlist_name);
+                    dbMusicHelper.updatePlaylist(playlist);
                     fragmentPlaylist.getAdapterPlayList().notifyDataSetChanged();
                 }
             }

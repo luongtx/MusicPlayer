@@ -2,7 +2,6 @@ package com.example.mymusicapp.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -43,34 +42,33 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
     public void onBindViewHolder(@NonNull final PlayListHolder holder, final int position) {
         final Playlist playList = playlists.get(position);
         holder.tv_name.setText(playList.getName());
-        holder.iv_more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                PopupMenu popup = new PopupMenu(context, holder.iv_more);
-                popup.inflate(R.menu.item_option_menu);
-
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.delete_playlist:
-                                ((ActivityMain)context).deletePlaylist(position);
-                                notifyDataSetChanged();
-                                return true;
-                            case R.id.add_song:
-                                ((ActivityMain)context).onClickOptionAddSongs(position);
-                            case R.id.rename_playlist:
-                            default:
-                                return false;
-                        }
-                    }
-                });
-                popup.show();
-            }
+        holder.iv_more.setOnClickListener(view -> showPopupMenu(holder, position));
+        holder.itemView.setOnLongClickListener(v -> {
+            showPopupMenu(holder, position);
+            return true;
         });
     }
-
+    public void showPopupMenu(PlayListHolder holder, int position) {
+        PopupMenu popup = new PopupMenu(context, holder.iv_more);
+        popup.inflate(R.menu.item_option_menu);
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.delete_playlist:
+                    ((ActivityMain)context).deletePlaylist(position);
+                    notifyDataSetChanged();
+                    return true;
+                case R.id.add_song:
+                    ((ActivityMain)context).onClickOptionAddSongs(position);
+                    return true;
+                case R.id.rename_playlist:
+                    ((ActivityMain)context).updatePlaylistName(position);
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        popup.show();
+    }
     @Override
     public int getItemCount() {
         return playlists.size();

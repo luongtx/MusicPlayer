@@ -63,4 +63,5 @@
     <string name="have_no_account">Have no account?</string>
     <string name="search_song_name">Enter song name </string>
     <string name="enter_new_playlist">Enter playlist name</string>
+    <string name="success_update_playlist">Update playlist successfully</string>
 </resources>

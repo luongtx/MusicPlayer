@@ -61,14 +61,6 @@ public class DBMusicHelper extends SQLiteOpenHelper {
         db.insert(DBMusicSchema.TablePlaylist.TABLE_NAME, null, values);
         Toast.makeText(context, R.string.success_add_playlist, Toast.LENGTH_SHORT).show();
     }
-//
-//    public void addSongToPlaylist(Song song) {
-//        db = this.getWritableDatabase();
-//        ContentValues values = new ContentValues();
-//        values.put(DBMusicSchema.TablePlaylistSong.COL_SONG_ID, song.getId());
-//        values.put(DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID, song.getPlaylist_id());
-//        db.insert(DBMusicSchema.TablePlaylistSong.TABLE_NAME, null, values);
-//    }
 
     public void addSongsToPlaylist(ArrayList<Song> songs, int playlistId) {
         db = this.getWritableDatabase();
@@ -94,13 +86,6 @@ public class DBMusicHelper extends SQLiteOpenHelper {
         db.delete(DBMusicSchema.TablePlaylistSong.TABLE_NAME, where_cls, where_args);
         Toast.makeText(context, R.string.success_delete_playlist, Toast.LENGTH_SHORT).show();
     }
-
-//    public void deleteSongFromPlaylist(int playlistId, int songId) {
-//        db = this.getWritableDatabase();
-//        String where_cls = DBMusicSchema.TablePlaylistSong.COL_SONG_ID + "=?" + " AND " + DBMusicSchema.TablePlaylistSong.COL_PLAYLIST_ID + "=?";
-//        String[] where_args = new String[]{String.valueOf(playlistId), String.valueOf(songId)};
-//        db.delete(DBMusicSchema.TablePlaylistSong.TABLE_NAME, where_cls, where_args);
-//    }
 
     public void deleteSongsFromPlaylist(int playlistId, ArrayList<Song> songs) {
         db = this.getWritableDatabase();
@@ -155,6 +140,7 @@ public class DBMusicHelper extends SQLiteOpenHelper {
         contentValues.put(DBMusicSchema.TablePlaylist.COL_NAME, playlist.getName());
         String where_cls = DBMusicSchema.TablePlaylist.COL_ID + "=?";
         String[] where_args = new String[]{Integer.toString(playlist.getId())};
+        Toast.makeText(context, R.string.success_update_playlist, Toast.LENGTH_SHORT).show();
         return db.update(DBMusicSchema.TablePlaylist.TABLE_NAME, contentValues, where_cls, where_args);
     }
 }
