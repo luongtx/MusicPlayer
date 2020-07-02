@@ -28,10 +28,13 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:layout_weight="1"
-            app:tabPaddingStart="-1dp"
+            app:tabBackground="@drawable/tab_background"
+            app:tabGravity="fill"
+            app:tabIconTint="@drawable/tab_foreground"
             app:tabPaddingEnd="-1dp"
+            app:tabPaddingStart="-1dp"
             app:tabSelectedTextColor="@color/colorAccent"
             app:tabTextColor="@color/icons">
 
@@ -44,11 +47,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/artists" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/albums" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

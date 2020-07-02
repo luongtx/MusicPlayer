@@ -75,7 +75,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentPlaylistDetails fragmentPlaylistDetails;
     FragmentArtistDetail fragmentArtistDetail;
 
-    private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_artist_title, R.drawable.ic_featured_play_list};
+    private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_star, R.drawable.ic_featured_play_list};
     private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
     String name, check;
 
@@ -111,30 +111,35 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
         fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(2);
         initModelSelectedItems(songs.size());
-//        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        name = getIntent().getStringExtra("name");
+        check = getIntent().getStringExtra("check");
+
+//        tabLayout.getTabAt(0).getIcon().setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+//        tabLayout.getTabAt(1).getIcon().setColorFilter(getResources().getColor(R.color.icons), PorterDuff.Mode.SRC_IN);
+//        tabLayout.getTabAt(2).getIcon().setColorFilter(getResources().getColor(R.color.icons), PorterDuff.Mode.SRC_IN);
 //
+//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                tabLayout.getTabAt(0).getIcon().setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN);
 //            }
 //
 //            @Override
-//            public void onPageSelected(int position) {
-//
+//            public void onTabUnselected(TabLayout.Tab tab) {
+//                tabLayout.getTabAt(2).getIcon().setColorFilter(getResources().getColor(R.color.icons), PorterDuff.Mode.SRC_IN);
 //            }
 //
 //            @Override
-//            public void onPageScrollStateChanged(int state) {
+//            public void onTabReselected(TabLayout.Tab tab) {
 //
 //            }
 //        });
-        name = getIntent().getStringExtra("name");
-        check = getIntent().getStringExtra("check");
     }
 
     private void setIconForTabTitle() {
         for(int i = 0 ; i< tabIcons.length; i++) {
             tabLayout.getTabAt(i).setIcon(tabIcons[i]);
-            tabLayout.getTabAt(i).setText(tabTitles[i]);
+//            tabLayout.getTabAt(i).setText(tabTitles[i]);
         }
     }
 
@@ -186,7 +191,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         getMenuInflater().inflate(R.menu.main_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.menu_search);
         it_my_account = menu.findItem(R.id.menu_my_account);
-        it_my_account.setTitle(name);
+        String title = name.length() == 0 ? getString(R.string.login) : name;
+        it_my_account.setTitle(title);
         it_refresh = menu.findItem(R.id.it_refresh);
         it_new_playlist = menu.findItem(R.id.it_new_playlist);
         it_sleep_timer = menu.findItem(R.id.it_sleep_timer);
@@ -352,7 +358,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public void addNewPlaylist() {
         //show input dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("New playlist");
+        builder.setTitle(R.string.enter_new_playlist);
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setPadding(20,20,20,20);
