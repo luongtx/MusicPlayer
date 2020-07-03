@@ -1,17 +1,7 @@
 package com.example.mymusicapp.fragment;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +10,19 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
-import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.MusicService;
 import com.example.mymusicapp.PlaybackController;
 import com.example.mymusicapp.R;
+import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.entity.Song;
 
 import java.util.Objects;
+
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 public class FragmentMediaControl extends Fragment implements MusicService.ServiceCallbacks {
@@ -44,11 +39,13 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     Song currentSong;
     SeekBarTask seekBarTask;
     PlaybackController playbackController;
+    View view;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_media_control, container, false);
+        if(view != null) return view;
+        view = inflater.inflate(R.layout.fragment_media_control, container, false);
 
         if (MusicService.currSongIndex <= ActivityMain.songs.size()) {
             currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
@@ -92,7 +89,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
             }
         });
-
         btn_end.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
         return view;
     }

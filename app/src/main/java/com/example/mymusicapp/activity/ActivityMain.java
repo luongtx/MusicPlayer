@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.InputType;
@@ -16,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +50,8 @@ import com.example.mymusicapp.repository.DBMusicHelper;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ActivityMain extends AppCompatActivity implements MusicService.ServiceCallbacks,
         AdapterSong.SongItemClickListener, AdapterArtist.ArtistItemClickListener,
@@ -74,7 +79,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentPlaylist fragmentPlaylist;
     FragmentPlaylistDetails fragmentPlaylistDetails;
     FragmentArtistDetail fragmentArtistDetail;
-
+    FragmentSelectSongs fragmentSelectSongs;
     private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_star, R.drawable.ic_featured_play_list};
     private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
     String name, check;
@@ -216,7 +221,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             return true;
         });
         it_new_playlist.setOnMenuItemClickListener( menuItem -> {
-            addNewPlaylist();
+            onClickAddNewPlaylist();
             return true;
         });
         it_add_to_this_playlist.setOnMenuItemClickListener(menuItem -> {
@@ -224,7 +229,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             return true;
         });
         it_add_to_other_playlist.setOnMenuItemClickListener(menuItem -> {
-            addSelectedSongToPlaylist(fragmentPlaylistDetails.getPlaylist_pos());
+            onClickOptionAddToPlaylist();
             return true;
         });
         it_delete_from_playlist.setOnMenuItemClickListener(menuItem -> {
@@ -335,7 +340,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     String playlist_name = "";
-    public void addNewPlaylist() {
+    public void onClickAddNewPlaylist() {
         //show input dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.enter_new_playlist);
@@ -433,9 +438,54 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         dbMusicHelper.deletePlaylist(playlistId);
     }
 
+    public void onClickOptionAddToPlaylist() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add selected song to playlist");
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(20,20,20,20);
+        EditText editText = new EditText(layout.getContext());
+        editText.setHint("Enter new playlist");
+        layout.addView(editText);
+        Set<Integer> set_selected_playlist = new HashSet<>();
+        for(Playlist playlist : playLists) {
+            TextView textView = new TextView(layout.getContext());
+            textView.setTextSize(20);
+            textView.setPadding(10,10,10,10);
+            textView.setTypeface(null, Typeface.BOLD);
+            textView.setText(playlist.getName());
+            layout.addView(textView);
+            textView.setOnClickListener(v -> {
+                int selectedId = playLists.indexOf(playlist);
+                if(set_selected_playlist.contains(selectedId)){
+                    v.setBackgroundColor(Color.WHITE);
+                    set_selected_playlist.remove(selectedId);
+                } else {
+                    v.setBackgroundColor(Color.CYAN);
+                    set_selected_playlist.add(selectedId);
+                }
+            });
+        }
+        builder.setView(layout);
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String playlist_name = editText.getText().toString();
+            if(!playlist_name.isEmpty()) {
+                //add playlist
+                dbMusicHelper.addPlaylist(new Playlist(playlist_name));
+                playLists = dbMusicHelper.getAllPlaylists();
+                //add song to new playlist
+                addSelectedSongToPlaylist(playLists.size()-1);
+            } else {
+                set_selected_playlist.forEach(index -> addSelectedSongToPlaylist(index));
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
     public void onClickOptionAddSongs(int position) {
         layout_mini_play.setVisibility(View.GONE);
-        FragmentSelectSongs fragmentSelectSongs = new FragmentSelectSongs();
+        fragmentSelectSongs = new FragmentSelectSongs();
         Bundle bundle = new Bundle();
         bundle.putInt("playlist_pos", position);
         fragmentSelectSongs.setArguments(bundle);
@@ -449,13 +499,18 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public void addSelectedSongToPlaylist(int position){
         int playlistId = playLists.get(position).getId();
         ArrayList<Song> selectedSongs = new ArrayList<>();
-        for(ModelSelectedItem item: modelSelectedItems) {
-            if(item.isSelectd()) {
+        if (fragmentSelectSongs == null) {
+            songs = musicSrv.getSongs();
+        }
+        for (ModelSelectedItem item : modelSelectedItems) {
+            if (item.isSelectd()) {
                 selectedSongs.add(songs.get(item.getPosition()));
             }
         }
         dbMusicHelper.addSongsToPlaylist(selectedSongs, playlistId);
-        fragmentPlaylistDetails.getAdapterSong().setList(dbMusicHelper.getPlaylistSongs(playlistId));
+        if (fragmentPlaylistDetails != null && position == fragmentPlaylistDetails.getPlaylist_pos()) {
+            fragmentPlaylistDetails.getAdapterSong().setList(dbMusicHelper.getPlaylistSongs(playlistId));
+        }
         popStackedFragment();
     }
 
@@ -464,7 +519,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         Song song;
         for(ModelSelectedItem modelSelectedItem: modelSelectedItems) {
             if(modelSelectedItem.isSelectd()) {
-                song = songs.get(modelSelectedItem.getPosition());
+                song = musicSrv.getSongs().get(modelSelectedItem.getPosition());
                 selectedSongs.add(song);
             }
         }

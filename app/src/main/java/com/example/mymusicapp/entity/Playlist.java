@@ -1,7 +1,5 @@
 package com.example.mymusicapp.entity;
 
-import java.util.ArrayList;
-
 public class Playlist {
     private int id;
     private String name;
@@ -9,6 +7,11 @@ public class Playlist {
     public Playlist() {
 
     }
+
+    public Playlist(String name) {
+        this.name = name;
+    }
+
     public Playlist(int id, String name) {
         this.id = id;
         this.name = name;
