@@ -66,4 +66,5 @@
     <string name="success_update_playlist">Update playlist successfully</string>
     <string name="add_selected_song_to_playlist">Add selected song to playlist</string>
     <string name="multi_select">select multiple songs</string>
+    <string name="playlist_name_duplicate">Duplicate playlist name, please type again!</string>
 </resources>

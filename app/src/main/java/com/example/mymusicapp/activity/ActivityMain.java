@@ -254,6 +254,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
         it_deselect_item.setVisible(true);
     }
+
     public void changeMenuInPlaylistDetails() {
         it_refresh.setVisible(true);
         it_new_playlist.setVisible(true);
@@ -266,6 +267,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         it_delete_from_playlist.setVisible(false);
         it_deselect_item.setVisible(false);
     }
+
     public void recoverMenu() {
         it_refresh.setVisible(true);
         it_new_playlist.setVisible(true);
@@ -358,16 +360,22 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                playlist_name = input.getText().toString();
+                playlist_name = input.getText().toString().trim();
                 if(playlist_name.length() == 0) {
                     Toast.makeText(ActivityMain.this, R.string.enter_playlist_name, Toast.LENGTH_SHORT).show();
                 } else {
                     //add playlist
                     Playlist playlist = new Playlist();
                     playlist.setName(playlist_name);
-                    playLists.add(playlist);
-                    dbMusicHelper.addPlaylist(playlist);
-                    fragmentPlaylist.getAdapterPlayList().notifyDataSetChanged();
+                    if (!playLists.stream().anyMatch(pls -> pls.getName().equals(playlist_name))) {
+                        playLists.add(playlist);
+                        dbMusicHelper.addPlaylist(playlist);
+                        if(fragmentPlaylist != null) {
+                            fragmentPlaylist.getAdapterPlayList().notifyDataSetChanged();
+                        }
+                    } else {
+                        Toast.makeText(ActivityMain.this, getString(R.string.playlist_name_duplicate), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

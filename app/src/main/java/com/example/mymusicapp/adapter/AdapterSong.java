@@ -2,6 +2,7 @@ package com.example.mymusicapp.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
@@ -162,6 +164,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
     }
 
     private Filter exampleFilter = new Filter() {
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Song> filteredList;
