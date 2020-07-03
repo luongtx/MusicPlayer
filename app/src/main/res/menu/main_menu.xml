@@ -1,33 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <item
-        android:id="@+id/menu_main_setting"
+        android:id="@+id/menu_search"
         android:icon="@drawable/ic_search"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom"
-        android:title="Search" />
-
+        android:title="@string/search_song_name"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView" />
     <item
-        android:id="@+id/menu_main_setting2"
+        android:id="@+id/menu_main_setting"
         android:icon="@drawable/ic_option_menu"
         android:orderInCategory="200"
         app:showAsAction="ifRoom"
-        android:title="Options" >
+        android:title="@string/options" >
         <menu>
             <item
-                android:id="@+id/refresh"
-                android:title="refresh" />
+                android:id="@+id/menu_my_account"
+                android:icon="@drawable/ic_account_circle"
+                android:title="@string/my_account" />
             <item
-                android:id="@+id/new_playlist"
-                android:title="new playlist" />
+                android:id="@+id/it_refresh"
+                android:icon="@drawable/ic_refresh"
+                android:title="@string/refresh" />
             <item
-                android:id="@+id/sleep_timer"
-                android:title="set timer" />
+                android:id="@+id/it_new_playlist"
+                android:icon="@drawable/ic_playlist_add"
+                android:title="@string/new_playlist" />
             <item
-                android:id="@+id/shuffle"
-                android:title="shuffle all" />
+                android:id="@+id/it_sleep_timer"
+                android:icon="@drawable/ic_timer_on"
+                android:title="@string/set_timer" />
+            <item
+                android:id="@+id/it_delete_from_playlist"
+                android:title="@string/delete_from_playlist"
+                android:visible="false" />
+            <item
+                android:id="@+id/it_add_to_other_playlist"
+                android:title="@string/add_to_playlist"
+                android:visible="false" />
+            <item
+                android:id="@+id/it_add_song_to_this_playlist"
+                android:title="@string/add_song_to_this_playlist"
+                android:visible="false" />
+            <item
+                android:id="@+id/it_deselect_item"
+                android:title="@string/deselect_selected_item"
+                android:visible="false" />
+
         </menu>
     </item>
 

@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_artists"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#D32F2F"
-    tools:context=".ArtistsFrag">
+    android:layout_height="wrap_content"
+    tools:context=".fragment.FragmentArtists">
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_artist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:text="Fragment Artist" />
-</FrameLayout>
+        android:scrollbars="vertical" />
+</LinearLayout>

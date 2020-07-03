@@ -1,19 +1,18 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
 
-public class MyPagerAdapter extends FragmentStatePagerAdapter {
+public class AdapterMyPager extends FragmentStatePagerAdapter {
 
     private ArrayList<String> list_page_title;
     private ArrayList<Fragment> list_page_fragment;
-    public MyPagerAdapter(@NonNull FragmentManager fm) {
+    public AdapterMyPager(@NonNull FragmentManager fm) {
         super(fm);
         list_page_title = new ArrayList<>();
         list_page_fragment = new ArrayList<>();
@@ -22,13 +21,19 @@ public class MyPagerAdapter extends FragmentStatePagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return list_page_title.get(position);
+//        return list_page_title.get(position);
+        return null;
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
         return list_page_fragment.get(position);
+    }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
     }
 
     @Override
@@ -41,4 +46,7 @@ public class MyPagerAdapter extends FragmentStatePagerAdapter {
         list_page_title.add(title);
     }
 
+    public ArrayList<Fragment> get_list_fragment() {
+        return list_page_fragment;
+    }
 }
