@@ -64,4 +64,5 @@
     <string name="search_song_name">Enter song name </string>
     <string name="enter_new_playlist">Enter playlist name</string>
     <string name="success_update_playlist">Update playlist successfully</string>
+    <string name="add_selected_song_to_playlist">Add selected song to playlist</string>
 </resources>

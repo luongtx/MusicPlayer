@@ -438,26 +438,28 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         dbMusicHelper.deletePlaylist(playlistId);
     }
 
+    //add song to other playlist
     public void onClickOptionAddToPlaylist() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add selected song to playlist");
+        builder.setTitle(R.string.add_selected_song_to_playlist);
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(20,20,20,20);
+        layout.setPadding(10, 10, 10, 10);
         EditText editText = new EditText(layout.getContext());
-        editText.setHint("Enter new playlist");
+        editText.setHint(R.string.enter_new_playlist);
+        editText.setPadding(20,20,20,20);
         layout.addView(editText);
         Set<Integer> set_selected_playlist = new HashSet<>();
-        for(Playlist playlist : playLists) {
+        for (Playlist playlist : playLists) {
             TextView textView = new TextView(layout.getContext());
             textView.setTextSize(20);
-            textView.setPadding(10,10,10,10);
+            textView.setPadding(10, 10, 10, 10);
             textView.setTypeface(null, Typeface.BOLD);
             textView.setText(playlist.getName());
             layout.addView(textView);
             textView.setOnClickListener(v -> {
                 int selectedId = playLists.indexOf(playlist);
-                if(set_selected_playlist.contains(selectedId)){
+                if (set_selected_playlist.contains(selectedId)) {
                     v.setBackgroundColor(Color.WHITE);
                     set_selected_playlist.remove(selectedId);
                 } else {
@@ -469,19 +471,22 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         builder.setView(layout);
         builder.setPositiveButton("OK", (dialog, which) -> {
             String playlist_name = editText.getText().toString();
-            if(!playlist_name.isEmpty()) {
+            if (!playlist_name.isEmpty()) {
                 //add playlist
                 dbMusicHelper.addPlaylist(new Playlist(playlist_name));
                 playLists = dbMusicHelper.getAllPlaylists();
                 //add song to new playlist
-                addSelectedSongToPlaylist(playLists.size()-1);
+                addSelectedSongToPlaylist(playLists.size() - 1);
             } else {
-                set_selected_playlist.forEach(index -> addSelectedSongToPlaylist(index));
+                for (Integer index : set_selected_playlist) {
+                    addSelectedSongToPlaylist(index);
+                }
             }
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
+
 
     public void onClickOptionAddSongs(int position) {
         layout_mini_play.setVisibility(View.GONE);
