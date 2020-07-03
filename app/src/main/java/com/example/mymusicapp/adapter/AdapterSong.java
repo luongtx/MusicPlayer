@@ -1,5 +1,6 @@
 package com.example.mymusicapp.adapter;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
+import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.entity.Song;
 import com.example.mymusicapp.model.ModelSelectedItem;
 
@@ -23,15 +26,17 @@ import java.util.stream.Collectors;
 public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder> implements Filterable {
 
     private ArrayList<Song> songs;
+    private Context context;
     private ArrayList<Song> backup_songs;
     private ArrayList<ModelSelectedItem> modelSelectedItems;
 
     private boolean isMultiSelected = false;
     private boolean isLongClicked = false;
 
-    public AdapterSong(ArrayList<Song> songs) {
+    public AdapterSong(ArrayList<Song> songs, Context context) {
         this.songs = songs;
         backup_songs = new ArrayList<>(songs);
+        this.context = context;
     }
 
     public void setList(ArrayList<Song> songs) {
@@ -41,7 +46,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
 
     public interface SongItemClickListener {
         void onSongItemClick(int position);
-        void onSongItemLongClicked();
+        void onMultipleSelected();
     }
 
     public void setMultiSelected(boolean isMultiSelected) {
@@ -76,7 +81,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
 
         @Override
         public void onClick(View v) {
-            if (isMultiSelected || isLongClicked) {
+            if (isMultiSelected) {
                 ModelSelectedItem modelSelectedItem = modelSelectedItems.get(getAdapterPosition());
                 modelSelectedItem.setSelectd(!modelSelectedItem.isSelectd());
                 view.setBackgroundColor(modelSelectedItem.isSelectd() ? Color.CYAN : Color.WHITE);
@@ -88,13 +93,46 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
 
         @Override
         public boolean onLongClick(View v) {
-            songItemClickListener.onSongItemLongClicked();
-            AdapterSong.this.setLongClicked(true);
             ModelSelectedItem modelSelectedItem = modelSelectedItems.get(getAdapterPosition());
             modelSelectedItem.setSelectd(!modelSelectedItem.isSelectd());
-            view.setBackgroundColor(modelSelectedItem.isSelectd() ? Color.CYAN : Color.WHITE);
+            showPopupMenu(this, getAdapterPosition());
+            AdapterSong.this.setLongClicked(true);
             return true;
         }
+    }
+
+    public void showPopupMenu(AdapterSong.SongViewHolder holder, int position) {
+        PopupMenu popup = new PopupMenu(context, holder.tvTitle);
+        if(((ActivityMain)context).getCurrentPagePosition() ==2) {
+            popup.inflate(R.menu.menu_song_playlist_item);
+        }else {
+            popup.inflate(R.menu.menu_song_item);
+        }
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.delete_song:
+                    ((ActivityMain)context).deleteFromPlaylist();
+                    notifyDataSetChanged();
+                    return true;
+                case R.id.add_to_playlist:
+                    ((ActivityMain)context).onClickOptionAddToPlaylist();
+                    return true;
+                case R.id.multi_select:
+                    modelSelectedItems.get(position).setSelectd(true);
+                    setMultiSelected(true);
+                    holder.view.setBackgroundColor(Color.CYAN);
+                    ((ActivityMain)context).changeMenuWhenSelectMultipleItem();
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        popup.show();
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull SongViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
     }
 
     @NonNull

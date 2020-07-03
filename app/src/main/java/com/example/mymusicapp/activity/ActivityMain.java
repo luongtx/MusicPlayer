@@ -242,19 +242,27 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         });
     }
 
-    public void changeMenuWhenLongClickItem() {
+    public void changeMenuWhenSelectMultipleItem() {
         it_refresh.setVisible(false);
         it_new_playlist.setVisible(false);
         it_sleep_timer.setVisible(false);
         it_add_to_other_playlist.setVisible(true);
-        it_delete_from_playlist.setVisible(true);
+        if(viewPager.getCurrentItem() == 2) {
+            it_delete_from_playlist.setVisible(true);
+        }else {
+            it_delete_from_playlist.setVisible(false);
+        }
         it_deselect_item.setVisible(true);
     }
     public void changeMenuInPlaylistDetails() {
         it_refresh.setVisible(true);
         it_new_playlist.setVisible(true);
         it_sleep_timer.setVisible(true);
-        it_add_to_this_playlist.setVisible(true);
+        if(viewPager.getCurrentItem() == 2) {
+            it_add_to_this_playlist.setVisible(true);
+        } else {
+            it_add_to_this_playlist.setVisible(false);
+        }
         it_delete_from_playlist.setVisible(false);
         it_deselect_item.setVisible(false);
     }
@@ -289,8 +297,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     @Override
-    public void onSongItemLongClicked() {
-        changeMenuWhenLongClickItem();
+    public void onMultipleSelected() {
+        changeMenuWhenSelectMultipleItem();
     }
 
     public void maximizeMediaControl(View view) {
@@ -549,6 +557,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             fragmentPlaylistDetails.getAdapterSong().setMultiSelected(false);
             fragmentPlaylistDetails.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
         }
+        recoverMenu();
     }
 
     public DBMusicHelper getDbMusicHelper() {
@@ -557,5 +566,9 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     public MusicProvider getMusicProvider() {
         return musicProvider;
+    }
+
+    public int getCurrentPagePosition() {
+        return viewPager.getCurrentItem();
     }
 }

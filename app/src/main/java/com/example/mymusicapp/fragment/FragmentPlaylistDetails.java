@@ -48,7 +48,7 @@ public class FragmentPlaylistDetails extends Fragment {
 
         DBMusicHelper dbMusicHelper = new DBMusicHelper(getActivity());
         songs = dbMusicHelper.getPlaylistSongs(playlistId);
-        adapterSong = new AdapterSong(songs);
+        adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         musicSrv.setList(songs);
         rcv_songs.setAdapter(adapterSong);

@@ -50,7 +50,7 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
     }
     public void showPopupMenu(PlayListHolder holder, int position) {
         PopupMenu popup = new PopupMenu(context, holder.iv_more);
-        popup.inflate(R.menu.item_option_menu);
+        popup.inflate(R.menu.menu_playlist_item);
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.delete_playlist:

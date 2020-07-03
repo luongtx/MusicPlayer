@@ -44,7 +44,7 @@ public class FragmentSongs extends Fragment {
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
         songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
-        adapterSong = new AdapterSong(songs);
+        adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         adapterSong.setMultiSelected(false);
         rcv_songs.setAdapter(adapterSong);

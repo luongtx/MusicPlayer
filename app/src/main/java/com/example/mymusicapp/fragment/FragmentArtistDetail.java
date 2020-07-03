@@ -44,7 +44,7 @@ public class FragmentArtistDetail extends Fragment {
         tvArtist.setText(artistName);
 //        MusicProvider provider = new MusicProvider(getActivity());
         songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongsByArtist(artistName);
-        adapterSong = new AdapterSong(songs);
+        adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         musicSrv.setList(songs);
         rcv_songs.setAdapter(adapterSong);
