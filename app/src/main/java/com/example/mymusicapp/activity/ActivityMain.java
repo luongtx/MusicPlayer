@@ -125,10 +125,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
         fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(2);
         initModelSelectedItems(songs.size());
-        name = getIntent().getStringExtra("name");
-        check = getIntent().getStringExtra("check");
+//        name = getIntent().getStringExtra("name");
+//        check = getIntent().getStringExtra("check");
 
         sharedPreferences = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, MODE_PRIVATE);
+        name = sharedPreferences.getString(ActivityLogin.NAME, "");
+        check = sharedPreferences.getString(ActivityLogin.CHECK, "");
         prefer_lang = sharedPreferences.getString("prefer_lang", "en");
         setLocale(prefer_lang);
     }
