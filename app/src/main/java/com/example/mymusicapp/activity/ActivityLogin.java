@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mymusicapp.R;
+import com.example.mymusicapp.repository.DBAccountHelper;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -26,7 +27,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -37,7 +37,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.example.mymusicapp.repository.DBAccountHelper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -98,18 +98,13 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         spinner = (Spinner) findViewById(R.id.spinner);
         listLang = new ArrayList<>();
 
-        if(language.equals("vi"))
-        {
+        if (language.equals("vi")) {
             listLang.add("Tiếng Việt");
             listLang.add("English");
-        }
-        else
-        {
+        } else {
             listLang.add("English");
             listLang.add("Tiếng Việt");
-
         }
-
 
         ArrayAdapter spinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, listLang);
 
