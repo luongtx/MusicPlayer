@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".fragment.FragmentSelectSongs">
     <!-- TODO: Update blank fragment layout -->
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="60dp"
+        android:background="@color/icons">
+        <!-- TODO: Update blank fragment layout -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv_songs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+    </androidx.core.widget.NestedScrollView>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         android:background="@color/colorPrimary"
+        android:layout_gravity="bottom"
         android:gravity="center"
-        android:padding="10dp">
+        >
 
         <ImageView
             android:id="@+id/iv_arrow"
@@ -20,17 +35,6 @@
             android:layout_alignParentStart="true"
             android:layout_margin="@dimen/activity_vertical_margin"
             android:background="@drawable/ic_arrow_back" />
-
-        <TextView
-            android:id="@+id/tv_num_selected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:layout_toEndOf="@+id/iv_arrow"
-            android:text="@string/songs_to_add"
-            android:textColor="@color/icons"
-            android:textSize="17sp"
-            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/iv_confirm"
@@ -41,16 +45,4 @@
             android:background="@drawable/ic_done" />
 
     </RelativeLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <!-- TODO: Update blank fragment layout -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcv_songs"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
-    </androidx.core.widget.NestedScrollView>
-
-</LinearLayout>
+</FrameLayout>

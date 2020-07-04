@@ -51,6 +51,7 @@ import com.example.mymusicapp.fragment.FragmentSelectSongs;
 import com.example.mymusicapp.fragment.FragmentSongs;
 import com.example.mymusicapp.model.ModelSelectedItem;
 import com.example.mymusicapp.repository.DBMusicHelper;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
+    AppBarLayout appBarLayout;
     AdapterMyPager pagerAdapter;
     public static MusicService musicSrv;
     private Intent playIntent;
@@ -98,6 +100,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        appBarLayout = findViewById(R.id.layout_appbar);
         tabLayout = findViewById(R.id.tab_layout);
         toolbar = findViewById(R.id.toolbar_main);
         viewPager = findViewById(R.id.pager);
@@ -184,16 +187,15 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     private Menu menu;
     MenuItem it_refresh, it_new_playlist, it_sleep_timer, it_add_to_other_playlist,
             it_add_to_this_playlist, it_delete_from_playlist , it_deselect_item, it_my_account,
-            it_language, it_vn, it_eng;
+            it_language, it_vn, it_eng, it_search;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
         findMenuItem();
         setOnClickListenerForMenuItem();
 
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        SearchView searchView = (SearchView) it_search.getActionView();
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         searchView.setQueryHint(getString(R.string.search_song_name));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -217,6 +219,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         return true;
     }
     public void findMenuItem() {
+        it_search = menu.findItem(R.id.menu_search);
         it_my_account = menu.findItem(R.id.menu_my_account);
         it_refresh = menu.findItem(R.id.it_refresh);
         it_new_playlist = menu.findItem(R.id.it_new_playlist);
@@ -348,6 +351,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         transaction.replace(R.id.layout_main, fragmentMediaControl);
         transaction.addToBackStack(null);
         transaction.commit();
+        appBarLayout.setVisibility(View.GONE);
         layout_mini_play.setVisibility(View.GONE);
     }
 
@@ -368,6 +372,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 //        super.onBackPressed();
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
+            appBarLayout.setVisibility(View.VISIBLE);
+            layout_mini_play.setVisibility(View.VISIBLE);
         } else {
             recoverFragment();
             recoverMenu();
@@ -644,4 +650,5 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         name = intent.getStringExtra("name");
         check = intent.getStringExtra("check");
     }
+
 }

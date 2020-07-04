@@ -3,8 +3,11 @@ package com.example.mymusicapp.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +20,8 @@ import com.example.mymusicapp.R;
 import com.example.mymusicapp.repository.DBAccountHelper;
 import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
+
+import java.util.Locale;
 
 public class ActivityAccount extends AppCompatActivity {
     TextView tvName,tv1,tv2,tv3;
@@ -44,6 +49,7 @@ public class ActivityAccount extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
 
         SharedPreferences prefs = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, MODE_PRIVATE);
+        setLocale(prefs.getString("prefer_lang", "en"));
         name = prefs.getString(ActivityLogin.NAME, "");
         check = prefs.getString(ActivityLogin.CHECK, "");
 
@@ -116,7 +122,7 @@ public class ActivityAccount extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 LoginManager.getInstance().logOut();
-                Intent intent = new Intent();
+                Intent intent = new Intent(ActivityAccount.this, ActivityLogin.class);
                 intent.putExtra("tvn", name);
                 tvName.setText("");
                 name ="";
@@ -124,7 +130,8 @@ public class ActivityAccount extends AppCompatActivity {
                 editor.putString(ActivityLogin.NAME, "");
                 editor.putString(ActivityLogin.CHECK,"");
                 editor.apply();
-                setResult(RESULT_OK, intent);
+//                setResult(RESULT_OK, intent);
+                startActivity(intent);
                 ActivityAccount.this.finish();
 
             }
@@ -176,6 +183,19 @@ public class ActivityAccount extends AppCompatActivity {
     {
         startActivity(new Intent(ActivityAccount.this,ActivitySignUp.class));
         ActivityAccount.this.finish();
+    }
+
+    public void setLocale(String lang) {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration config = res.getConfiguration();
+        if (!config.locale.getLanguage().equals(myLocale.getLanguage())) {
+            config.locale = myLocale;
+            res.updateConfiguration(config, dm);
+            Intent refresh = new Intent(this, ActivityAccount.class);
+            startActivity(refresh);
+        }
     }
 
 }
