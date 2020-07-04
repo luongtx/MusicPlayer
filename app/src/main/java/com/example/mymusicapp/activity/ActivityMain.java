@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +54,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public class ActivityMain extends AppCompatActivity implements MusicService.ServiceCallbacks,
@@ -83,7 +87,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_star, R.drawable.ic_featured_play_list};
     private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
     String name, check;
-
+    public Locale myLocale;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +122,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         initModelSelectedItems(songs.size());
         name = getIntent().getStringExtra("name");
         check = getIntent().getStringExtra("check");
-
     }
 
     private void setIconForTabTitle() {
@@ -169,22 +172,14 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     private Menu menu;
     MenuItem it_refresh, it_new_playlist, it_sleep_timer, it_add_to_other_playlist,
-            it_add_to_this_playlist, it_delete_from_playlist , it_deselect_item, it_my_account;
+            it_add_to_this_playlist, it_delete_from_playlist , it_deselect_item, it_my_account,
+            it_language, it_vn, it_eng;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.menu_search);
-        it_my_account = menu.findItem(R.id.menu_my_account);
-        String title = name.length() == 0 ? getString(R.string.login) : name;
-        it_my_account.setTitle(title);
-        it_refresh = menu.findItem(R.id.it_refresh);
-        it_new_playlist = menu.findItem(R.id.it_new_playlist);
-        it_sleep_timer = menu.findItem(R.id.it_sleep_timer);
-        it_add_to_other_playlist = menu.findItem(R.id.it_add_to_other_playlist);
-        it_add_to_this_playlist = menu.findItem(R.id.it_add_song_to_this_playlist);
-        it_delete_from_playlist = menu.findItem(R.id.it_delete_from_playlist);
-        it_deselect_item = menu.findItem(R.id.it_deselect_item);
+        findMenuItem();
         setOnClickListenerForMenuItem();
 
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -209,6 +204,23 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             }
         });
         return true;
+    }
+    public void findMenuItem() {
+        it_my_account = menu.findItem(R.id.menu_my_account);
+        it_refresh = menu.findItem(R.id.it_refresh);
+        it_new_playlist = menu.findItem(R.id.it_new_playlist);
+        it_sleep_timer = menu.findItem(R.id.it_sleep_timer);
+        it_add_to_other_playlist = menu.findItem(R.id.it_add_to_other_playlist);
+        it_add_to_this_playlist = menu.findItem(R.id.it_add_song_to_this_playlist);
+        it_delete_from_playlist = menu.findItem(R.id.it_delete_from_playlist);
+        it_deselect_item = menu.findItem(R.id.it_deselect_item);
+
+        it_language = menu.findItem(R.id.it_change_language);
+        it_eng = menu.findItem(R.id.it_eng);
+        it_vn = menu.findItem(R.id.it_vn);
+
+        String title = name.isEmpty() ? getString(R.string.login) : name;
+        it_my_account.setTitle(title);
     }
 
     private void setOnClickListenerForMenuItem() {
@@ -236,8 +248,17 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             deleteFromPlaylist();
             return true;
         });
-        it_deselect_item.setOnMenuItemClickListener(menuitem -> {
+        it_deselect_item.setOnMenuItemClickListener(menuItem -> {
             cancelSelected();
+            return true;
+        });
+
+        it_eng.setOnMenuItemClickListener(menuItem -> {
+            setLocale("en");
+            return true;
+        });
+        it_vn.setOnMenuItemClickListener(menuItem -> {
+            setLocale("vi");
             return true;
         });
     }
@@ -578,5 +599,32 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     public int getCurrentPagePosition() {
         return viewPager.getCurrentItem();
+    }
+
+    public void setLocale(String lang) {
+        myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration config = res.getConfiguration();
+        if (!config.locale.getLanguage().equals(myLocale.getLanguage())) {
+            config.locale = myLocale;
+            res.updateConfiguration(config, dm);
+            Intent refresh = new Intent(this, ActivityMain.class);
+            refresh.putExtras(bundle());
+            startActivity(refresh);
+        }
+    }
+
+    public Bundle bundle() {
+        Bundle bundle = new Bundle();
+        bundle.putString("name", name);
+        bundle.putString("check", check);
+        return bundle;
+    }
+
+    public void extractBundle() {
+        Intent intent = getIntent();
+        name = intent.getStringExtra("name");
+        check = intent.getStringExtra("check");
     }
 }

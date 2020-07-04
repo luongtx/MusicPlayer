@@ -32,6 +32,19 @@
                 android:icon="@drawable/ic_timer_on"
                 android:title="@string/set_timer" />
             <item
+                android:id="@+id/it_change_language"
+                android:title="@string/change_language"
+                app:showAsAction="ifRoom">
+                <menu>
+                    <item
+                        android:id="@+id/it_eng"
+                        android:title="@string/english" />
+                    <item
+                        android:id="@+id/it_vn"
+                        android:title="@string/tiengvn" />
+                </menu>
+            </item>
+            <item
                 android:id="@+id/it_delete_from_playlist"
                 android:title="@string/delete_from_playlist"
                 android:visible="false" />
