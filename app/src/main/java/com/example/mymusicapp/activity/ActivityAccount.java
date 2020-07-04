@@ -116,7 +116,7 @@ public class ActivityAccount extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 LoginManager.getInstance().logOut();
-                Intent intent = new Intent();
+                Intent intent = new Intent(ActivityAccount.this, ActivityLogin.class);
                 intent.putExtra("tvn", name);
                 tvName.setText("");
                 name ="";
@@ -124,7 +124,8 @@ public class ActivityAccount extends AppCompatActivity {
                 editor.putString(ActivityLogin.NAME, "");
                 editor.putString(ActivityLogin.CHECK,"");
                 editor.apply();
-                setResult(RESULT_OK, intent);
+//                setResult(RESULT_OK, intent);
+                startActivity(intent);
                 ActivityAccount.this.finish();
 
             }
