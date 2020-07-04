@@ -1,6 +1,7 @@
 package com.example.mymusicapp.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.view.View;
@@ -48,8 +49,10 @@ public class ActivitySignUp extends AppCompatActivity {
                     etPass2.setText("");
                     Intent intent = new Intent( ActivitySignUp.this,
                             com.example.mymusicapp.activity.ActivityMain.class); // paste first line
-                    intent.putExtra("name", name);
-                    intent.putExtra("check","0");
+                    SharedPreferences.Editor editor = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, ActivityLogin.MODE_PRIVATE).edit();
+                    editor.putString(ActivityLogin.NAME, name);
+                    editor.putString(ActivityLogin.CHECK,"0");
+                    editor.apply();
                     startActivity(intent);
                     ActivitySignUp.this.finish();
                 }
