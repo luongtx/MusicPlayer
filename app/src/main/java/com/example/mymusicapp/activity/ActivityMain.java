@@ -194,7 +194,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         getMenuInflater().inflate(R.menu.main_menu, menu);
         findMenuItem();
         setOnClickListenerForMenuItem();
-
         SearchView searchView = (SearchView) it_search.getActionView();
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         searchView.setQueryHint(getString(R.string.search_song_name));
@@ -281,6 +280,21 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             shaEditor.apply();
             return true;
         });
+
+        it_refresh.setOnMenuItemClickListener(menuItem -> {
+            refresh();
+            return true;
+        });
+    }
+
+    public void refresh() {
+        songs = musicProvider.loadSongs();
+        artists = musicProvider.loadArtist();
+        playLists = dbMusicHelper.getAllPlaylists();
+        fragmentSongs.getAdapterSong().setList(songs);
+        if (fragmentArtists != null) {
+            fragmentArtists.getAdapterArtist().notifyDataSetChanged();
+        }
     }
 
     public void changeMenuWhenSelectMultipleItem() {
