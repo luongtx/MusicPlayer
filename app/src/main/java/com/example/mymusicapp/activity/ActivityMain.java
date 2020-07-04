@@ -650,4 +650,5 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         name = intent.getStringExtra("name");
         check = intent.getStringExtra("check");
     }
+
 }

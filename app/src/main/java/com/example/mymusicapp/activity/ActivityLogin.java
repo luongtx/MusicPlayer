@@ -2,8 +2,11 @@ package com.example.mymusicapp.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,6 +44,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "";
@@ -90,10 +94,22 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE);
         language = prefs.getString("prefer_lang", "en");
+        setLocale(language);
         spinner = (Spinner) findViewById(R.id.spinner);
         listLang = new ArrayList<>();
-        listLang.add("Tiếng Việt");
-        listLang.add("English");
+
+        if(language.equals("vi"))
+        {
+            listLang.add("Tiếng Việt");
+            listLang.add("English");
+        }
+        else
+        {
+            listLang.add("English");
+            listLang.add("Tiếng Việt");
+
+        }
+
 
         ArrayAdapter spinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, listLang);
 
@@ -109,6 +125,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
                     editor.putString("prefer_lang", language);
                     editor.apply();
+                    setLocale(language);
                 }
                 else
                 {
@@ -116,6 +133,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
                     editor.putString("prefer_lang", language);
                     editor.apply();
+                    setLocale(language);
                 }
             }
 
@@ -304,6 +322,19 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 signIn();
                 break;
             // ...
+        }
+    }
+
+    public void setLocale(String lang) {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration config = res.getConfiguration();
+        if (!config.locale.getLanguage().equals(myLocale.getLanguage())) {
+            config.locale = myLocale;
+            res.updateConfiguration(config, dm);
+            Intent refresh = new Intent(this, ActivityLogin.class);
+            startActivity(refresh);
         }
     }
 }
