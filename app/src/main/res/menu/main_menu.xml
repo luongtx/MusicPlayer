@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search"
@@ -9,9 +10,15 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
     <item
+        android:id="@+id/it_refresh"
+        android:icon="@drawable/ic_refresh"
+        android:orderInCategory="200"
+        app:showAsAction="ifRoom"
+        android:title="@string/refresh" />
+    <item
         android:id="@+id/menu_main_setting"
         android:icon="@drawable/ic_option_menu"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         app:showAsAction="ifRoom"
         android:title="@string/options" >
         <menu>
@@ -19,10 +26,6 @@
                 android:id="@+id/menu_my_account"
                 android:icon="@drawable/ic_account_circle"
                 android:title="@string/my_account" />
-            <item
-                android:id="@+id/it_refresh"
-                android:icon="@drawable/ic_refresh"
-                android:title="@string/refresh" />
             <item
                 android:id="@+id/it_new_playlist"
                 android:icon="@drawable/ic_playlist_add"
