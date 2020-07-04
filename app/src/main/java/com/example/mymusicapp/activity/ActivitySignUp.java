@@ -46,7 +46,7 @@ public class ActivitySignUp extends AppCompatActivity {
                     etNameSignUp.setText("");
                     etPass1.setText("");
                     etPass2.setText("");
-                    Intent intent = new Intent(ActivitySignUp.this,
+                    Intent intent = new Intent( ActivitySignUp.this,
                             com.example.mymusicapp.activity.ActivityMain.class); // paste first line
                     intent.putExtra("name", name);
                     intent.putExtra("check","0");
