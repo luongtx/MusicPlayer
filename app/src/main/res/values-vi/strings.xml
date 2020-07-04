@@ -67,7 +67,7 @@
     <string name="add_selected_song_to_playlist">Thêm các bài hát đã chọn vào playlist</string>
     <string name="multi_select">Chọn nhiều bài hát</string>
     <string name="playlist_name_duplicate">Tên playlist đã tồn tại, vui lòng nhập lại</string>
-    <string name="change_language">change language</string>
+    <string name="change_language">Ngôn ngữ</string>
     <string name="english">English</string>
     <string name="tiengvn">Tiếng việt</string>
 </resources>

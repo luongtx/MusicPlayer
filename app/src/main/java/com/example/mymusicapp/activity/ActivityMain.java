@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -88,6 +89,10 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
     String name, check;
     public Locale myLocale;
+
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor shaEditor;
+    String prefer_lang;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +127,10 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         initModelSelectedItems(songs.size());
         name = getIntent().getStringExtra("name");
         check = getIntent().getStringExtra("check");
+
+        sharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE);
+        prefer_lang = sharedPreferences.getString("prefer_lang", "en");
+        setLocale(prefer_lang);
     }
 
     private void setIconForTabTitle() {
@@ -255,10 +264,16 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         it_eng.setOnMenuItemClickListener(menuItem -> {
             setLocale("en");
+            shaEditor = sharedPreferences.edit();
+            shaEditor.putString("prefer_lang", "en");
+            shaEditor.apply();
             return true;
         });
         it_vn.setOnMenuItemClickListener(menuItem -> {
             setLocale("vi");
+            shaEditor = sharedPreferences.edit();
+            shaEditor.putString("prefer_lang", "vi");
+            shaEditor.apply();
             return true;
         });
     }
