@@ -1,18 +1,21 @@
 package com.example.mymusicapp.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.repository.DBAccountHelper;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -31,11 +34,13 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
+import com.example.mymusicapp.repository.DBAccountHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "";
@@ -44,8 +49,15 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     int RC_SIGN_IN = 432;
     AccessTokenTracker tokenTracker;
     private LoginButton loginButton;
-    private GoogleSignInClient mGoogleSignInClient;
+    public GoogleSignInClient mGoogleSignInClient;
     private CallbackManager callbackManager;
+    public static final String MY_PREFS_FILENAME = "com.example.mymusicapp.activity.SharePref";
+    public static final String NAME = "name";
+    public static final String CHECK = "check";
+    public String language = "";
+
+    Spinner spinner;
+    private List<String> listLang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +87,47 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.sign_in_button).setOnClickListener((View.OnClickListener) this);
         loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
         checkLoginStatus();
+
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE);
+        language = prefs.getString("prefer_lang", "en");
+        spinner = (Spinner) findViewById(R.id.spinner);
+        listLang = new ArrayList<>();
+        listLang.add("Tiếng Việt");
+        listLang.add("English");
+
+        ArrayAdapter spinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, listLang);
+
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String Lang = listLang.get(position);
+                if(Lang.equals("Tiếng Việt"))
+                {
+                    language = "vi";
+                    SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
+                    editor.putString("prefer_lang", language);
+                    editor.apply();
+                }
+                else
+                {
+                    language = "en";
+                    SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
+                    editor.putString("prefer_lang", language);
+                    editor.apply();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                Toast.makeText(ActivityLogin.this, "onNothingSelected", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -96,8 +149,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     {
         Intent intent = new Intent(ActivityLogin.this,
                 com.example.mymusicapp.activity.ActivityMain.class); // paste first line
-        intent.putExtra("name", "");
-        intent.putExtra("check","1");
+//        intent.putExtra(NAME, "");
+//        intent.putExtra(CHECK,"1");
         startActivity(intent);
     }
     public void btnLogin(View v) {
@@ -114,9 +167,11 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 if (login) {
                     Intent intent = new Intent(ActivityLogin.this,
                             com.example.mymusicapp.activity.ActivityMain.class); // paste first line
-                    intent.putExtra("name", name);
-                    intent.putExtra("check","0");
                     startActivity(intent);
+                    SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
+                    editor.putString(NAME, name);
+                    editor.putString(CHECK,"0");
+                    editor.commit();
                     etNameLogin.setText("");
                     etPass.setText("");
                 } else {
@@ -161,9 +216,11 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 String name = task.getResult().getEmail();
                 Intent intent = new Intent(ActivityLogin.this,
                         com.example.mymusicapp.activity.ActivityMain.class); // paste first line
-                intent.putExtra("name", name);
-                intent.putExtra("check","API");
-                startActivityForResult(intent, ACTIVITY3);
+                SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
+                    editor.putString(NAME, name);
+                    editor.putString(CHECK,"API");
+                    editor.apply();
+                startActivityForResult(intent,ACTIVITY3);
             }
 
 
@@ -171,7 +228,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         } else if (requestCode == ACTIVITY3) {
             if (resultCode == RESULT_OK) {
                 signOut();
-                LoginManager.getInstance().logOut();
+//                LoginManager.getInstance().logOut();
                 Toast.makeText(this, getString(R.string.logout_success) + data.getStringExtra("tvn"), Toast.LENGTH_SHORT).show();
             }
 
@@ -190,9 +247,13 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
                     Intent intent = new Intent(ActivityLogin.this,
                             com.example.mymusicapp.activity.ActivityMain.class); // paste first line
-                    intent.putExtra("name", email);
-                    intent.putExtra("check","API");
-                    startActivityForResult(intent, ACTIVITY3);
+//                    intent.putExtra("name", email);
+//                    intent.putExtra("check","API");
+                    SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
+                    editor.putString(NAME, email);
+                    editor.putString(CHECK,"API");
+                    editor.apply();
+                    startActivity(intent);
 
                 } catch (JSONException e) {
                     e.printStackTrace();

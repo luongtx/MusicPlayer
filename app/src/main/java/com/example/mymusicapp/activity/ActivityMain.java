@@ -128,7 +128,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         name = getIntent().getStringExtra("name");
         check = getIntent().getStringExtra("check");
 
-        sharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, MODE_PRIVATE);
         prefer_lang = sharedPreferences.getString("prefer_lang", "en");
         setLocale(prefer_lang);
     }
@@ -228,8 +228,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         it_eng = menu.findItem(R.id.it_eng);
         it_vn = menu.findItem(R.id.it_vn);
 
-        String title = name.isEmpty() ? getString(R.string.login) : name;
-        it_my_account.setTitle(title);
+        if(name == null || name.length() == 0) it_my_account.setTitle(R.string.login);
+        else it_my_account.setTitle(name);
     }
 
     private void setOnClickListenerForMenuItem() {

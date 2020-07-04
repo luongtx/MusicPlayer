@@ -2,6 +2,7 @@ package com.example.mymusicapp.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.repository.DBAccountHelper;
+import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
 
 public class ActivityAccount extends AppCompatActivity {
@@ -40,8 +42,11 @@ public class ActivityAccount extends AppCompatActivity {
         etNewPass = findViewById(R.id.etNewPass);
         etNewPassAgain = findViewById(R.id.etNewPassAgain);
         loginButton = findViewById(R.id.login_button);
-        check = getIntent().getStringExtra("check");
-        name = getIntent().getStringExtra("name");
+
+        SharedPreferences prefs = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, MODE_PRIVATE);
+        name = prefs.getString(ActivityLogin.NAME, "");
+        check = prefs.getString(ActivityLogin.CHECK, "");
+
         if(name.equals(""))
         {
             tv1.setVisibility(View.VISIBLE);
@@ -106,14 +111,20 @@ public class ActivityAccount extends AppCompatActivity {
             }
         });
 
+
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                LoginManager.getInstance().logOut();
                 Intent intent = new Intent();
                 intent.putExtra("tvn", name);
-                setResult(RESULT_OK, intent);
                 tvName.setText("");
                 name ="";
+                SharedPreferences.Editor editor = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, ActivityLogin.MODE_PRIVATE).edit();
+                editor.putString(ActivityLogin.NAME, "");
+                editor.putString(ActivityLogin.CHECK,"");
+                editor.apply();
+                setResult(RESULT_OK, intent);
                 ActivityAccount.this.finish();
 
             }
