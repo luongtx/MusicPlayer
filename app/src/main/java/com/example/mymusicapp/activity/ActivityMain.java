@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -116,8 +117,10 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
         fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(2);
         initModelSelectedItems(songs.size());
-        name = getIntent().getStringExtra("name");
-        check = getIntent().getStringExtra("check");
+
+        SharedPreferences prefs = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, ActivityLogin.MODE_PRIVATE);
+        name = prefs.getString(ActivityLogin.NAME, "");
+        check = prefs.getString(ActivityLogin.CHECK, "");
 
     }
 
@@ -214,8 +217,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     private void setOnClickListenerForMenuItem() {
         it_my_account.setOnMenuItemClickListener( menuItem -> {
             Intent accountIntent = new Intent(ActivityMain.this, ActivityAccount.class);
-            accountIntent.putExtra("name", name);
-            accountIntent.putExtra("check", check);
             startActivity(accountIntent);
             finish();
             return true;
