@@ -51,6 +51,7 @@ public class FragmentSongs extends Fragment {
         rcv_songs.setHasFixedSize(true);
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
+        setRetainInstance(true);
         return view;
     }
 
@@ -89,11 +90,11 @@ public class FragmentSongs extends Fragment {
         return adapterSong;
     }
 
-    @Override
-    public void onDestroy() {
-        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
-        musicSrv.setList(ActivityMain.songs);
-        super.onDestroy();
-    }
+//    @Override
+//    public void onDestroy() {
+//        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
+//        musicSrv.setList(ActivityMain.songs);
+//        super.onDestroy();
+//    }
 
 }

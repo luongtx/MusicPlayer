@@ -9,4 +9,5 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
     <color name="colorTabSelect">#00E5FF</color>
+    <color name="colorSelected">#03A9F4</color>
 </resources>

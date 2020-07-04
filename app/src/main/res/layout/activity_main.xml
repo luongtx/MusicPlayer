@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/colorPrimary"
     tools:context="com.example.mymusicapp.activity.ActivityMain">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -51,12 +52,12 @@
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
+        android:background="@color/icons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="60dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
     <LinearLayout
         android:id="@+id/mini_control"
         android:layout_width="match_parent"

@@ -54,7 +54,8 @@ public class FragmentPlaylistDetails extends Fragment {
         rcv_songs.setAdapter(adapterSong);
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
         iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
-
+        ImageView btn_plus = view.findViewById(R.id.btn_plus_song);
+        btn_plus.setOnClickListener(v -> ((ActivityMain)getActivity()).onClickOptionAddSongs(playlist_pos));
         return view;
     }
 

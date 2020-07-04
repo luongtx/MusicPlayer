@@ -122,7 +122,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
                 case R.id.multi_select:
                     modelSelectedItems.get(position).setSelectd(true);
                     setMultiSelected(true);
-                    holder.view.setBackgroundColor(Color.CYAN);
+                    holder.view.setBackgroundColor(context.getResources().getColor(R.color.colorSelected));
                     ((ActivityMain)context).changeMenuWhenSelectMultipleItem();
                     return true;
                 default:
