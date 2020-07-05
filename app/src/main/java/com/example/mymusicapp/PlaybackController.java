@@ -30,11 +30,11 @@ public class PlaybackController {
         iv_loop.setOnClickListener(this::loop);
     }
 
-    void previous(View view) {
+    public void previous(View view) {
         musicSrv.playSong(musicSrv.getCurrSongIndex() - 1);
     }
 
-    void toggle_play(View view) {
+    public void toggle_play(View view) {
         if (MusicService.player.isPlaying()) {
             musicSrv.pause();
             iv_play.setBackgroundResource(R.drawable.ic_play);
@@ -44,11 +44,11 @@ public class PlaybackController {
         }
     }
 
-    void next(View view) {
+    public void next(View view) {
         musicSrv.playSong(musicSrv.getCurrSongIndex() + 1);
     }
 
-    void shuffle(View view) {
+    public void shuffle(View view) {
         iv_shuffle = view.findViewById(R.id.iv_shuffle);
         if (MusicService.isShuffling) {
             MusicService.isShuffling = false;

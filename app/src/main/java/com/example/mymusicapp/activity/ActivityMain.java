@@ -1,6 +1,7 @@
 package com.example.mymusicapp.activity;
 
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.text.InputType;
 import android.util.DisplayMetrics;
@@ -23,6 +25,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import androidx.appcompat.widget.SearchView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,6 +52,7 @@ import com.example.mymusicapp.fragment.FragmentPlaylist;
 import com.example.mymusicapp.fragment.FragmentPlaylistDetails;
 import com.example.mymusicapp.fragment.FragmentSelectSongs;
 import com.example.mymusicapp.fragment.FragmentSongs;
+import com.example.mymusicapp.fragment.FragmentTimerPicker;
 import com.example.mymusicapp.model.ModelSelectedItem;
 import com.example.mymusicapp.repository.DBMusicHelper;
 import com.google.android.material.appbar.AppBarLayout;
@@ -61,7 +65,7 @@ import java.util.Set;
 
 public class ActivityMain extends AppCompatActivity implements MusicService.ServiceCallbacks,
         AdapterSong.SongItemClickListener, AdapterArtist.ArtistItemClickListener,
-        AdapterPlayList.PlaylistClickListener {
+        AdapterPlayList.PlaylistClickListener, TimePickerDialog.OnTimeSetListener {
 
     Toolbar toolbar;
     TabLayout tabLayout;
@@ -87,6 +91,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentPlaylistDetails fragmentPlaylistDetails;
     FragmentArtistDetail fragmentArtistDetail;
     FragmentSelectSongs fragmentSelectSongs;
+    FragmentTimerPicker fragmentTimerPicker;
     private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_star, R.drawable.ic_featured_play_list};
     private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
     String name, check;
@@ -153,7 +158,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         return modelSelectedItems;
     }
 
-    public void changSongDisplay() {
+    public void highlightCurrentPosition() {
         fragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
     }
 
@@ -285,8 +290,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             refresh();
             return true;
         });
-    }
 
+        it_sleep_timer.setOnMenuItemClickListener(menuItem -> {
+            fragmentTimerPicker = new FragmentTimerPicker();
+            fragmentTimerPicker.show(getSupportFragmentManager(), "Timer picker");
+            return true;
+        });
+    }
     public void refresh() {
         songs = musicProvider.loadSongs();
         artists = musicProvider.loadArtist();
@@ -335,17 +345,17 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     @Override
     public void onPlayNewSong() {
-        changSongDisplay();
+        highlightCurrentPosition();
     }
 
     @Override
     public void onMusicPause() {
-        changSongDisplay();
+        highlightCurrentPosition();
     }
 
     @Override
     public void onMusicResume() {
-        changSongDisplay();
+        highlightCurrentPosition();
     }
 
     @Override
@@ -665,4 +675,36 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         check = intent.getStringExtra("check");
     }
 
+    CountDownTimer countDownTimer;
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        int milliseconds = (hourOfDay * 3600 + minute * 60) * 1000;
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        countDownTimer = new CountDownTimer(milliseconds, 1000) {
+            long r_hour, r_min, r_sec, secs;
+            String s_hour, s_min, s_sec;
+
+            public void onTick(long millisUntilFinished) {
+                secs = millisUntilFinished / 1000;
+                r_hour = secs / 3600;
+                r_min = (secs % 3600) / 60;
+                r_sec = secs % 60;
+                s_hour = String.valueOf(r_hour);
+                s_min = String.valueOf(r_min);
+                s_sec = String.valueOf(r_sec);
+                if (r_hour < 10) s_hour = "0" + r_hour;
+                if (r_min < 10) s_min = "0" + r_min;
+                if (r_sec < 10) s_sec = "0" + r_sec;
+                it_sleep_timer.setTitle(String.format("%s: %s:%s:%s", getString(R.string.timer), s_hour, s_min, s_sec));
+            }
+
+            public void onFinish() {
+                it_sleep_timer.setTitle(R.string.set_timer);
+                musicSrv.pause();
+            }
+        };
+        countDownTimer.start();
+    }
 }

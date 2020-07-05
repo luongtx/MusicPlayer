@@ -22,7 +22,7 @@
     <string name="options">Options</string>
     <string name="refresh">refresh</string>
     <string name="new_playlist">new playlist</string>
-    <string name="set_timer">set timer</string>
+    <string name="set_timer">sleep timer</string>
     <string name="settings">settings</string>
     <string name="delete_playlist">delete playlist</string>
     <string name="add_songs">add song to playlist</string>
@@ -70,4 +70,5 @@
     <string name="change_language">change language</string>
     <string name="english">English</string>
     <string name="tiengvn">Tiếng việt</string>
+    <string name="timer">Time remaining</string>
 </resources>

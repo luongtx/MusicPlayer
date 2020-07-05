@@ -70,4 +70,5 @@
     <string name="change_language">Ngôn ngữ</string>
     <string name="english">English</string>
     <string name="tiengvn">Tiếng việt</string>
+    <string name="timer">Bộ đếm giờ</string>
 </resources>
