@@ -35,7 +35,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     TextView tvStart, tvEnd;
     TextView tvArtist, tvTitle;
 //    ImageButton btn_next, btn_prev, btn_play, btn_shuffle, btn_loop;
-    LinearLayout layout_mini_play;
+    LinearLayout layout_mini_controller;
     Song currentSong;
     SeekBarTask seekBarTask;
     PlaybackController playbackController;
@@ -63,8 +63,8 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         volumnBar = view.findViewById(R.id.volumeBar);
 
 
-        layout_mini_play = view.findViewById(R.id.layout_mini_play);
-        playbackController = new PlaybackController(layout_mini_play);
+        layout_mini_controller = view.findViewById(R.id.layout_mini_controller);
+        playbackController = new PlaybackController(layout_mini_controller);
 
         Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
 

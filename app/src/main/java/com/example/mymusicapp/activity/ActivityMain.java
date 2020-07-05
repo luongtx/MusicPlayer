@@ -80,7 +80,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public static ArrayList<Playlist> playLists;
 
     public static ArrayList<ModelSelectedItem> modelSelectedItems;
-    LinearLayout layout_mini_play;
+    LinearLayout layout_mini_controller;
     MusicProvider musicProvider;
     DBMusicHelper dbMusicHelper;
     PlaybackController playbackController;
@@ -118,8 +118,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         setIconForTabTitle();
-        layout_mini_play = findViewById(R.id.layout_mini_play);
-        layout_mini_play.setVisibility(View.GONE);
+        layout_mini_controller = findViewById(R.id.layout_mini_controller);
+        layout_mini_controller.setVisibility(View.GONE);
 
         musicProvider = new MusicProvider(this);
         songs = musicProvider.loadSongs();
@@ -127,7 +127,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         dbMusicHelper = new DBMusicHelper(ActivityMain.this);
         playLists = dbMusicHelper.getAllPlaylists();
-        playbackController = new PlaybackController(layout_mini_play);
+        playbackController = new PlaybackController(layout_mini_controller);
 
         fragmentSongs = (FragmentSongs) pagerAdapter.getItem(0);
         fragmentArtists = (FragmentArtists) pagerAdapter.getItem(1);
@@ -376,7 +376,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         transaction.addToBackStack(null);
         transaction.commit();
         appBarLayout.setVisibility(View.GONE);
-        layout_mini_play.setVisibility(View.GONE);
+        layout_mini_controller.setVisibility(View.GONE);
     }
 
     public void popStackedFragment() {
@@ -397,7 +397,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
             appBarLayout.setVisibility(View.VISIBLE);
-            layout_mini_play.setVisibility(View.VISIBLE);
+            layout_mini_controller.setVisibility(View.VISIBLE);
         } else {
             recoverFragment();
             recoverMenu();
@@ -454,7 +454,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             }
         });
         builder.show();
-        layout_mini_play.setVisibility(View.GONE);
+        layout_mini_controller.setVisibility(View.GONE);
     }
 
     public void updatePlaylistName(int position) {
@@ -487,7 +487,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             }
         });
         builder.show();
-        layout_mini_play.setVisibility(View.GONE);
+        layout_mini_controller.setVisibility(View.GONE);
     }
 
     @Override
@@ -573,7 +573,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
 
     public void onClickOptionAddSongs(int position) {
-        layout_mini_play.setVisibility(View.GONE);
+        layout_mini_controller.setVisibility(View.GONE);
         fragmentSelectSongs = new FragmentSelectSongs();
         Bundle bundle = new Bundle();
         bundle.putInt("playlist_pos", position);
