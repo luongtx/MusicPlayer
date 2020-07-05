@@ -86,7 +86,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
             if (isMultiSelected) {
                 ModelSelectedItem modelSelectedItem = modelSelectedItems.get(getAdapterPosition());
                 modelSelectedItem.setSelectd(!modelSelectedItem.isSelectd());
-                view.setBackgroundColor(modelSelectedItem.isSelectd() ? Color.CYAN : Color.WHITE);
+                view.setBackgroundColor(modelSelectedItem.isSelectd() ? context.getResources().getColor(R.color.colorSelected) : Color.WHITE);
             } else {
                 songItemClickListener.onSongItemClick(getAdapterPosition());
             }

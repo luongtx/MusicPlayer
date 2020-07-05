@@ -37,7 +37,7 @@ public class FragmentArtistSongs extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_artist_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_artist_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
         TextView tvArtist = view.findViewById(R.id.tvArtist);
         String artistName = getArguments().getString("artist");
