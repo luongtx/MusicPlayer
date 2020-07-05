@@ -62,7 +62,7 @@
     <string name="enter_account_name">Nhập tên tài khoản</string>
     <string name="have_no_account">Chưa có tài khoản?</string>
     <string name="search_song_name">Nhập tên bài hát</string>
-    <string name="enter_new_playlist">Nhập tên playlist</string>
+    <string name="enter_new_playlist">Nhập tên playlist mới</string>
     <string name="success_update_playlist">Cập nhật playlist thành công</string>
     <string name="add_selected_song_to_playlist">Thêm các bài hát đã chọn vào playlist</string>
     <string name="multi_select">Chọn nhiều bài hát</string>

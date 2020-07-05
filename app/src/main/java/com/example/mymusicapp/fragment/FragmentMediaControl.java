@@ -47,9 +47,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         if(view != null) return view;
         view = inflater.inflate(R.layout.fragment_media_control, container, false);
 
-        if (MusicService.currSongIndex <= ActivityMain.songs.size()) {
-            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
-        }
+        currentSong = musicSrv.getSongs().get(MusicService.currSongIndex);
         tvTitle = view.findViewById(R.id.tvTitle);
         tvArtist = view.findViewById(R.id.tvArtist);
         tvTitle.setText(currentSong.getTitle());

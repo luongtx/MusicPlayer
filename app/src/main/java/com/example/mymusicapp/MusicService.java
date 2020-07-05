@@ -69,6 +69,7 @@ public class MusicService extends Service implements
 
     public void setList(ArrayList<Song> theSongs) {
         songs = theSongs;
+        currSongIndex = -1;
     }
 
     public class MusicBinder extends Binder {

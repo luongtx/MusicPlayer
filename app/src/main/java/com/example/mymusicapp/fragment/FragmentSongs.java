@@ -44,6 +44,7 @@ public class FragmentSongs extends Fragment {
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
         songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
+        if(musicSrv != null) musicSrv.setList(songs);
         adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         adapterSong.setMultiSelected(false);
@@ -51,7 +52,6 @@ public class FragmentSongs extends Fragment {
         rcv_songs.setHasFixedSize(true);
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
-        setRetainInstance(true);
         return view;
     }
 

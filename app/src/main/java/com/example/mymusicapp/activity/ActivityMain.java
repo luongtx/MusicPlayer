@@ -598,7 +598,9 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
         dbMusicHelper.addSongsToPlaylist(selectedSongs, playlistId);
         if (fragmentPlaylistSongs != null && position == fragmentPlaylistSongs.getPlaylist_pos()) {
-            fragmentPlaylistSongs.getAdapterSong().setList(dbMusicHelper.getPlaylistSongs(playlistId));
+            ArrayList<Song> playlistSongs = dbMusicHelper.getPlaylistSongs(playlistId);
+            fragmentPlaylistSongs.getAdapterSong().setList(playlistSongs);
+            fragmentPlaylistSongs.getAdapterSong().setModel(initModelSelectedItems(playlistSongs.size()));
         }
         popStackedFragment();
     }

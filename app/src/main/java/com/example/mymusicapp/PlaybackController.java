@@ -10,7 +10,6 @@ public class PlaybackController {
 
     View view;
     ImageButton iv_prev, iv_play, iv_next, iv_shuffle, iv_loop;
-    static int prev_song_id = -1, curr_song_id = -1;
     public PlaybackController(View view) {
         this.view = view;
         iv_prev = (ImageButton) view.findViewById(R.id.iv_prev);
@@ -32,6 +31,7 @@ public class PlaybackController {
 
     public void previous(View view) {
         musicSrv.playSong(musicSrv.getCurrSongIndex() - 1);
+        iv_play.setBackgroundResource(R.drawable.ic_pause);
     }
 
     public void toggle_play(View view) {
@@ -46,6 +46,7 @@ public class PlaybackController {
 
     public void next(View view) {
         musicSrv.playSong(musicSrv.getCurrSongIndex() + 1);
+        iv_play.setBackgroundResource(R.drawable.ic_pause);
     }
 
     public void shuffle(View view) {
@@ -71,13 +72,12 @@ public class PlaybackController {
     }
 
     public void songPicked(int position) {
-        curr_song_id = musicSrv.getSongs().get(position).getId();
-        if (curr_song_id != prev_song_id) {
+        if(musicSrv.getCurrSongIndex() != position) {
             musicSrv.playSong(position);
+            iv_play.setBackgroundResource(R.drawable.ic_pause);
         } else {
             toggle_play(view);
         }
-        prev_song_id = curr_song_id;
         view.setVisibility(View.VISIBLE);
     }
 }

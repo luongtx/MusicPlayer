@@ -50,16 +50,15 @@ public class FragmentArtistSongs extends Fragment {
         rcv_songs.setAdapter(adapterSong);
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
         iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
-
         return view;
     }
 
-    @Override
-    public void onDestroy() {
-        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
-        musicSrv.setList(ActivityMain.songs);
-        super.onDestroy();
-    }
+//    @Override
+//    public void onDestroy() {
+//        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
+//        musicSrv.setList(ActivityMain.songs);
+//        super.onDestroy();
+//    }
 
     public AdapterSong getAdapterSong() {
         return adapterSong;
