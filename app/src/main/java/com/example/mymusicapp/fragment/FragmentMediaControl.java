@@ -100,9 +100,10 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     }
 
     private void resetView() {
-        if (MusicService.currSongIndex < ActivityMain.songs.size()) {
-            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
-        }
+//        if (MusicService.currSongIndex < ActivityMain.songs.size()) {
+//            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
+//        }
+        currentSong = musicSrv.getSongs().get(MusicService.currSongIndex);
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
         tvStart.setText("0:00");
