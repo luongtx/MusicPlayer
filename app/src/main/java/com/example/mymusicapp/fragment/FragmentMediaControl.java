@@ -68,8 +68,8 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
         Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
 
-        tvStart.setText(MusicService.getHumanTime(MusicService.player.getCurrentPosition()));
-        tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
+        tvStart.setText(MusicService.getReadableTime(MusicService.player.getCurrentPosition()));
+        tvEnd.setText(MusicService.getReadableTime(currentSong.getDuration()));
 
         volumnBar.setProgress(50);
         volumnBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -108,7 +108,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
         tvStart.setText("0:00");
-        tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
+        tvEnd.setText(MusicService.getReadableTime(currentSong.getDuration()));
 
         seekBarTask = new SeekBarTask();
         seekBarTask.execute();
@@ -170,7 +170,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         @Override
         protected void onProgressUpdate(Integer... values) {
             postionBar.setProgress(100*values[0]/duration);
-            tvStart.setText(MusicService.getHumanTime(values[0]));
+            tvStart.setText(MusicService.getReadableTime(values[0]));
         }
 
         //bug: never used

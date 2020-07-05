@@ -163,7 +163,7 @@ public class MusicService extends Service implements
         mp.start();
     }
 
-    public static String getHumanTime(int milliseconds) {
+    public static String getReadableTime(int milliseconds) {
         int seconds = milliseconds/1000;
         int minutes = seconds/60;
         int r_seconds = seconds % 60;

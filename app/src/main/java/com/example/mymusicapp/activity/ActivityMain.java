@@ -45,11 +45,11 @@ import com.example.mymusicapp.adapter.AdapterSong;
 import com.example.mymusicapp.entity.Artist;
 import com.example.mymusicapp.entity.Playlist;
 import com.example.mymusicapp.entity.Song;
-import com.example.mymusicapp.fragment.FragmentArtistDetail;
+import com.example.mymusicapp.fragment.FragmentArtistSongs;
 import com.example.mymusicapp.fragment.FragmentArtists;
 import com.example.mymusicapp.fragment.FragmentMediaControl;
 import com.example.mymusicapp.fragment.FragmentPlaylist;
-import com.example.mymusicapp.fragment.FragmentPlaylistDetails;
+import com.example.mymusicapp.fragment.FragmentPlaylistSongs;
 import com.example.mymusicapp.fragment.FragmentSelectSongs;
 import com.example.mymusicapp.fragment.FragmentSongs;
 import com.example.mymusicapp.fragment.FragmentTimerPicker;
@@ -88,8 +88,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentSongs fragmentSongs;
     FragmentArtists fragmentArtists;
     FragmentPlaylist fragmentPlaylist;
-    FragmentPlaylistDetails fragmentPlaylistDetails;
-    FragmentArtistDetail fragmentArtistDetail;
+    FragmentPlaylistSongs fragmentPlaylistSongs;
+    FragmentArtistSongs fragmentArtistSongs;
     FragmentSelectSongs fragmentSelectSongs;
     FragmentTimerPicker fragmentTimerPicker;
     private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_star, R.drawable.ic_featured_play_list};
@@ -211,11 +211,11 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             @Override
             public boolean onQueryTextChange(String newText) {
                 fragmentSongs.getAdapterSong().getFilter().filter(newText);
-                if (fragmentPlaylistDetails != null) {
-                    fragmentPlaylistDetails.getAdapterSong().getFilter().filter(newText);
+                if (fragmentPlaylistSongs != null) {
+                    fragmentPlaylistSongs.getAdapterSong().getFilter().filter(newText);
                 }
-                if (fragmentArtistDetail != null) {
-                    fragmentArtistDetail.getAdapterSong().getFilter().filter(newText);
+                if (fragmentArtistSongs != null) {
+                    fragmentArtistSongs.getAdapterSong().getFilter().filter(newText);
                 }
                 return false;
             }
@@ -255,7 +255,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             return true;
         });
         it_add_to_this_playlist.setOnMenuItemClickListener(menuItem -> {
-            onClickOptionAddSongs(fragmentPlaylistDetails.getPlaylist_pos());
+            onClickOptionAddSongs(fragmentPlaylistSongs.getPlaylist_pos());
             return true;
         });
         it_add_to_other_playlist.setOnMenuItemClickListener(menuItem -> {
@@ -493,12 +493,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onClickArtistItem(int position) {
         String artistName = artists.get(position).getName();
-        fragmentArtistDetail = new FragmentArtistDetail();
+        fragmentArtistSongs = new FragmentArtistSongs();
         Bundle bundle = new Bundle();
         bundle.putString("artist", artistName);
-        fragmentArtistDetail.setArguments(bundle);
+        fragmentArtistSongs.setArguments(bundle);
         pagerAdapter.get_list_fragment().remove(1);
-        pagerAdapter.get_list_fragment().add(1, fragmentArtistDetail);
+        pagerAdapter.get_list_fragment().add(1, fragmentArtistSongs);
         pagerAdapter.notifyDataSetChanged();
         setIconForTabTitle();
     }
@@ -506,12 +506,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     @Override
     public void onClickPlaylistItem(int position) {
         changeMenuInPlaylistDetails();
-        fragmentPlaylistDetails = new FragmentPlaylistDetails();
+        fragmentPlaylistSongs = new FragmentPlaylistSongs();
         Bundle bundle = new Bundle();
         bundle.putInt("playlist_pos", position);
-        fragmentPlaylistDetails.setArguments(bundle);
+        fragmentPlaylistSongs.setArguments(bundle);
         pagerAdapter.get_list_fragment().remove(2);
-        pagerAdapter.get_list_fragment().add(2, fragmentPlaylistDetails);
+        pagerAdapter.get_list_fragment().add(2, fragmentPlaylistSongs);
         pagerAdapter.notifyDataSetChanged();
         setIconForTabTitle();
     }
@@ -597,8 +597,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             }
         }
         dbMusicHelper.addSongsToPlaylist(selectedSongs, playlistId);
-        if (fragmentPlaylistDetails != null && position == fragmentPlaylistDetails.getPlaylist_pos()) {
-            fragmentPlaylistDetails.getAdapterSong().setList(dbMusicHelper.getPlaylistSongs(playlistId));
+        if (fragmentPlaylistSongs != null && position == fragmentPlaylistSongs.getPlaylist_pos()) {
+            fragmentPlaylistSongs.getAdapterSong().setList(dbMusicHelper.getPlaylistSongs(playlistId));
         }
         popStackedFragment();
     }
@@ -612,10 +612,10 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
                 selectedSongs.add(song);
             }
         }
-        int playlistId = playLists.get(fragmentPlaylistDetails.getPlaylist_pos()).getId();
+        int playlistId = playLists.get(fragmentPlaylistSongs.getPlaylist_pos()).getId();
         dbMusicHelper.deleteSongsFromPlaylist(playlistId, selectedSongs);
         songs = dbMusicHelper.getPlaylistSongs(playlistId);
-        fragmentPlaylistDetails.getAdapterSong().setList(songs);
+        fragmentPlaylistSongs.getAdapterSong().setList(songs);
         musicSrv.setList(songs);
     }
 
@@ -625,13 +625,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             fragmentSongs.getAdapterSong().setMultiSelected(false);
             fragmentSongs.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
         } else if (viewPager.getCurrentItem() == 1) {
-            fragmentArtistDetail.getAdapterSong().setLongClicked(false);
-            fragmentArtistDetail.getAdapterSong().setMultiSelected(false);
-            fragmentArtistDetail.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
+            fragmentArtistSongs.getAdapterSong().setLongClicked(false);
+            fragmentArtistSongs.getAdapterSong().setMultiSelected(false);
+            fragmentArtistSongs.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
         } else {
-            fragmentPlaylistDetails.getAdapterSong().setLongClicked(false);
-            fragmentPlaylistDetails.getAdapterSong().setMultiSelected(false);
-            fragmentPlaylistDetails.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
+            fragmentPlaylistSongs.getAdapterSong().setLongClicked(false);
+            fragmentPlaylistSongs.getAdapterSong().setMultiSelected(false);
+            fragmentPlaylistSongs.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
         }
         recoverMenu();
     }
