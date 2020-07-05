@@ -11,6 +11,7 @@
     <string name="update_success">Update successfully!</string>
     <string name="wrong_password">Wrong password!</string>
     <string name="wrong_new_password">New password is wrong</string>
+    <string name="Save_password">Save Your Password</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="last_added">Last added</string>
