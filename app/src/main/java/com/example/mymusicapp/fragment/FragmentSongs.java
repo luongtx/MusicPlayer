@@ -90,11 +90,11 @@ public class FragmentSongs extends Fragment {
         return adapterSong;
     }
 
-//    @Override
-//    public void onDestroy() {
-//        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
-//        musicSrv.setList(ActivityMain.songs);
-//        super.onDestroy();
-//    }
+    @Override
+    public void onDestroy() {
+        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
+        musicSrv.setList(ActivityMain.songs);
+        super.onDestroy();
+    }
 
 }

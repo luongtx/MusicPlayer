@@ -14,12 +14,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.repository.DBAccountHelper;
 import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.Locale;
 
@@ -121,7 +124,6 @@ public class ActivityAccount extends AppCompatActivity {
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginManager.getInstance().logOut();
                 Intent intent = new Intent(ActivityAccount.this, ActivityLogin.class);
                 intent.putExtra("tvn", name);
                 tvName.setText("");

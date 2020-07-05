@@ -11,6 +11,7 @@
     <string name="update_success">Cập nhật thành công</string>
     <string name="wrong_password">Sai mật khẩu</string>
     <string name="wrong_new_password">Mật khẩu mới nhập không đúng</string>
+    <string name="Save_password">Nhớ mật khẩu</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="last_added">Last added</string>
