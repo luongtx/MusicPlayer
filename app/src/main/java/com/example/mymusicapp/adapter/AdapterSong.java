@@ -88,7 +88,11 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
                 modelSelectedItem.setSelectd(!modelSelectedItem.isSelectd());
                 view.setBackgroundColor(modelSelectedItem.isSelectd() ? Color.CYAN : Color.WHITE);
             } else {
-                songItemClickListener.onSongItemClick(getAdapterPosition());
+                try {
+                    songItemClickListener.onSongItemClick(getAdapterPosition());
+                }catch(Exception e) {
+
+                }
             }
 
         }

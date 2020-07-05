@@ -240,8 +240,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     private void setOnClickListenerForMenuItem() {
         it_my_account.setOnMenuItemClickListener( menuItem -> {
             Intent accountIntent = new Intent(ActivityMain.this, ActivityAccount.class);
-            accountIntent.putExtra("name", name);
-            accountIntent.putExtra("check", check);
+            accountIntent.putExtra(ActivityLogin.NAME, name);
+            accountIntent.putExtra(ActivityLogin.CHECK, check);
             startActivity(accountIntent);
             finish();
             return true;

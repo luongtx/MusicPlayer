@@ -90,10 +90,21 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         findViewById(R.id.sign_in_button).setOnClickListener((View.OnClickListener) this);
         loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
-        checkLoginStatus();
+//        checkLoginStatus();
 
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE);
         language = prefs.getString("prefer_lang", "en");
+        String cookie = prefs.getString(CHECK, "");
+        String nameID = prefs.getString(NAME,"");
+        if(cookie.equals("") || nameID.equals(""))
+        {
+            LoginManager.getInstance().logOut();
+            signOut();
+        }
+        else
+        {
+            startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
+        }
         setLocale(language);
         spinner = (Spinner) findViewById(R.id.spinner);
         listLang = new ArrayList<>();
@@ -238,17 +249,17 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     editor.putString(NAME, name);
                     editor.putString(CHECK,"API");
                     editor.apply();
-                startActivityForResult(intent,ACTIVITY3);
+                startActivity(intent);
             }
 
 
 
-        } else if (requestCode == ACTIVITY3) {
-            if (resultCode == RESULT_OK) {
-                signOut();
+//        } else if (requestCode == ACTIVITY3) {
+//            if (resultCode == RESULT_OK) {
+//                signOut();
 //                LoginManager.getInstance().logOut();
-                Toast.makeText(this, getString(R.string.logout_success) + data.getStringExtra("tvn"), Toast.LENGTH_SHORT).show();
-            }
+//                Toast.makeText(this, getString(R.string.logout_success) + data.getStringExtra("tvn"), Toast.LENGTH_SHORT).show();
+//            }
 
         }
     }
@@ -298,7 +309,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void signOut() {
+    public void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
@@ -308,11 +319,11 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    private void checkLoginStatus() {
-        if (AccessToken.getCurrentAccessToken() != null) {
-            loaduserProfile(AccessToken.getCurrentAccessToken());
-        }
-    }
+//    private void checkLoginStatus() {
+//        if (AccessToken.getCurrentAccessToken() != null) {
+//            loaduserProfile(AccessToken.getCurrentAccessToken());
+//        }
+//    }
 
 
     @Override
