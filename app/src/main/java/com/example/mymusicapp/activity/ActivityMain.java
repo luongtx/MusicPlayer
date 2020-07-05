@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -23,12 +24,13 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import androidx.appcompat.widget.SearchView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -75,6 +77,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public static MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound = false;
+    public static ArrayList<Song> all_songs;
     public static ArrayList<Song> songs;
     public static ArrayList<Artist> artists;
     public static ArrayList<Playlist> playLists;
@@ -123,6 +126,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         musicProvider = new MusicProvider(this);
         songs = musicProvider.loadSongs();
+        all_songs = songs;
         artists = musicProvider.loadArtist();
 
         dbMusicHelper = new DBMusicHelper(ActivityMain.this);
@@ -141,6 +145,29 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         check = sharedPreferences.getString(ActivityLogin.CHECK, "");
         prefer_lang = sharedPreferences.getString("prefer_lang", "en");
         setLocale(prefer_lang);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(position == 0) {
+                    songs = musicProvider.loadSongs();
+                    fragmentSongs.getAdapterSong().setList(songs);
+                    fragmentSongs.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
+                    musicSrv.setList(songs);
+                    highlightCurrentPosition();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void setIconForTabTitle() {
@@ -159,7 +186,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     }
 
     public void highlightCurrentPosition() {
-        fragmentSongs.changeSongItemDisplay(musicSrv.getCurrSongIndex());
+        fragmentSongs.changeSongItemDisplay(musicSrv.getPlayingSongPos());
     }
 
     private ServiceConnection musicConnection = new ServiceConnection(){
@@ -426,6 +453,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 playlist_name = input.getText().toString().trim();
@@ -623,15 +651,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     public void cancelSelected() {
         if (viewPager.getCurrentItem() == 0) {
-            fragmentSongs.getAdapterSong().setLongClicked(false);
             fragmentSongs.getAdapterSong().setMultiSelected(false);
             fragmentSongs.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
         } else if (viewPager.getCurrentItem() == 1) {
-            fragmentArtistSongs.getAdapterSong().setLongClicked(false);
             fragmentArtistSongs.getAdapterSong().setMultiSelected(false);
             fragmentArtistSongs.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
         } else {
-            fragmentPlaylistSongs.getAdapterSong().setLongClicked(false);
             fragmentPlaylistSongs.getAdapterSong().setMultiSelected(false);
             fragmentPlaylistSongs.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
         }

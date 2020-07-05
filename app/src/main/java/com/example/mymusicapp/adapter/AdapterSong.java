@@ -33,7 +33,6 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
     private ArrayList<ModelSelectedItem> modelSelectedItems;
 
     private boolean isMultiSelected = false;
-    private boolean isLongClicked = false;
 
     public AdapterSong(ArrayList<Song> songs, Context context) {
         this.songs = songs;
@@ -46,6 +45,11 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
         notifyDataSetChanged();
     }
 
+    public void setModel(ArrayList<ModelSelectedItem> modelSelectedItems) {
+        this.modelSelectedItems = modelSelectedItems;
+        notifyDataSetChanged();
+    }
+
     public interface SongItemClickListener {
         void onSongItemClick(int position);
         void onMultipleSelected();
@@ -55,28 +59,18 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
         this.isMultiSelected = isMultiSelected;
     }
 
-    public void setLongClicked(boolean longClicked) {
-        isLongClicked = longClicked;
-    }
-
-    public void setModel(ArrayList<ModelSelectedItem> modelSelectedItems) {
-        this.modelSelectedItems = modelSelectedItems;
-        notifyDataSetChanged();
-    }
-
+    SongItemClickListener songItemClickListener;
     class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
         View view;
         ImageView ivImg;
         TextView tvTitle, tvArtist;
-        SongItemClickListener songItemClickListener;
 
-        SongViewHolder(View itemView, SongItemClickListener songItemClickListener) {
+        SongViewHolder(View itemView) {
             super(itemView);
             this.view = itemView;
             ivImg = itemView.findViewById(R.id.ivSong);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvArtist = itemView.findViewById(R.id.tvArtist);
-            this.songItemClickListener = songItemClickListener;
             itemView.setOnLongClickListener(this);
             itemView.setOnClickListener(this);
         }
@@ -91,7 +85,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
                 try {
                     songItemClickListener.onSongItemClick(getAdapterPosition());
                 }catch(Exception e) {
-
+                    e.printStackTrace();
                 }
             }
 
@@ -102,7 +96,6 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
             ModelSelectedItem modelSelectedItem = modelSelectedItems.get(getAdapterPosition());
             modelSelectedItem.setSelectd(!modelSelectedItem.isSelectd());
             showPopupMenu(this, getAdapterPosition());
-            AdapterSong.this.setLongClicked(true);
             return true;
         }
     }
@@ -127,7 +120,7 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
                     modelSelectedItems.get(position).setSelectd(true);
                     setMultiSelected(true);
                     holder.view.setBackgroundColor(context.getResources().getColor(R.color.colorSelected));
-                    ((ActivityMain)context).changeMenuWhenSelectMultipleItem();
+                    songItemClickListener.onMultipleSelected();
                     return true;
                 default:
                     return false;
@@ -144,8 +137,9 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
     @NonNull
     @Override
     public AdapterSong.SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_item, parent,false);
-        return new SongViewHolder(view, (SongItemClickListener) parent.getContext());
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_item, parent, false);
+        songItemClickListener = (SongItemClickListener) parent.getContext();
+        return new SongViewHolder(view);
     }
 
     @Override

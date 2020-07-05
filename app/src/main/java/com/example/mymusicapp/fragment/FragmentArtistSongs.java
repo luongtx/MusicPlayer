@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
@@ -17,6 +19,7 @@ import com.example.mymusicapp.entity.Song;
 
 import java.util.ArrayList;
 
+import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 
@@ -44,10 +47,15 @@ public class FragmentArtistSongs extends Fragment {
         tvArtist.setText(artistName);
 //        MusicProvider provider = new MusicProvider(getActivity());
         songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongsByArtist(artistName);
+        ActivityMain.songs = songs;
         adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         musicSrv.setList(songs);
         rcv_songs.setAdapter(adapterSong);
+        rcv_songs.setHasFixedSize(true);
+        rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
+
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
         iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
         return view;

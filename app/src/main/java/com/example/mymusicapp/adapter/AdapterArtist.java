@@ -22,7 +22,7 @@ public class AdapterArtist extends RecyclerView.Adapter<AdapterArtist.ArtistHold
         void onClickArtistItem(int position);
     }
 
-    static class ArtistHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class ArtistHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView ivArtist;
         TextView tvArtist, tvNoSongs;

@@ -69,7 +69,6 @@ public class MusicService extends Service implements
 
     public void setList(ArrayList<Song> theSongs) {
         songs = theSongs;
-        currSongIndex = -1;
     }
 
     public class MusicBinder extends Binder {
@@ -126,7 +125,7 @@ public class MusicService extends Service implements
         serviceCallbacks.onMusicResume();
     }
 
-    public int getCurrSongIndex() {
+    public int getPlayingSongPos() {
         return currSongIndex;
     }
 
@@ -177,5 +176,9 @@ public class MusicService extends Service implements
 
     public ArrayList<Song> getSongs() {
         return songs;
+    }
+
+    public int getSongIdAt(int position) {
+        return songs.get(position).getId();
     }
 }
