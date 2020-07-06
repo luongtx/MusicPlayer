@@ -48,13 +48,13 @@
             android:textSize="20sp">
 
         </TextView>
-
-        <fragment
-            android:id="@+id/fragment_list_song"
-            class="com.example.mymusicapp.fragment.FragmentSongs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout="@layout/fragment_songs" />
+        <include layout="@layout/fragment_songs"/>
+<!--        <fragment-->
+<!--            android:id="@+id/fragment_list_song"-->
+<!--            class="com.example.mymusicapp.fragment.FragmentSongs"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            tools:layout="@layout/fragment_songs" />-->
 
     </LinearLayout>
 <!--    <include layout="@layout/mini_control" />-->

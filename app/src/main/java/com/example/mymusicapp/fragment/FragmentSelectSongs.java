@@ -40,7 +40,7 @@ public class FragmentSelectSongs extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_selected_songs, container, false);
-        rcv_songs = view.findViewById(R.id.rcv_songs);
+        rcv_songs = view.findViewById(R.id.rcv_select_songs);
 
         ArrayList<Song> songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
         ActivityMain.songs = songs;

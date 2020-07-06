@@ -49,7 +49,7 @@ public class FragmentPlaylistSongs extends Fragment {
         int playlistId = playlist.getId();
         tv_playlist_name.setText(playlist.getName());
 
-        DBMusicHelper dbMusicHelper = new DBMusicHelper(getActivity());
+        DBMusicHelper dbMusicHelper = ((ActivityMain)getActivity()).getDbMusicHelper();
         songs = dbMusicHelper.getPlaylistSongs(playlistId);
         ActivityMain.songs = songs;
         adapterSong = new AdapterSong(songs, getContext());

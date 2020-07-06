@@ -40,15 +40,9 @@ public class FragmentSongs extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
         songs = ActivityMain.songs;
-//        int currentPagePos = ((ActivityMain) getActivity()).getCurrentPagePosition();
-//        if (currentPagePos == 0) {
-//             songs = ((ActivityMain) getActivity()).getMusicProvider().loadSongs();
-//        }
-
         if(musicSrv != null) musicSrv.setList(songs);
         adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
