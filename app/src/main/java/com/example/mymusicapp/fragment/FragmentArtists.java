@@ -58,7 +58,7 @@ public class FragmentArtists extends Fragment{
 
     public void onArtistItemClicked(int position) {
         String artistName = artists.get(position).getName();
-        FragmentArtistSongs fragmentArtistSongs = ((ActivityMain)context).newAristSongFragment();
+        FragmentArtistSongs fragmentArtistSongs = ((ActivityMain)context).newArtistSongFragment();
         Bundle bundle = new Bundle();
         bundle.putString("artist", artistName);
         fragmentArtistSongs.setArguments(bundle);

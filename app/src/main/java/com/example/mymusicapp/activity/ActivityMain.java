@@ -77,6 +77,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentArtistSongs fragmentArtistSongs;
     FragmentMediaControl fragmentMediaControl;
     FragmentTimerPicker fragmentTimerPicker;
+    AlertDialogPlaylist alertDialogPlaylist;
 
     private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_star, R.drawable.ic_featured_play_list};
     private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
@@ -111,6 +112,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         loadData();
         setOnChangeListenerForViewPager();
+        alertDialogPlaylist = new AlertDialogPlaylist(this);
 
     }
 
@@ -147,15 +149,23 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             }
             @Override
             public void onPageSelected(int position) {
-                if(position == 0) {
+                if (position == 0) {
                     songs = musicProvider.loadSongs();
-                    fragmentSongs.getAdapterSong().setList(songs);
-                    fragmentSongs.getAdapterSong().initSelectedSongs();
+                    fragmentSongs.notifySongStateChanges(songs);
                     setList(songs);
-                } else if(position == 1) {
-                    if()
+                } else if (position == 1) {
+                    if (pagerAdapter.getItem(1).equals(fragmentArtistSongs)) {
+                        songs = musicProvider.loadSongsByArtist(fragmentArtistSongs.getArtistName());
+                        fragmentArtistSongs.notifySongStateChanges(songs);
+                        setList(songs);
+                    }
+                } else {
+                    if (pagerAdapter.getItem(2).equals(fragmentPlaylistSongs)) {
+                        songs = dbMusicHelper.getPlaylistSongs(fragmentPlaylistSongs.getPlaylist_pos());
+                        fragmentPlaylistSongs.notifySongStateChanges(songs);
+                        setList(songs);
+                    }
                 }
-//                recoverFragment();
                 recoverMenu();
                 setIconForTabTitle();
             }
@@ -227,12 +237,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                fragmentSongs.getAdapterSong().getFilter().filter(newText);
-                if (fragmentPlaylistSongs != null) {
-                    fragmentPlaylistSongs.getAdapterSong().getFilter().filter(newText);
-                }
-                if (fragmentArtistSongs != null) {
+                if (viewPager.getCurrentItem() == 0) {
+                    fragmentSongs.getAdapterSong().getFilter().filter(newText);
+                } else if (viewPager.getCurrentItem() == 1) {
                     fragmentArtistSongs.getAdapterSong().getFilter().filter(newText);
+                } else {
+                    fragmentPlaylistSongs.getAdapterSong().getFilter().filter(newText);
                 }
                 return false;
             }
@@ -269,7 +279,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             return true;
         });
         it_new_playlist.setOnMenuItemClickListener( menuItem -> {
-            fragmentPlaylist.onClickAddNewPlaylist();
+            alertDialogPlaylist.createDialogAddNewPlaylist();
             return true;
         });
         it_add_to_this_playlist.setOnMenuItemClickListener(menuItem -> {
@@ -432,7 +442,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     //add song to any playlist
     public void onClickOptionAddToPlaylist() {
-        new AlertDialogPlaylist(this);
+        alertDialogPlaylist.createDialogAddSongsToPlaylist();
     }
 
     public void cancelSelected() {
@@ -587,7 +597,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         return fragmentPlaylistSongs;
     }
 
-    public FragmentArtistSongs newAristSongFragment() {
+    public FragmentArtistSongs newArtistSongFragment() {
         fragmentArtistSongs = new FragmentArtistSongs();
         return fragmentArtistSongs;
     }
@@ -602,6 +612,5 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         ActivityMain.songs = songs;
         musicSrv.setList(songs);
     }
-
 
 }

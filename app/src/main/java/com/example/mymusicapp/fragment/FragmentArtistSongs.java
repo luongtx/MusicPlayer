@@ -22,6 +22,7 @@ import com.example.mymusicapp.entity.Song;
 import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
+import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 import static com.example.mymusicapp.activity.ActivityMain.songs;
 
 
@@ -32,6 +33,7 @@ public class FragmentArtistSongs extends Fragment {
 
     RecyclerView rcv_artist_songs;
     AdapterSong adapterSong;
+    String artistName;
     public FragmentArtistSongs() {
         // Required empty public constructor
     }
@@ -44,7 +46,7 @@ public class FragmentArtistSongs extends Fragment {
         View view = inflater.inflate(R.layout.fragment_artist_songs, container, false);
         rcv_artist_songs = view.findViewById(R.id.rcv_artist_songs);
         TextView tvArtist = view.findViewById(R.id.tvArtist);
-        String artistName = getArguments().getString("artist");
+        artistName = getArguments().getString("artist");
         tvArtist.setText(artistName);
 
         songs = ((ActivityMain) context).loadSongsByArtist(artistName);
@@ -86,5 +88,9 @@ public class FragmentArtistSongs extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
+    }
+
+    public String getArtistName() {
+        return artistName;
     }
 }

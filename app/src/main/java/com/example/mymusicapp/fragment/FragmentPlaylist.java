@@ -3,7 +3,6 @@ package com.example.mymusicapp.fragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -60,43 +58,6 @@ public class FragmentPlaylist extends Fragment implements AdapterPlayList.Playli
 
     public AdapterPlayList getAdapterPlayList() {
         return adapterPlayList;
-    }
-
-    public void onClickAddNewPlaylist() {
-        //show input dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(R.string.enter_new_playlist);
-        final EditText input = new EditText(getContext());
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String playlist_name = input.getText().toString().trim();
-                if(playlist_name.length() == 0) {
-                    Toast.makeText(getContext(), R.string.enter_playlist_name, Toast.LENGTH_SHORT).show();
-                } else {
-                    //add playlist
-                    Playlist playlist = new Playlist();
-                    playlist.setName(playlist_name);
-                    if (playLists.stream().noneMatch(pls -> pls.getName().equals(playlist_name))) {
-                        playLists.add(playlist);
-                        ((ActivityMain) context).addPlaylist(playlist);
-                        getAdapterPlayList().notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getContext(), getString(R.string.playlist_name_duplicate), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
     }
 
     public void updatePlaylistName(int position) {
@@ -172,5 +133,9 @@ public class FragmentPlaylist extends Fragment implements AdapterPlayList.Playli
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
+    }
+
+    public void notifyDataChanged() {
+        adapterPlayList.notifyDataSetChanged();
     }
 }

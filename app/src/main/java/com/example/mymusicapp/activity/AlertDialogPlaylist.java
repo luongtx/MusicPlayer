@@ -2,12 +2,17 @@ package com.example.mymusicapp.activity;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.text.InputType;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mymusicapp.R;
@@ -24,10 +29,9 @@ public class AlertDialogPlaylist extends AppCompatActivity {
 
     public AlertDialogPlaylist(Context context) {
         this.context = context;
-        createDialog();
     }
 
-    public void createDialog() {
+    public void createDialogAddSongsToPlaylist() {
         AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
         builder.setTitle(R.string.add_selected_song_to_playlist);
         LinearLayout layout = new LinearLayout(context);
@@ -72,6 +76,43 @@ public class AlertDialogPlaylist extends AppCompatActivity {
             }
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    public void createDialogAddNewPlaylist() {
+        //show input dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.enter_new_playlist);
+        final EditText input = new EditText(context);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String playlist_name = input.getText().toString().trim();
+                if(playlist_name.length() == 0) {
+                    Toast.makeText(context, R.string.enter_playlist_name, Toast.LENGTH_SHORT).show();
+                } else {
+                    //add playlist
+                    Playlist playlist = new Playlist();
+                    playlist.setName(playlist_name);
+                    if (playLists.stream().noneMatch(pls -> pls.getName().equals(playlist_name))) {
+                        playLists.add(playlist);
+                        ((ActivityMain) context).addPlaylist(playlist);
+                        ((ActivityMain) context).fragmentPlaylist.notifyDataChanged();
+                    } else {
+                        Toast.makeText( context, getString(R.string.playlist_name_duplicate), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
         builder.show();
     }
 
