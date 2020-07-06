@@ -2,8 +2,11 @@ package com.example.mymusicapp.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mymusicapp.R;
+import com.example.mymusicapp.repository.DBAccountHelper;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -34,13 +38,14 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.example.mymusicapp.repository.DBAccountHelper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "";
@@ -86,14 +91,32 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         findViewById(R.id.sign_in_button).setOnClickListener((View.OnClickListener) this);
         loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
-        checkLoginStatus();
+//        checkLoginStatus();
 
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE);
         language = prefs.getString("prefer_lang", "en");
+        String cookie = prefs.getString(CHECK, "");
+        String nameID = prefs.getString(NAME,"");
+        if(cookie.equals("") || nameID.equals(""))
+        {
+            LoginManager.getInstance().logOut();
+            signOut();
+        }
+        else
+        {
+            startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
+        }
+        setLocale(language);
         spinner = (Spinner) findViewById(R.id.spinner);
         listLang = new ArrayList<>();
-        listLang.add("Tiếng Việt");
-        listLang.add("English");
+
+        if (language.equals("vi")) {
+            listLang.add("Tiếng Việt");
+            listLang.add("English");
+        } else {
+            listLang.add("English");
+            listLang.add("Tiếng Việt");
+        }
 
         ArrayAdapter spinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, listLang);
 
@@ -105,10 +128,11 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 String Lang = listLang.get(position);
                 if(Lang.equals("Tiếng Việt"))
                 {
-                    language = "vn";
+                    language = "vi";
                     SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
                     editor.putString("prefer_lang", language);
                     editor.apply();
+                    setLocale(language);
                 }
                 else
                 {
@@ -116,6 +140,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
                     editor.putString("prefer_lang", language);
                     editor.apply();
+                    setLocale(language);
                 }
             }
 
@@ -220,17 +245,17 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     editor.putString(NAME, name);
                     editor.putString(CHECK,"API");
                     editor.apply();
-                startActivityForResult(intent,ACTIVITY3);
+                startActivity(intent);
             }
 
 
 
-        } else if (requestCode == ACTIVITY3) {
-            if (resultCode == RESULT_OK) {
-                signOut();
+//        } else if (requestCode == ACTIVITY3) {
+//            if (resultCode == RESULT_OK) {
+//                signOut();
 //                LoginManager.getInstance().logOut();
-                Toast.makeText(this, getString(R.string.logout_success) + data.getStringExtra("tvn"), Toast.LENGTH_SHORT).show();
-            }
+//                Toast.makeText(this, getString(R.string.logout_success) + data.getStringExtra("tvn"), Toast.LENGTH_SHORT).show();
+//            }
 
         }
     }
@@ -280,7 +305,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void signOut() {
+    public void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
@@ -290,11 +315,11 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    private void checkLoginStatus() {
-        if (AccessToken.getCurrentAccessToken() != null) {
-            loaduserProfile(AccessToken.getCurrentAccessToken());
-        }
-    }
+//    private void checkLoginStatus() {
+//        if (AccessToken.getCurrentAccessToken() != null) {
+//            loaduserProfile(AccessToken.getCurrentAccessToken());
+//        }
+//    }
 
 
     @Override
@@ -304,6 +329,19 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 signIn();
                 break;
             // ...
+        }
+    }
+
+    public void setLocale(String lang) {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration config = res.getConfiguration();
+        if (!config.locale.getLanguage().equals(myLocale.getLanguage())) {
+            config.locale = myLocale;
+            res.updateConfiguration(config, dm);
+            Intent refresh = new Intent(this, ActivityLogin.class);
+            startActivity(refresh);
         }
     }
 }

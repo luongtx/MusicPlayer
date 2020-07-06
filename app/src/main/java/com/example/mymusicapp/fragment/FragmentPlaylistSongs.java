@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
@@ -19,25 +21,26 @@ import com.example.mymusicapp.repository.DBMusicHelper;
 
 import java.util.ArrayList;
 
+import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentPlaylistDetails extends Fragment {
+public class FragmentPlaylistSongs extends Fragment {
 
     RecyclerView rcv_songs;
     AdapterSong adapterSong;
     ArrayList<Song> songs;
     int playlist_pos;
-    public FragmentPlaylistDetails() {
+    public FragmentPlaylistSongs() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_playlist_details, container, false);
+        View view = inflater.inflate(R.layout.fragment_playlist_songs, container, false);
         TextView tv_playlist_name = view.findViewById(R.id.tv_playlist_name);
         rcv_songs = view.findViewById(R.id.rcv_songs);
 
@@ -48,13 +51,19 @@ public class FragmentPlaylistDetails extends Fragment {
 
         DBMusicHelper dbMusicHelper = new DBMusicHelper(getActivity());
         songs = dbMusicHelper.getPlaylistSongs(playlistId);
-        adapterSong = new AdapterSong(songs);
+        ActivityMain.songs = songs;
+        adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         musicSrv.setList(songs);
         rcv_songs.setAdapter(adapterSong);
+        rcv_songs.setHasFixedSize(true);
+        rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
+
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
         iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
-
+        ImageView btn_plus = view.findViewById(R.id.btn_plus_song);
+        btn_plus.setOnClickListener(v -> ((ActivityMain)getActivity()).onClickOptionAddSongs(playlist_pos));
         return view;
     }
 

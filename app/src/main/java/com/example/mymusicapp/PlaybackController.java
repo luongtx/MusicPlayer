@@ -10,7 +10,9 @@ public class PlaybackController {
 
     View view;
     ImageButton iv_prev, iv_play, iv_next, iv_shuffle, iv_loop;
-    static int prev_song_id = -1, curr_song_id = -1;
+
+    private int currId = -1;
+    private int pickedId = -1;
     public PlaybackController(View view) {
         this.view = view;
         iv_prev = (ImageButton) view.findViewById(R.id.iv_prev);
@@ -30,11 +32,12 @@ public class PlaybackController {
         iv_loop.setOnClickListener(this::loop);
     }
 
-    void previous(View view) {
-        musicSrv.playSong(musicSrv.getCurrSongIndex() - 1);
+    public void previous(View view) {
+        musicSrv.playSong(musicSrv.getPlayingSongPos() - 1);
+        iv_play.setBackgroundResource(R.drawable.ic_pause);
     }
 
-    void toggle_play(View view) {
+    public void toggle_play(View view) {
         if (MusicService.player.isPlaying()) {
             musicSrv.pause();
             iv_play.setBackgroundResource(R.drawable.ic_play);
@@ -44,11 +47,12 @@ public class PlaybackController {
         }
     }
 
-    void next(View view) {
-        musicSrv.playSong(musicSrv.getCurrSongIndex() + 1);
+    public void next(View view) {
+        musicSrv.playSong(musicSrv.getPlayingSongPos() + 1);
+        iv_play.setBackgroundResource(R.drawable.ic_pause);
     }
 
-    void shuffle(View view) {
+    public void shuffle(View view) {
         iv_shuffle = view.findViewById(R.id.iv_shuffle);
         if (MusicService.isShuffling) {
             MusicService.isShuffling = false;
@@ -71,13 +75,14 @@ public class PlaybackController {
     }
 
     public void songPicked(int position) {
-        curr_song_id = musicSrv.getSongs().get(position).getId();
-        if (curr_song_id != prev_song_id) {
+        pickedId = musicSrv.getSongIdAt(position);
+        if(pickedId != currId) {
             musicSrv.playSong(position);
+            iv_play.setBackgroundResource(R.drawable.ic_pause);
         } else {
             toggle_play(view);
         }
-        prev_song_id = curr_song_id;
+        currId = pickedId;
         view.setVisibility(View.VISIBLE);
     }
 }

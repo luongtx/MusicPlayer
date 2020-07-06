@@ -43,7 +43,8 @@ public class FragmentSelectSongs extends Fragment {
         rcv_songs = view.findViewById(R.id.rcv_songs);
 
         ArrayList<Song> songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
-        adapterSong = new AdapterSong(songs);
+        ActivityMain.songs = songs;
+        adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         adapterSong.setMultiSelected(true);
         rcv_songs.setAdapter(adapterSong);

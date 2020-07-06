@@ -43,10 +43,15 @@ public class FragmentSongs extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
-        songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
-        adapterSong = new AdapterSong(songs);
+        songs = ActivityMain.songs;
+//        int currentPagePos = ((ActivityMain) getActivity()).getCurrentPagePosition();
+//        if (currentPagePos == 0) {
+//             songs = ((ActivityMain) getActivity()).getMusicProvider().loadSongs();
+//        }
+
+        if(musicSrv != null) musicSrv.setList(songs);
+        adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
-        adapterSong.setMultiSelected(false);
         rcv_songs.setAdapter(adapterSong);
         rcv_songs.setHasFixedSize(true);
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -89,11 +94,11 @@ public class FragmentSongs extends Fragment {
         return adapterSong;
     }
 
-    @Override
-    public void onDestroy() {
-        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
-        musicSrv.setList(ActivityMain.songs);
-        super.onDestroy();
-    }
+//    @Override
+//    public void onDestroy() {
+//        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
+//        musicSrv.setList(ActivityMain.songs);
+//        super.onDestroy();
+//    }
 
 }

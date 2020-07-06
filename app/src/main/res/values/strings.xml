@@ -11,6 +11,7 @@
     <string name="update_success">Update successfully!</string>
     <string name="wrong_password">Wrong password!</string>
     <string name="wrong_new_password">New password is wrong</string>
+    <string name="Save_password">Save Your Password</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="last_added">Last added</string>
@@ -22,7 +23,7 @@
     <string name="options">Options</string>
     <string name="refresh">refresh</string>
     <string name="new_playlist">new playlist</string>
-    <string name="set_timer">set timer</string>
+    <string name="set_timer">sleep timer</string>
     <string name="settings">settings</string>
     <string name="delete_playlist">delete playlist</string>
     <string name="add_songs">add song to playlist</string>
@@ -38,7 +39,7 @@
     <string name="confirm">CONFIRM</string>
     <string name="songs_to_add">SELECT SONGS</string>
     <string name="rename_playlist">rename playlist</string>
-    <string name="delete_from_playlist">delete selected songs</string>
+    <string name="delete_from_playlist">remove songs from playlist</string>
     <string name="add_to_playlist">add to playlist</string>
     <string name="deselect_selected_item">cancel selected item</string>
     <string name="seleted_playlist_song_deleted">Deleted selected songs from playlist!</string>
@@ -62,6 +63,13 @@
     <string name="enter_account_name">Enter account name</string>
     <string name="have_no_account">Have no account?</string>
     <string name="search_song_name">Enter song name </string>
-    <string name="enter_new_playlist">Enter playlist name</string>
+    <string name="enter_new_playlist">Enter new playlist name</string>
     <string name="success_update_playlist">Update playlist successfully</string>
+    <string name="add_selected_song_to_playlist">Add selected song to playlist</string>
+    <string name="multi_select">select multiple songs</string>
+    <string name="playlist_name_duplicate">Duplicate playlist name, please type again!</string>
+    <string name="change_language">change language</string>
+    <string name="english">English</string>
+    <string name="tiengvn">Tiếng việt</string>
+    <string name="timer">Time remaining</string>
 </resources>

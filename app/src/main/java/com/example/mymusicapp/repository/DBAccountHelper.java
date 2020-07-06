@@ -12,6 +12,7 @@ public class DBAccountHelper {
     public static final String KEY_NAME ="person_name";
     public static final String KEY_PASS ="_pass";
 
+
     private static final String DATABASE_NAME = "AccountDB";
     private static final String DATABASE_TABLE = "ContactsTable";
     private static final int DATABASE_VERSION = 1;

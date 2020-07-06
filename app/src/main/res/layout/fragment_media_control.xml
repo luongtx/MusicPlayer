@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/colorPrimaryLight"
     tools:context="com.example.mymusicapp.activity.ActivityMain">
     <ImageView
         android:id="@+id/iv_end"
         android:layout_margin="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_collapse">
+        app:srcCompat="@drawable/ic_collapse">
     </ImageView>
 
     <ImageView
@@ -79,7 +80,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_volume_down" />
+            app:srcCompat="@drawable/ic_volume_down" />
 
         <SeekBar
             android:id="@+id/volumeBar"
@@ -91,7 +92,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_volume_up" />
+            app:srcCompat="@drawable/ic_volume_up" />
     </LinearLayout>
 
     <LinearLayout

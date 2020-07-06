@@ -125,7 +125,7 @@ public class MusicService extends Service implements
         serviceCallbacks.onMusicResume();
     }
 
-    public int getCurrSongIndex() {
+    public int getPlayingSongPos() {
         return currSongIndex;
     }
 
@@ -163,7 +163,7 @@ public class MusicService extends Service implements
         mp.start();
     }
 
-    public static String getHumanTime(int milliseconds) {
+    public static String getReadableTime(int milliseconds) {
         int seconds = milliseconds/1000;
         int minutes = seconds/60;
         int r_seconds = seconds % 60;
@@ -176,5 +176,9 @@ public class MusicService extends Service implements
 
     public ArrayList<Song> getSongs() {
         return songs;
+    }
+
+    public int getSongIdAt(int position) {
+        return songs.get(position).getId();
     }
 }

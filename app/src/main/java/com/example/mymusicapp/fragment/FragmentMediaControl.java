@@ -35,7 +35,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     TextView tvStart, tvEnd;
     TextView tvArtist, tvTitle;
 //    ImageButton btn_next, btn_prev, btn_play, btn_shuffle, btn_loop;
-    LinearLayout layout_mini_play;
+    LinearLayout layout_mini_controller;
     Song currentSong;
     SeekBarTask seekBarTask;
     PlaybackController playbackController;
@@ -47,9 +47,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         if(view != null) return view;
         view = inflater.inflate(R.layout.fragment_media_control, container, false);
 
-        if (MusicService.currSongIndex <= ActivityMain.songs.size()) {
-            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
-        }
+        currentSong = musicSrv.getSongs().get(MusicService.currSongIndex);
         tvTitle = view.findViewById(R.id.tvTitle);
         tvArtist = view.findViewById(R.id.tvArtist);
         tvTitle.setText(currentSong.getTitle());
@@ -63,13 +61,13 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         volumnBar = view.findViewById(R.id.volumeBar);
 
 
-        layout_mini_play = view.findViewById(R.id.layout_mini_play);
-        playbackController = new PlaybackController(layout_mini_play);
+        layout_mini_controller = view.findViewById(R.id.layout_mini_controller);
+        playbackController = new PlaybackController(layout_mini_controller);
 
         Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
 
-        tvStart.setText(MusicService.getHumanTime(MusicService.player.getCurrentPosition()));
-        tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
+        tvStart.setText(MusicService.getReadableTime(MusicService.player.getCurrentPosition()));
+        tvEnd.setText(MusicService.getReadableTime(currentSong.getDuration()));
 
         volumnBar.setProgress(50);
         volumnBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -102,13 +100,14 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     }
 
     private void resetView() {
-        if (MusicService.currSongIndex < ActivityMain.songs.size()) {
-            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
-        }
+//        if (MusicService.currSongIndex < ActivityMain.songs.size()) {
+//            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
+//        }
+        currentSong = musicSrv.getSongs().get(MusicService.currSongIndex);
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
         tvStart.setText("0:00");
-        tvEnd.setText(MusicService.getHumanTime(currentSong.getDuration()));
+        tvEnd.setText(MusicService.getReadableTime(currentSong.getDuration()));
 
         seekBarTask = new SeekBarTask();
         seekBarTask.execute();
@@ -170,7 +169,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         @Override
         protected void onProgressUpdate(Integer... values) {
             postionBar.setProgress(100*values[0]/duration);
-            tvStart.setText(MusicService.getHumanTime(values[0]));
+            tvStart.setText(MusicService.getReadableTime(values[0]));
         }
 
         //bug: never used
