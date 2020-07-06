@@ -29,7 +29,7 @@ import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
  */
 public class FragmentPlaylistSongs extends Fragment {
 
-    RecyclerView rcv_songs;
+    RecyclerView rcv_playlist_songs;
     AdapterSong adapterSong;
     ArrayList<Song> songs;
     int playlist_pos;
@@ -42,7 +42,7 @@ public class FragmentPlaylistSongs extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_playlist_songs, container, false);
         TextView tv_playlist_name = view.findViewById(R.id.tv_playlist_name);
-        rcv_songs = view.findViewById(R.id.rcv_songs);
+        rcv_playlist_songs = view.findViewById(R.id.rcv_playlist_songs);
 
         playlist_pos = getArguments().getInt("playlist_pos");
         Playlist playlist = ActivityMain.playLists.get(playlist_pos);
@@ -52,13 +52,13 @@ public class FragmentPlaylistSongs extends Fragment {
         DBMusicHelper dbMusicHelper = ((ActivityMain)getActivity()).getDbMusicHelper();
         songs = dbMusicHelper.getPlaylistSongs(playlistId);
         ActivityMain.songs = songs;
+        musicSrv.setList(songs);
         adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
-        musicSrv.setList(songs);
-        rcv_songs.setAdapter(adapterSong);
-        rcv_songs.setHasFixedSize(true);
-        rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
+        rcv_playlist_songs.setAdapter(adapterSong);
+        rcv_playlist_songs.setHasFixedSize(true);
+        rcv_playlist_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        rcv_playlist_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
 
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
         iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());

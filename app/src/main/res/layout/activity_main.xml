@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:layout_gravity="bottom"
-        android:onClick="maximizeMediaControl">
+        android:onClick="maximizeMediaController">
         <include layout="@layout/mini_control" />
     </LinearLayout>
 

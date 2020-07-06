@@ -26,6 +26,11 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
         this.playlists = playlists;
     }
 
+    public void setList(ArrayList<Playlist> playlists) {
+        this.playlists = playlists;
+        notifyDataSetChanged();
+    }
+
     public interface PlaylistClickListener {
         void onClickPlaylistItem(int position);
     }

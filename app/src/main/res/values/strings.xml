@@ -3,9 +3,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="login">Login</string>
     <string name="signup">Sign up</string>
-<!--    <string name="ten_dn">Điền tên đăng nhập</string>-->
-<!--    <string name="mk_dn">Điền mật khẩu</string>-->
-<!--    <string name="mk_dn_lai">Điền lại mật khẩu</string>-->
     <string name="facebook_app_id">277789886668240</string>
     <string name="fb_login_protocol_scheme">fb277789886668240</string>
     <string name="update_success">Update successfully!</string>
@@ -68,7 +65,7 @@
     <string name="add_selected_song_to_playlist">Add selected song to playlist</string>
     <string name="multi_select">select multiple songs</string>
     <string name="playlist_name_duplicate">Duplicate playlist name, please type again!</string>
-    <string name="change_language">change language</string>
+    <string name="change_language">Language</string>
     <string name="english">English</string>
     <string name="tiengvn">Tiếng việt</string>
     <string name="timer">Time remaining</string>

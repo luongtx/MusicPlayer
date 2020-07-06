@@ -94,6 +94,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentPlaylistSongs fragmentPlaylistSongs;
     FragmentArtistSongs fragmentArtistSongs;
     FragmentSelectSongs fragmentSelectSongs;
+    FragmentMediaControl fragmentMediaControl;
     FragmentTimerPicker fragmentTimerPicker;
     private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_star, R.drawable.ic_featured_play_list};
     private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
@@ -125,8 +126,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         layout_mini_controller.setVisibility(View.GONE);
 
         musicProvider = new MusicProvider(this);
-        songs = musicProvider.loadSongs();
-        all_songs = songs;
+        all_songs = musicProvider.loadSongs();
+        songs = all_songs;
         artists = musicProvider.loadArtist();
 
         dbMusicHelper = new DBMusicHelper(ActivityMain.this);
@@ -159,7 +160,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
                     fragmentSongs.getAdapterSong().setList(songs);
                     fragmentSongs.getAdapterSong().setModel(initModelSelectedItems(songs.size()));
                     musicSrv.setList(songs);
-                    highlightCurrentPosition();
                 }
             }
 
@@ -197,7 +197,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             musicSrv = binder.getService();
             musicSrv.setList(songs);
             musicBound = true;
-            musicSrv.setCallBacks(ActivityMain.this); //register service call back
+            musicSrv.setCallBacks(ActivityMain.this);
         }
 
         @Override
@@ -326,13 +326,18 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             return true;
         });
     }
+
     public void refresh() {
-        songs = musicProvider.loadSongs();
+        all_songs = musicProvider.loadSongs();
+        songs = all_songs;
         artists = musicProvider.loadArtist();
         playLists = dbMusicHelper.getAllPlaylists();
         fragmentSongs.getAdapterSong().setList(songs);
         if (fragmentArtists != null) {
-            fragmentArtists.getAdapterArtist().notifyDataSetChanged();
+            fragmentArtists.getAdapterArtist().setList(artists);
+        }
+        if (fragmentPlaylist != null) {
+            fragmentPlaylist.getAdapterPlayList().setList(playLists);
         }
     }
 
@@ -397,8 +402,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         changeMenuWhenSelectMultipleItem();
     }
 
-    public void maximizeMediaControl(View view) {
-        FragmentMediaControl fragmentMediaControl = new FragmentMediaControl();
+    public void maximizeMediaController(View view) {
+        fragmentMediaControl = new FragmentMediaControl();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.layout_main, fragmentMediaControl);
@@ -515,7 +520,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
                     //add playlist
                     Playlist playlist = new Playlist();
                     playlist.setName(playlist_name);
-                    if (!playLists.stream().anyMatch(pls -> pls.getName().equals(playlist_name))) {
+                    if (playLists.stream().noneMatch(pls -> pls.getName().equals(playlist_name))) {
                         playLists.add(playlist);
                         dbMusicHelper.addPlaylist(playlist);
                         if(fragmentPlaylist != null) {
@@ -589,7 +594,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         dbMusicHelper.deletePlaylist(playlistId);
     }
 
-
     //artist operation
     @Override
     public void onClickArtistItem(int position) {
@@ -621,9 +625,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public void addSelectedSongToPlaylist(int position){
         int playlistId = playLists.get(position).getId();
         ArrayList<Song> selectedSongs = new ArrayList<>();
-        if (fragmentSelectSongs == null) {
-            songs = musicSrv.getSongs();
-        }
         for (ModelSelectedItem item : modelSelectedItems) {
             if (item.isSelectd()) {
                 selectedSongs.add(songs.get(item.getPosition()));
@@ -701,12 +702,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         return bundle;
     }
 
-    public void extractBundle() {
-        Intent intent = getIntent();
-        name = intent.getStringExtra("name");
-        check = intent.getStringExtra("check");
-    }
-
     CountDownTimer countDownTimer;
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -734,7 +729,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
             public void onFinish() {
                 it_sleep_timer.setTitle(R.string.set_timer);
-                musicSrv.pause();
+                playbackController.stop();
             }
         };
         countDownTimer.start();

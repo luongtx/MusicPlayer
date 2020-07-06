@@ -85,4 +85,9 @@ public class PlaybackController {
         currId = pickedId;
         view.setVisibility(View.VISIBLE);
     }
+
+    public void stop() {
+        musicSrv.pause();
+        iv_play.setBackgroundResource(R.drawable.ic_play);
+    }
 }

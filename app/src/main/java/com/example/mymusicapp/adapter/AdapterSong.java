@@ -93,8 +93,6 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
 
         @Override
         public boolean onLongClick(View v) {
-            ModelSelectedItem modelSelectedItem = modelSelectedItems.get(getAdapterPosition());
-            modelSelectedItem.setSelectd(!modelSelectedItem.isSelectd());
             showPopupMenu(this, getAdapterPosition());
             return true;
         }
@@ -107,17 +105,20 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
         }else {
             popup.inflate(R.menu.menu_song_item);
         }
+        ModelSelectedItem modelSelectedItem = modelSelectedItems.get(position);
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.delete_song:
+                    modelSelectedItem.setSelectd(true);
                     ((ActivityMain)context).deleteFromPlaylist();
                     notifyDataSetChanged();
                     return true;
                 case R.id.add_to_playlist:
+                    modelSelectedItem.setSelectd(true);
                     ((ActivityMain)context).onClickOptionAddToPlaylist();
                     return true;
                 case R.id.multi_select:
-                    modelSelectedItems.get(position).setSelectd(true);
+                    modelSelectedItem.setSelectd(true);
                     setMultiSelected(true);
                     holder.view.setBackgroundColor(context.getResources().getColor(R.color.colorSelected));
                     songItemClickListener.onMultipleSelected();

@@ -28,9 +28,9 @@ import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
  */
 public class FragmentArtistSongs extends Fragment {
 
-    private RecyclerView rcv_songs;
-    private AdapterSong adapterSong;
-    private ArrayList<Song> songs;
+    RecyclerView rcv_artist_songs;
+    AdapterSong adapterSong;
+    ArrayList<Song> songs;
     public FragmentArtistSongs() {
         // Required empty public constructor
     }
@@ -41,20 +41,20 @@ public class FragmentArtistSongs extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_artist_songs, container, false);
-        rcv_songs = view.findViewById(R.id.rcv_songs);
+        rcv_artist_songs = view.findViewById(R.id.rcv_artist_songs);
         TextView tvArtist = view.findViewById(R.id.tvArtist);
         String artistName = getArguments().getString("artist");
         tvArtist.setText(artistName);
-//        MusicProvider provider = new MusicProvider(getActivity());
+
         songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongsByArtist(artistName);
         ActivityMain.songs = songs;
         adapterSong = new AdapterSong(songs, getContext());
         adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
         musicSrv.setList(songs);
-        rcv_songs.setAdapter(adapterSong);
-        rcv_songs.setHasFixedSize(true);
-        rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        rcv_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
+        rcv_artist_songs.setAdapter(adapterSong);
+        rcv_artist_songs.setHasFixedSize(true);
+        rcv_artist_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        rcv_artist_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
 
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
         iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());

@@ -47,6 +47,11 @@ public class AdapterArtist extends RecyclerView.Adapter<AdapterArtist.ArtistHold
         this.artists = artists;
     }
 
+    public void setList(ArrayList<Artist> artists) {
+        this.artists = artists;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ArtistHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
