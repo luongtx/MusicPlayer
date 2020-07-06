@@ -7,11 +7,13 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.example.mymusicapp.entity.Song;
 
@@ -93,6 +95,7 @@ public class MusicService extends Service implements
     public void playSong(int songIndex) {
         player.reset();
         currSongIndex = songIndex;
+        resetSongState();
         if (songs != null && currSongIndex + 1 <= songs.size() && currSongIndex >= 0) {
             if (isShuffling) currSongIndex = generateRandomIdx();
             Song playSong = songs.get(currSongIndex);
@@ -104,6 +107,7 @@ public class MusicService extends Service implements
                 Log.e("MUSIC SERVICE", "Error setting data source", e);
             }
             player.prepareAsync();
+            playSong.setState(1);
             serviceCallbacks.onPlayNewSong();
         } else {
             player.pause();
@@ -111,8 +115,13 @@ public class MusicService extends Service implements
         }
     }
 
+    public void resetSongState() {
+        songs.forEach(song -> song.setState(-1));
+    }
+
     public void pause() {
         player.pause();
+        songs.get(currSongIndex).setState(0);
         serviceCallbacks.onMusicPause();
     }
 
@@ -121,6 +130,7 @@ public class MusicService extends Service implements
             playSong(songs.size() - 1);
         } else {
             player.start();
+            songs.get(currSongIndex).setState(1);
         }
         serviceCallbacks.onMusicResume();
     }

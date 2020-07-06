@@ -1,18 +1,17 @@
 package com.example.mymusicapp.fragment;
 
-import android.graphics.Color;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterSong;
@@ -27,7 +26,7 @@ import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentSongs extends Fragment {
+public class FragmentSongs extends Fragment{
 
     private RecyclerView rcv_songs;
     private AdapterSong adapterSong;
@@ -45,7 +44,18 @@ public class FragmentSongs extends Fragment {
         songs = ActivityMain.songs;
         if(musicSrv != null) musicSrv.setList(songs);
         adapterSong = new AdapterSong(songs, getContext());
-        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
+        adapterSong.resetModelItemSelected();
+        adapterSong.setSongItemClickListener(new AdapterSong.SongItemClickListener() {
+            @Override
+            public void onSongItemClick(int position) {
+                ((ActivityMain) context).pickSong(position);
+            }
+
+            @Override
+            public void onMultipleSelected() {
+                ((ActivityMain) context).changeMenuWhenSelectMultipleItem();
+            }
+        });
         rcv_songs.setAdapter(adapterSong);
         rcv_songs.setHasFixedSize(true);
         rcv_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -53,32 +63,32 @@ public class FragmentSongs extends Fragment {
         return view;
     }
 
-    public void changeSongItemDisplay(int position) {
-        View view = rcv_songs.getLayoutManager().findViewByPosition(position);
-        if(view !=null ) {
-            ImageView imageView = view.findViewById(R.id.ivSong);
-            if (lastClickPosition == position) {
-                if (imageView.isActivated()) {
-                    imageView.setActivated(false);
-                    Glide.with(view).load(R.drawable.img_dvd).into(imageView);
-                } else {
-                    imageView.setActivated(true);
-                    Glide.with(view).load(R.drawable.img_dvd_playing).into(imageView);
-                }
-            } else {
-                view.setBackgroundColor(Color.CYAN);
-                Glide.with(view).load(R.drawable.img_dvd_playing).into(imageView);
-                imageView.setActivated(true);
-                View oldView = rcv_songs.getLayoutManager().findViewByPosition(lastClickPosition);
-                if (oldView != null) {
-                    oldView.setBackgroundColor(Color.WHITE);
-                    ImageView oldImg = oldView.findViewById(R.id.ivSong);
-                    Glide.with(view).load(R.drawable.img_dvd).into(oldImg);
-                }
-            }
-        }
-        lastClickPosition = position;
-    }
+//    public void changeSongItemDisplay(int position) {
+//        View view = rcv_songs.getLayoutManager().findViewByPosition(position);
+//        if(view !=null ) {
+//            ImageView imageView = view.findViewById(R.id.ivSong);
+//            if (lastClickPosition == position) {
+//                if (imageView.isActivated()) {
+//                    imageView.setActivated(false);
+//                    Glide.with(view).load(R.drawable.img_dvd).into(imageView);
+//                } else {
+//                    imageView.setActivated(true);
+//                    Glide.with(view).load(R.drawable.img_dvd_playing).into(imageView);
+//                }
+//            } else {
+//                view.setBackgroundColor(Color.CYAN);
+//                Glide.with(view).load(R.drawable.img_dvd_playing).into(imageView);
+//                imageView.setActivated(true);
+//                View oldView = rcv_songs.getLayoutManager().findViewByPosition(lastClickPosition);
+//                if (oldView != null) {
+//                    oldView.setBackgroundColor(Color.WHITE);
+//                    ImageView oldImg = oldView.findViewById(R.id.ivSong);
+//                    Glide.with(view).load(R.drawable.img_dvd).into(oldImg);
+//                }
+//            }
+//        }
+//        lastClickPosition = position;
+//    }
 
     public void setAdapterSong(AdapterSong adapterSong) {
         this.adapterSong = adapterSong;
@@ -88,11 +98,14 @@ public class FragmentSongs extends Fragment {
         return adapterSong;
     }
 
-//    @Override
-//    public void onDestroy() {
-//        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
-//        musicSrv.setList(ActivityMain.songs);
-//        super.onDestroy();
-//    }
-
+    public void notifySongStateChanges(ArrayList<Song> songs) {
+        adapterSong.setList(songs);
+    }
+    
+    Context context;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 }

@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.entity.Playlist;
 
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
 
     private ArrayList<Playlist> playlists;
     private Context context;
+    PlaylistClickListener playlistClickListener;
     public AdapterPlayList(Context context, ArrayList<Playlist> playlists) {
         this.context = context;
         this.playlists = playlists;
@@ -33,14 +33,20 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
 
     public interface PlaylistClickListener {
         void onClickPlaylistItem(int position);
+        void onClickOptionAddSongs(int position);
+        void updatePlaylistName(int position);
+        void deletePlaylist(int position);
     }
 
+    public void setPlaylistClickListener(PlaylistClickListener playlistClickListener) {
+        this.playlistClickListener = playlistClickListener;
+    }
 
     @NonNull
     @Override
     public PlayListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.playlist_item, parent, false);
-        return new PlayListHolder(view, (PlaylistClickListener) parent.getContext());
+        return new PlayListHolder(view);
     }
 
     @Override
@@ -59,14 +65,14 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.delete_playlist:
-                    ((ActivityMain)context).deletePlaylist(position);
+                    playlistClickListener.deletePlaylist(position);
                     notifyDataSetChanged();
                     return true;
                 case R.id.add_song:
-                    ((ActivityMain)context).onClickOptionAddSongs(position);
+                    playlistClickListener.onClickOptionAddSongs(position);
                     return true;
                 case R.id.rename_playlist:
-                    ((ActivityMain)context).updatePlaylistName(position);
+                    playlistClickListener.updatePlaylistName(position);
                     return true;
                 default:
                     return false;
@@ -83,13 +89,11 @@ public class AdapterPlayList extends RecyclerView.Adapter<AdapterPlayList.PlayLi
 
         ImageView iv_playlist, iv_more;
         TextView tv_name;
-        PlaylistClickListener playlistClickListener;
-        public PlayListHolder(@NonNull View itemView, PlaylistClickListener playlistClickListener) {
+        public PlayListHolder(@NonNull View itemView) {
             super(itemView);
             iv_playlist = itemView.findViewById(R.id.iv_playlist);
             iv_more = itemView.findViewById(R.id.iv_more);
             tv_name = itemView.findViewById(R.id.tv_playlist_name);
-            this.playlistClickListener = playlistClickListener;
             itemView.setOnClickListener(this);
         }
 

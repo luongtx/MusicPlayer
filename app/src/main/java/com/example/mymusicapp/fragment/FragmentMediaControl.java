@@ -53,16 +53,14 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
 
+        playbackController = new PlaybackController(view.findViewById(R.id.layout_mini_controller));
+
         iv_dvd = view.findViewById(R.id.ivDVD);
         btn_end = view.findViewById(R.id.iv_end);
         postionBar = view.findViewById(R.id.positionBar);
         tvStart = view.findViewById(R.id.elapsedTimeLabel);
         tvEnd = view.findViewById(R.id.remainingTimeLabel);
         volumnBar = view.findViewById(R.id.volumeBar);
-
-
-        layout_mini_controller = view.findViewById(R.id.layout_mini_controller);
-        playbackController = new PlaybackController(layout_mini_controller);
 
         Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
 
@@ -100,9 +98,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     }
 
     private void resetView() {
-//        if (MusicService.currSongIndex < ActivityMain.songs.size()) {
-//            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
-//        }
         currentSong = musicSrv.getSongs().get(MusicService.currSongIndex);
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
@@ -121,13 +116,11 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     @Override
     public void onMusicPause() {
         Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_video).into(iv_dvd);
-//        ((ActivityMain)getActivity()).onMusicPause();
     }
 
     @Override
     public void onMusicResume() {
         Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_spinning).into(iv_dvd);
-//        ((ActivityMain)getActivity()).onMusicResume();
     }
 
     @Override
@@ -135,6 +128,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         super.onPause();
         if(seekBarTask != null && isRemoving()) {
             seekBarTask.cancel(false);
+
         }
     }
 

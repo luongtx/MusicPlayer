@@ -16,10 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.activity.ActivityMain;
 import com.example.mymusicapp.entity.Song;
-import com.example.mymusicapp.model.ModelSelectedItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,23 +30,23 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
     private ArrayList<Song> songs;
     private Context context;
     private ArrayList<Song> backup_songs;
-    private ArrayList<ModelSelectedItem> modelSelectedItems;
 
     private boolean isMultiSelected = false;
-
+    private int currentPos = -1;
     public AdapterSong(ArrayList<Song> songs, Context context) {
         this.songs = songs;
         backup_songs = new ArrayList<>(songs);
         this.context = context;
     }
-
+    
+    
     public void setList(ArrayList<Song> songs) {
         this.songs = songs;
         notifyDataSetChanged();
     }
 
-    public void setModel(ArrayList<ModelSelectedItem> modelSelectedItems) {
-        this.modelSelectedItems = modelSelectedItems;
+    public void initSelectedSongs() {
+        songs.forEach(song -> song.setSelected(false));
         notifyDataSetChanged();
     }
 
@@ -60,6 +60,11 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
     }
 
     SongItemClickListener songItemClickListener;
+
+    public void setSongItemClickListener(SongItemClickListener songItemClickListener) {
+        this.songItemClickListener = songItemClickListener;
+    }
+
     class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
         View view;
         ImageView ivImg;
@@ -71,16 +76,19 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
             ivImg = itemView.findViewById(R.id.ivSong);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvArtist = itemView.findViewById(R.id.tvArtist);
-            itemView.setOnLongClickListener(this);
-            itemView.setOnClickListener(this);
+        }
+
+        public void setOnClickItemListener() {
+            view.setOnClickListener(this);
+            view.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             if (isMultiSelected) {
-                ModelSelectedItem modelSelectedItem = modelSelectedItems.get(getAdapterPosition());
-                modelSelectedItem.setSelectd(!modelSelectedItem.isSelectd());
-                view.setBackgroundColor(modelSelectedItem.isSelectd() ? context.getResources().getColor(R.color.colorSelected) : Color.WHITE);
+                Song song = songs.get(getAdapterPosition());
+                song.setSelected(!song.isSelected());
+                view.setBackgroundColor(song.isSelected() ? context.getResources().getColor(R.color.colorSelected) : Color.WHITE);
             } else {
                 try {
                     songItemClickListener.onSongItemClick(getAdapterPosition());
@@ -88,8 +96,9 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
                     e.printStackTrace();
                 }
             }
-
         }
+
+
 
         @Override
         public boolean onLongClick(View v) {
@@ -100,25 +109,25 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
 
     public void showPopupMenu(AdapterSong.SongViewHolder holder, int position) {
         PopupMenu popup = new PopupMenu(context, holder.tvTitle);
-        if(((ActivityMain)context).getCurrentPagePosition() ==2) {
+        if (((ActivityMain) context).getCurrentPagePosition() == 2) {
             popup.inflate(R.menu.menu_song_playlist_item);
-        }else {
+        } else {
             popup.inflate(R.menu.menu_song_item);
         }
-        ModelSelectedItem modelSelectedItem = modelSelectedItems.get(position);
+        Song song = songs.get(position);
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.delete_song:
-                    modelSelectedItem.setSelectd(true);
+                    song.setSelected(true);
                     ((ActivityMain)context).deleteFromPlaylist();
                     notifyDataSetChanged();
                     return true;
                 case R.id.add_to_playlist:
-                    modelSelectedItem.setSelectd(true);
+                    song.setSelected(true);
                     ((ActivityMain)context).onClickOptionAddToPlaylist();
                     return true;
                 case R.id.multi_select:
-                    modelSelectedItem.setSelectd(true);
+                    song.setSelected(true);
                     setMultiSelected(true);
                     holder.view.setBackgroundColor(context.getResources().getColor(R.color.colorSelected));
                     songItemClickListener.onMultipleSelected();
@@ -139,7 +148,6 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
     @Override
     public AdapterSong.SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_item, parent, false);
-        songItemClickListener = (SongItemClickListener) parent.getContext();
         return new SongViewHolder(view);
     }
 
@@ -150,6 +158,17 @@ public class AdapterSong extends RecyclerView.Adapter<AdapterSong.SongViewHolder
         holder.tvTitle.setText(song.getTitle());
         holder.tvArtist.setText(song.getArtist());
         holder.view.setBackgroundColor(Color.WHITE);
+        holder.setOnClickItemListener();
+        if (song.getState() == -1) {
+            holder.view.setBackgroundColor(Color.WHITE);
+            Glide.with(holder.view).load(R.drawable.img_dvd).into(holder.ivImg);
+        } else if (song.getState() == 0) {
+            holder.view.setBackgroundColor(Color.CYAN);
+            Glide.with(holder.view).load(R.drawable.img_dvd).into(holder.ivImg);
+        } else {
+            holder.view.setBackgroundColor(Color.CYAN);
+            Glide.with(holder.view).load(R.drawable.img_dvd_playing).into(holder.ivImg);
+        }
     }
 
     @Override

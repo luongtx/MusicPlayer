@@ -1,5 +1,6 @@
 package com.example.mymusicapp.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,7 +22,7 @@ import com.example.mymusicapp.entity.Song;
 import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
-import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
+import static com.example.mymusicapp.activity.ActivityMain.songs;
 
 
 /**
@@ -30,7 +32,6 @@ public class FragmentArtistSongs extends Fragment {
 
     RecyclerView rcv_artist_songs;
     AdapterSong adapterSong;
-    ArrayList<Song> songs;
     public FragmentArtistSongs() {
         // Required empty public constructor
     }
@@ -46,29 +47,44 @@ public class FragmentArtistSongs extends Fragment {
         String artistName = getArguments().getString("artist");
         tvArtist.setText(artistName);
 
-        songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongsByArtist(artistName);
-        ActivityMain.songs = songs;
+        songs = ((ActivityMain) context).loadSongsByArtist(artistName);
+        ActivityMain.setList(songs);
         adapterSong = new AdapterSong(songs, getContext());
-        adapterSong.setModel(((ActivityMain)getActivity()).initModelSelectedItems(songs.size()));
-        musicSrv.setList(songs);
+        adapterSong.initSelectedSongs();
+        adapterSong.setSongItemClickListener(new AdapterSong.SongItemClickListener() {
+            @Override
+            public void onSongItemClick(int position) {
+                ((ActivityMain) context).pickSong(position);
+            }
+
+            @Override
+            public void onMultipleSelected() {
+                ((ActivityMain) context).changeMenuWhenSelectMultipleItem();
+            }
+        });
         rcv_artist_songs.setAdapter(adapterSong);
         rcv_artist_songs.setHasFixedSize(true);
         rcv_artist_songs.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rcv_artist_songs.addItemDecoration(new DividerItemDecoration(view.getContext(), HORIZONTAL));
 
         ImageView iv_arrow = view.findViewById(R.id.iv_arrow);
-        iv_arrow.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
+        iv_arrow.setOnClickListener(v -> ((ActivityMain)context).onBackPressed());
         return view;
     }
 
-//    @Override
-//    public void onDestroy() {
-//        ActivityMain.songs = ((ActivityMain)getActivity()).getMusicProvider().loadSongs();
-//        musicSrv.setList(ActivityMain.songs);
-//        super.onDestroy();
-//    }
-
     public AdapterSong getAdapterSong() {
         return adapterSong;
+    }
+
+    public void notifySongStateChanges(ArrayList<Song> songs) {
+        adapterSong.setList(songs);
+    }
+
+    Context context;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 }
