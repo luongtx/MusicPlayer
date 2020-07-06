@@ -6,7 +6,8 @@ public class Song {
     private String artist;
     private String album;
     private int duration;
-
+    private int state;
+    private boolean isSelected;
     public Song() {
 
     }
@@ -16,6 +17,8 @@ public class Song {
         this.artist = artist;
         this.album = album;
         this.duration = duration;
+        this.state = -1;
+        this.isSelected = false;
     }
 
     public int getId() {
@@ -58,4 +61,19 @@ public class Song {
         return duration;
     }
 
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 }
