@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.example.mymusicapp.MusicService" />
+        <service android:name="com.example.mymusicapp.service.MusicService" />
 
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=

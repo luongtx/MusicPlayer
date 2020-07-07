@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.mymusicapp.MusicService;
+import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.controller.ActivityMain;
 import com.example.mymusicapp.controller.PlaybackController;

@@ -23,8 +23,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.mymusicapp.MusicProvider;
-import com.example.mymusicapp.MusicService;
+import com.example.mymusicapp.service.MusicProvider;
+import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.adapter.AdapterViewPager;
 import com.example.mymusicapp.entity.Artist;

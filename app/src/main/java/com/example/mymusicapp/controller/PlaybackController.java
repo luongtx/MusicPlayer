@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.example.mymusicapp.MusicService;
+import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
 
 import static com.example.mymusicapp.controller.ActivityMain.musicSrv;

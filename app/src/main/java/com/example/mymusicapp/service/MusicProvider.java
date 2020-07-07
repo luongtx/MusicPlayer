@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.service;
 
 import android.Manifest;
 import android.app.Activity;
