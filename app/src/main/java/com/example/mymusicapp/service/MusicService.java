@@ -23,10 +23,11 @@ public class MusicService extends Service implements
 
     public static MediaPlayer player;
     private ArrayList<Song> songs;
-    public static int currSongIndex;
+    public static int currentSongPos;
     public static boolean isLooping;
     public static boolean isShuffling;
     public static boolean isTouching;
+    public static int currentPagePos;
     private final IBinder musicBind = new MusicBinder();
 
     public interface ServiceCallbacks {
@@ -44,7 +45,8 @@ public class MusicService extends Service implements
     @Override
     public void onCreate() {
         super.onCreate();
-        currSongIndex = -1;
+        currentSongPos = -1;
+        currentPagePos = -1;
         isLooping = false;
         isShuffling = false;
         player = new MediaPlayer();
@@ -93,11 +95,11 @@ public class MusicService extends Service implements
 
     public void playSong(int songIndex) {
         player.reset();
-        currSongIndex = songIndex;
+        currentSongPos = songIndex;
         resetSongState();
-        if (songs != null && currSongIndex + 1 <= songs.size() && currSongIndex >= 0) {
-            if (isShuffling && !isTouching) currSongIndex = generateRandomIdx();
-            Song playSong = songs.get(currSongIndex);
+        if (songs != null && currentSongPos + 1 <= songs.size() && currentSongPos >= 0) {
+            if (isShuffling && !isTouching) currentSongPos = generateRandomIdx();
+            Song playSong = songs.get(currentSongPos);
             int songId = playSong.getId();
             Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId);
             try {
@@ -120,27 +122,27 @@ public class MusicService extends Service implements
 
     public void pause() {
         player.pause();
-        songs.get(currSongIndex).setState(0);
+        songs.get(currentSongPos).setState(0);
         serviceCallbacks.onMusicPause();
     }
 
     public void resume() {
-        if (currSongIndex >= songs.size()) {
+        if (currentSongPos >= songs.size()) {
             playSong(songs.size() - 1);
         } else {
             player.start();
-            songs.get(currSongIndex).setState(1);
+            songs.get(currentSongPos).setState(1);
         }
         serviceCallbacks.onMusicResume();
     }
 
     public int getPlayingSongPos() {
-        return currSongIndex;
+        return currentSongPos;
     }
 
     public int generateRandomIdx() {
         int newIndex = (int) (Math.random() * songs.size());
-        while (newIndex == currSongIndex) {
+        while (newIndex == currentSongPos) {
             newIndex = (int) (Math.random() * songs.size());
         }
         return newIndex;
@@ -149,13 +151,13 @@ public class MusicService extends Service implements
     @Override
     public void onCompletion(MediaPlayer mp) {
         if (isLooping) {
-            playSong(currSongIndex);
+            playSong(currentSongPos);
         } else {
             if (isShuffling) {
-                currSongIndex = generateRandomIdx();
-                playSong(currSongIndex);
+                currentSongPos = generateRandomIdx();
+                playSong(currentSongPos);
             } else {
-                playSong(currSongIndex + 1);
+                playSong(currentSongPos + 1);
                 serviceCallbacks.onPlayNewSong();
             }
         }
@@ -191,6 +193,10 @@ public class MusicService extends Service implements
         return songs.get(position).getId();
     }
 
+    public int getCurrentSongId() {
+        return songs.get(currentSongPos).getId();
+    }
+
     public static boolean isIsShuffling() {
         return isShuffling;
     }
@@ -199,4 +205,13 @@ public class MusicService extends Service implements
         return isLooping;
     }
 
+    public void indexCurrentSong(ArrayList<Song> songs) {
+        if (player != null && currentSongPos != -1) {
+            if (player.isPlaying()) {
+                songs.get(currentSongPos).setState(1);
+            } else {
+                songs.get(currentSongPos).setState(0);
+            }
+        }
+    }
 }

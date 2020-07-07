@@ -50,7 +50,7 @@ public class FragmentPlaylistSongs extends Fragment {
         tv_playlist_name.setText(playlist.getName());
 
         songs = ((ActivityMain) context).getPlaylistSongs(playlistId);
-        ActivityMain.setList(songs);
+//        ActivityMain.setList(songs);
         setPlaylistSongs(songs);
         rcv_playlist_songs.setAdapter(adapterSong);
         rcv_playlist_songs.setHasFixedSize(true);

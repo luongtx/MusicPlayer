@@ -47,7 +47,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         if(view != null) return view;
         view = inflater.inflate(R.layout.fragment_media_control, container, false);
 
-        currentSong = musicSrv.getSongs().get(MusicService.currSongIndex);
+        currentSong = musicSrv.getSongs().get(MusicService.currentSongPos);
         tvTitle = view.findViewById(R.id.tvTitle);
         tvArtist = view.findViewById(R.id.tvArtist);
         tvTitle.setText(currentSong.getTitle());
@@ -107,7 +107,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     }
 
     private void resetView() {
-        currentSong = musicSrv.getSongs().get(MusicService.currSongIndex);
+        currentSong = musicSrv.getSongs().get(MusicService.currentSongPos);
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
         tvStart.setText("0:00");

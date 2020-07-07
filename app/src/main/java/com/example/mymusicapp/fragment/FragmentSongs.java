@@ -40,7 +40,7 @@ public class FragmentSongs extends Fragment{
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
         songs = ActivityMain.songs;
-        ActivityMain.setList(songs);
+//        ActivityMain.setList(songs);
         adapterSong = new AdapterSong(songs, getContext());
         adapterSong.initSelectedSongs();
         adapterSong.setSongItemClickListener(new AdapterSong.SongItemClickListener() {

@@ -49,7 +49,7 @@ public class FragmentArtistSongs extends Fragment {
         tvArtist.setText(artistName);
 
         songs = ((ActivityMain) context).loadSongsByArtist(artistName);
-        ActivityMain.setList(songs);
+//        ActivityMain.setList(songs);
         adapterSong = new AdapterSong(songs, getContext());
         adapterSong.initSelectedSongs();
         adapterSong.setSongItemClickListener(new AdapterSong.SongItemClickListener() {

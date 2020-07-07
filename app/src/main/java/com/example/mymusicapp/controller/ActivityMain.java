@@ -139,23 +139,27 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
+
             @Override
             public void onPageSelected(int position) {
                 if (position == 0) {
                     songs = musicProvider.loadSongs();
+                    if (MusicService.currentPagePos == position)
+                        musicSrv.indexCurrentSong(songs);
                     fragmentSongs.notifySongStateChanges(songs);
-                    setList(songs);
                 } else if (position == 1) {
                     if (pagerAdapter.getItem(1).equals(fragmentArtistSongs)) {
                         songs = musicProvider.loadSongsByArtist(fragmentArtistSongs.getArtistName());
+                        if (MusicService.currentPagePos == position)
+                            musicSrv.indexCurrentSong(songs);
                         fragmentArtistSongs.notifySongStateChanges(songs);
-                        setList(songs);
                     }
                 } else {
                     if (pagerAdapter.getItem(2).equals(fragmentPlaylistSongs)) {
                         songs = dbMusicHelper.getPlaylistSongs(fragmentPlaylistSongs.getPlaylist_pos());
+                        if (MusicService.currentPagePos == position)
+                            musicSrv.indexCurrentSong(songs);
                         fragmentPlaylistSongs.notifySongStateChanges(songs);
-                        setList(songs);
                     }
                 }
                 menuItemController.recoverMenu();
@@ -202,11 +206,14 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     };
 
     public void highlightCurrentPosition() {
-        fragmentSongs.notifySongStateChanges(songs);
-        if (fragmentPlaylistSongs != null) fragmentPlaylistSongs.notifySongStateChanges(songs);
-        else if (fragmentArtistSongs != null) fragmentArtistSongs.notifySongStateChanges(songs);
+        if (getCurrentPagePosition() == 0) {
+            fragmentSongs.notifySongStateChanges(songs);
+        } else if (getCurrentPagePosition() == 1) {
+            fragmentArtistSongs.notifySongStateChanges(songs);
+        } else {
+            fragmentPlaylistSongs.notifySongStateChanges(songs);
+        }
     }
-
 
     public String getName() {
         return name;
@@ -406,9 +413,9 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         int playlistId = playLists.get(pos).getId();
         fragmentPlaylist.addSelectedSongToPlaylist(playlistId);
         if (isCurrentPlaylist) {
-            setPlaylistSongs(dbMusicHelper.getPlaylistSongs(playlistId));
+            songs = dbMusicHelper.getPlaylistSongs(playlistId);
+            setPlaylistSongs(songs);
             popStackedFragment();
-            setList(songs);
         }
     }
 
@@ -448,12 +455,12 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         }
     }
 
-    public static void setList(ArrayList<Song> songs) {
-        ActivityMain.songs = songs;
-        if(musicSrv != null) {
-            musicSrv.setList(songs);
-        }
-    }
+//    public static void setList(ArrayList<Song> songs) {
+//        ActivityMain.songs = songs;
+//        if(musicSrv != null) {
+//            musicSrv.setList(songs);
+//        }
+//    }
 
     public void changeMenuWhenSelectMultipleItem() {
         menuItemController.changeMenuWhenSelectMultipleItem();

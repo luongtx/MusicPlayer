@@ -8,6 +8,7 @@ import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
 
 import static com.example.mymusicapp.controller.ActivityMain.musicSrv;
+import static com.example.mymusicapp.controller.ActivityMain.songs;
 
 public class PlaybackController implements View.OnClickListener, MusicService.ServiceCallbacks{
 
@@ -95,7 +96,9 @@ public class PlaybackController implements View.OnClickListener, MusicService.Se
     }
 
     public void songPicked(int position) {
+        musicSrv.setList(songs);
         MusicService.isTouching = true;
+        MusicService.currentPagePos = ((ActivityMain) context).getCurrentPagePosition();
         int pickedId = musicSrv.getSongIdAt(position);
         if (pickedId != currSongId) {
             musicSrv.playSong(position);
