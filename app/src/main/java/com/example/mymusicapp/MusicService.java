@@ -26,8 +26,9 @@ public class MusicService extends Service implements
     public static MediaPlayer player;
     private ArrayList<Song> songs;
     public static int currSongIndex;
-    static boolean isLooping;
-    static boolean isShuffling;
+    public static boolean isLooping;
+    public static boolean isShuffling;
+    public static boolean isTouching;
     private final IBinder musicBind = new MusicBinder();
 
     public interface ServiceCallbacks {
@@ -97,7 +98,7 @@ public class MusicService extends Service implements
         currSongIndex = songIndex;
         resetSongState();
         if (songs != null && currSongIndex + 1 <= songs.size() && currSongIndex >= 0) {
-            if (isShuffling) currSongIndex = generateRandomIdx();
+            if (isShuffling && !isTouching) currSongIndex = generateRandomIdx();
             Song playSong = songs.get(currSongIndex);
             int songId = playSong.getId();
             Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId);
@@ -191,4 +192,13 @@ public class MusicService extends Service implements
     public int getSongIdAt(int position) {
         return songs.get(position).getId();
     }
+
+    public static boolean isIsShuffling() {
+        return isShuffling;
+    }
+
+    public static boolean isIsLooping() {
+        return isLooping;
+    }
+
 }

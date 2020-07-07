@@ -1,18 +1,23 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.controller;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 
-import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
+import com.example.mymusicapp.MusicService;
+import com.example.mymusicapp.R;
 
-public class PlaybackController implements View.OnClickListener {
+import static com.example.mymusicapp.controller.ActivityMain.musicSrv;
+
+public class PlaybackController implements View.OnClickListener, MusicService.ServiceCallbacks{
 
 
+    Context context;
     View view;
-    private int currId = -1;
+    private int currSongId = -1;
     ImageButton btn_prev, btn_play, btn_next, btn_shuffle, btn_loop;
-
-    public PlaybackController(View view) {
+    public PlaybackController(Context context, View view) {
+        this.context = context;
         this.view = view;
         btn_prev = view.findViewById(R.id.iv_prev);
         btn_prev.setOnClickListener(this);
@@ -46,6 +51,7 @@ public class PlaybackController implements View.OnClickListener {
     }
 
     public void previous() {
+        MusicService.isTouching = false;
         musicSrv.playSong(musicSrv.getPlayingSongPos() - 1);
         btn_play.setBackgroundResource(R.drawable.ic_pause);
     }
@@ -61,6 +67,7 @@ public class PlaybackController implements View.OnClickListener {
     }
 
     public void next() {
+        MusicService.isTouching = false;
         musicSrv.playSong(musicSrv.getPlayingSongPos() + 1);
         btn_play.setBackgroundResource(R.drawable.ic_pause);
     }
@@ -88,14 +95,15 @@ public class PlaybackController implements View.OnClickListener {
     }
 
     public void songPicked(int position) {
+        MusicService.isTouching = true;
         int pickedId = musicSrv.getSongIdAt(position);
-        if (pickedId != currId) {
+        if (pickedId != currSongId) {
             musicSrv.playSong(position);
             btn_play.setBackgroundResource(R.drawable.ic_pause);
         } else {
             toggle_play();
         }
-        currId = pickedId;
+        currSongId = pickedId;
         view.setVisibility(View.VISIBLE);
     }
 
@@ -104,4 +112,22 @@ public class PlaybackController implements View.OnClickListener {
         btn_play.setBackgroundResource(R.drawable.ic_play);
     }
 
+    @Override
+    public void onPlayNewSong() {
+        ((ActivityMain) context).highlightCurrentPosition();
+        btn_play.setBackgroundResource(R.drawable.ic_pause);
+        MusicService.isTouching = false;
+    }
+
+    @Override
+    public void onMusicPause() {
+        ((ActivityMain) context).highlightCurrentPosition();
+        btn_play.setBackgroundResource(R.drawable.ic_play);
+    }
+
+    @Override
+    public void onMusicResume() {
+        ((ActivityMain) context).highlightCurrentPosition();
+        btn_play.setBackgroundResource(R.drawable.ic_pause);
+    }
 }

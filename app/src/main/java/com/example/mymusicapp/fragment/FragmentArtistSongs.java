@@ -15,15 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.controller.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterSong;
 import com.example.mymusicapp.entity.Song;
 
 import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
-import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
-import static com.example.mymusicapp.activity.ActivityMain.songs;
+import static com.example.mymusicapp.controller.ActivityMain.songs;
 
 
 /**

@@ -1,4 +1,4 @@
-package com.example.mymusicapp.activity;
+package com.example.mymusicapp.controller;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,13 +21,13 @@ import com.example.mymusicapp.entity.Playlist;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.example.mymusicapp.activity.ActivityMain.playLists;
+import static com.example.mymusicapp.controller.ActivityMain.playLists;
 
-public class AlertDialogPlaylist extends AppCompatActivity {
+public class DialogController extends AppCompatActivity {
 
     Context context;
 
-    public AlertDialogPlaylist(Context context) {
+    public DialogController(Context context) {
         this.context = context;
     }
 
