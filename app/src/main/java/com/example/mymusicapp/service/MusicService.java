@@ -211,4 +211,8 @@ public class MusicService extends Service implements
             }
         }
     }
+
+    public Song getCurrentSong(){
+        return songs.get(getPlayingSongPos());
+    }
 }

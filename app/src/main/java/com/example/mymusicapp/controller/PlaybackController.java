@@ -1,14 +1,26 @@
 package com.example.mymusicapp.controller;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
-import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
+import com.example.mymusicapp.service.MusicService;
+import com.example.mymusicapp.service.OnClearFromRecentService;
 
 import static com.example.mymusicapp.controller.ActivityMain.musicSrv;
 import static com.example.mymusicapp.controller.ActivityMain.songs;
+import static com.example.mymusicapp.controller.NotificationPlayback.ACTION_NEXT;
+import static com.example.mymusicapp.controller.NotificationPlayback.ACTION_PLAY;
+import static com.example.mymusicapp.controller.NotificationPlayback.ACTION_PREVIUOS;
+import static com.example.mymusicapp.controller.NotificationPlayback.CHANNEL_ID;
 
 public class PlaybackController implements View.OnClickListener, MusicService.ServiceCallbacks{
 
@@ -17,9 +29,18 @@ public class PlaybackController implements View.OnClickListener, MusicService.Se
     View view;
     private int currSongId = -1;
     ImageButton btn_prev, btn_play, btn_next, btn_shuffle, btn_loop;
+    NotificationManager notificationManager;
+    TextView title;
     public PlaybackController(Context context, View view) {
         this.context = context;
         this.view = view;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            createChannel();
+            context.registerReceiver(broadcastReceiver, new IntentFilter("TRACKS_TRACKS"));
+            context.startService(new Intent(context, OnClearFromRecentService.class));
+        }
+
         btn_prev = view.findViewById(R.id.iv_prev);
         btn_prev.setOnClickListener(this);
         btn_play = view.findViewById(R.id.iv_play);
@@ -30,6 +51,18 @@ public class PlaybackController implements View.OnClickListener, MusicService.Se
         btn_shuffle.setOnClickListener(this);
         btn_loop = view.findViewById(R.id.iv_loop);
         btn_loop.setOnClickListener(this);
+    }
+
+    private void createChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                    "KOD Dev", NotificationManager.IMPORTANCE_LOW);
+
+            notificationManager = context.getSystemService(NotificationManager.class);
+            if (notificationManager != null){
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
     }
 
     @Override
@@ -120,17 +153,53 @@ public class PlaybackController implements View.OnClickListener, MusicService.Se
         ((ActivityMain) context).highlightCurrentPosition();
         btn_play.setBackgroundResource(R.drawable.ic_pause);
         MusicService.isTouching = false;
+
+        NotificationPlayback.createNotification(context, musicSrv.getCurrentSong(),
+                R.drawable.ic_pause, musicSrv.getPlayingSongPos(), musicSrv.getSongs().size()-1);
+        title.setText(musicSrv.getCurrentSong().getTitle());
+
     }
 
     @Override
     public void onMusicPause() {
         ((ActivityMain) context).highlightCurrentPosition();
         btn_play.setBackgroundResource(R.drawable.ic_play);
+
+        NotificationPlayback.createNotification(context, musicSrv.getCurrentSong(),
+                R.drawable.ic_play, musicSrv.getPlayingSongPos(), musicSrv.getSongs().size()-1);
+        title.setText(musicSrv.getCurrentSong().getTitle());
+
     }
 
     @Override
     public void onMusicResume() {
         ((ActivityMain) context).highlightCurrentPosition();
         btn_play.setBackgroundResource(R.drawable.ic_pause);
+
+        NotificationPlayback.createNotification(context, musicSrv.getCurrentSong(),
+                R.drawable.ic_pause, musicSrv.getPlayingSongPos(), musicSrv.getSongs().size()-1);
+        title.setText(musicSrv.getCurrentSong().getTitle());
     }
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getExtras().getString("actionname");
+            switch (action) {
+                case ACTION_PREVIUOS:
+                case ACTION_NEXT:
+                    onPlayNewSong();
+                    break;
+                case ACTION_PLAY:
+                    if (MusicService.player.isPlaying()) {
+                        onMusicPause();
+                    } else {
+                        onMusicResume();
+                    }
+                    break;
+            }
+        }
+    };
 }
+
+
