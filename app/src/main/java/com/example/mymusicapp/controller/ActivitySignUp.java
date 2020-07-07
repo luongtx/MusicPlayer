@@ -1,4 +1,4 @@
-package com.example.mymusicapp.activity;
+package com.example.mymusicapp.controller;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,7 +48,7 @@ public class ActivitySignUp extends AppCompatActivity {
                     etPass1.setText("");
                     etPass2.setText("");
                     Intent intent = new Intent( ActivitySignUp.this,
-                            com.example.mymusicapp.activity.ActivityMain.class); // paste first line
+                            com.example.mymusicapp.controller.ActivityMain.class); // paste first line
                     SharedPreferences.Editor editor = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, ActivityLogin.MODE_PRIVATE).edit();
                     editor.putString(ActivityLogin.NAME, name);
                     editor.putString(ActivityLogin.CHECK,"0");

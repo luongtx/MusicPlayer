@@ -13,15 +13,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".activity.ActivityMain"/>
-        <activity android:name=".activity.ActivitySignUp"/>
-        <activity android:name=".activity.ActivityLogin">
+        <activity android:name=".controller.ActivityMain"/>
+        <activity android:name=".controller.ActivitySignUp"/>
+        <activity android:name=".controller.ActivityLogin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.example.mymusicapp.MusicService" />
+        <service android:name="com.example.mymusicapp.service.MusicService" />
 
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
@@ -37,7 +37,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ActivityAccount" />
+        <activity android:name=".controller.ActivityAccount" />
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>

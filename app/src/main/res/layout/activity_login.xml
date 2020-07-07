@@ -7,7 +7,7 @@
 
     android:background="@drawable/backgr"
     android:orientation="vertical"
-    tools:context=".activity.ActivityLogin">
+    tools:context=".controller.ActivityLogin">
 
     <LinearLayout
         android:layout_width="match_parent"

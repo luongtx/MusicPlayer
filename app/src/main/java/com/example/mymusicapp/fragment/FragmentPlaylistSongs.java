@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.controller.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterSong;
 import com.example.mymusicapp.entity.Playlist;
 import com.example.mymusicapp.entity.Song;
@@ -23,7 +23,7 @@ import com.example.mymusicapp.entity.Song;
 import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
-import static com.example.mymusicapp.activity.ActivityMain.songs;
+import static com.example.mymusicapp.controller.ActivityMain.songs;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +50,7 @@ public class FragmentPlaylistSongs extends Fragment {
         tv_playlist_name.setText(playlist.getName());
 
         songs = ((ActivityMain) context).getPlaylistSongs(playlistId);
-        ActivityMain.setList(songs);
+//        ActivityMain.setList(songs);
         setPlaylistSongs(songs);
         rcv_playlist_songs.setAdapter(adapterSong);
         rcv_playlist_songs.setHasFixedSize(true);

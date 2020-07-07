@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.controller.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterPlayList;
 import com.example.mymusicapp.entity.Playlist;
 import com.example.mymusicapp.entity.Song;
@@ -26,9 +26,9 @@ import com.example.mymusicapp.entity.Song;
 import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
-import static com.example.mymusicapp.activity.ActivityMain.dbMusicHelper;
-import static com.example.mymusicapp.activity.ActivityMain.playLists;
-import static com.example.mymusicapp.activity.ActivityMain.songs;
+import static com.example.mymusicapp.controller.ActivityMain.dbMusicHelper;
+import static com.example.mymusicapp.controller.ActivityMain.playLists;
+import static com.example.mymusicapp.controller.ActivityMain.songs;
 
 
 /**
@@ -104,7 +104,7 @@ public class FragmentPlaylist extends Fragment implements AdapterPlayList.Playli
     }
 
     public void onClickOptionAddSongs(int position) {
-        ActivityMain.layout_mini_controller.setVisibility(View.GONE);
+        ((ActivityMain)context).hideMiniController();
         FragmentSelectSongs fragmentSelectSongs = new FragmentSelectSongs();
         Bundle bundle = new Bundle();
         bundle.putInt("playlist_pos", position);

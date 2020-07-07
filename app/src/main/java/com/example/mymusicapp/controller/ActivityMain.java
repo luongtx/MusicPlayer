@@ -1,4 +1,4 @@
-package com.example.mymusicapp.activity;
+package com.example.mymusicapp.controller;
 
 import android.app.TimePickerDialog;
 import android.content.ComponentName;
@@ -9,27 +9,22 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.mymusicapp.MusicProvider;
-import com.example.mymusicapp.MusicService;
-import com.example.mymusicapp.PlaybackController;
+import com.example.mymusicapp.service.MusicProvider;
+import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.adapter.AdapterViewPager;
 import com.example.mymusicapp.entity.Artist;
@@ -41,7 +36,6 @@ import com.example.mymusicapp.fragment.FragmentMediaControl;
 import com.example.mymusicapp.fragment.FragmentPlaylist;
 import com.example.mymusicapp.fragment.FragmentPlaylistSongs;
 import com.example.mymusicapp.fragment.FragmentSongs;
-import com.example.mymusicapp.fragment.FragmentTimerPicker;
 import com.example.mymusicapp.repository.DBMusicHelper;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
@@ -49,8 +43,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class ActivityMain extends AppCompatActivity implements MusicService.ServiceCallbacks,
-       TimePickerDialog.OnTimeSetListener {
+public class ActivityMain extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     Toolbar toolbar;
     TabLayout tabLayout;
@@ -66,7 +59,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public static ArrayList<Artist> artists;
     public static ArrayList<Playlist> playLists;
 
-    public static LinearLayout layout_mini_controller;
+    public LinearLayout layout_mini_controller;
     public static MusicProvider musicProvider;
     public static DBMusicHelper dbMusicHelper;
 
@@ -76,9 +69,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     FragmentPlaylistSongs fragmentPlaylistSongs;
     FragmentArtistSongs fragmentArtistSongs;
     FragmentMediaControl fragmentMediaControl;
-    FragmentTimerPicker fragmentTimerPicker;
-    AlertDialogPlaylist alertDialogPlaylist;
-
+    DialogController dialogController;
+    MenuItemController menuItemController;
     private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_star, R.drawable.ic_featured_play_list};
     private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
     String name, check;
@@ -87,6 +79,7 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor shaEditor;
     String prefer_lang;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,12 +101,11 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
         layout_mini_controller = findViewById(R.id.layout_mini_controller);
         layout_mini_controller.setVisibility(View.GONE);
-        playbackController = new PlaybackController(layout_mini_controller);
+        playbackController = new PlaybackController(this, layout_mini_controller);
 
         loadData();
         setOnChangeListenerForViewPager();
-        alertDialogPlaylist = new AlertDialogPlaylist(this);
-
+        dialogController = new DialogController(this);
     }
 
     private void loadData() {
@@ -147,26 +139,30 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
+
             @Override
             public void onPageSelected(int position) {
                 if (position == 0) {
                     songs = musicProvider.loadSongs();
+                    if (MusicService.currentPagePos == position)
+                        musicSrv.indexCurrentSong(songs);
                     fragmentSongs.notifySongStateChanges(songs);
-                    setList(songs);
                 } else if (position == 1) {
                     if (pagerAdapter.getItem(1).equals(fragmentArtistSongs)) {
                         songs = musicProvider.loadSongsByArtist(fragmentArtistSongs.getArtistName());
+                        if (MusicService.currentPagePos == position)
+                            musicSrv.indexCurrentSong(songs);
                         fragmentArtistSongs.notifySongStateChanges(songs);
-                        setList(songs);
                     }
                 } else {
                     if (pagerAdapter.getItem(2).equals(fragmentPlaylistSongs)) {
                         songs = dbMusicHelper.getPlaylistSongs(fragmentPlaylistSongs.getPlaylist_pos());
+                        if (MusicService.currentPagePos == position)
+                            musicSrv.indexCurrentSong(songs);
                         fragmentPlaylistSongs.notifySongStateChanges(songs);
-                        setList(songs);
                     }
                 }
-                recoverMenu();
+                menuItemController.recoverMenu();
                 setIconForTabTitle();
             }
             @Override
@@ -179,32 +175,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
     public void setIconForTabTitle() {
         for(int i = 0 ; i< tabIcons.length; i++) {
             tabLayout.getTabAt(i).setIcon(tabIcons[i]);
-//            tabLayout.getTabAt(i).setText(tabTitles[i]);
         }
     }
-
-    public void highlightCurrentPosition() {
-        fragmentSongs.notifySongStateChanges(songs);
-        if (fragmentPlaylistSongs != null) fragmentPlaylistSongs.notifySongStateChanges(songs);
-        else if (fragmentArtistSongs != null) fragmentArtistSongs.notifySongStateChanges(songs);
-    }
-
-    private ServiceConnection musicConnection = new ServiceConnection(){
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
-            musicSrv = binder.getService();
-            musicSrv.setList(songs);
-            musicBound = true;
-            musicSrv.setCallBacks(ActivityMain.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            musicBound = false;
-        }
-    };
 
     @Override
     protected void onStart() {
@@ -216,114 +188,61 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
     }
 
-    private Menu menu;
-    MenuItem it_refresh, it_new_playlist, it_sleep_timer, it_add_to_other_playlist,
-            it_add_to_this_playlist, it_delete_from_playlist, it_deselect_item, it_my_account,
-            it_language, it_vn, it_eng, it_search;
+    private ServiceConnection musicConnection = new ServiceConnection(){
 
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
+            musicSrv = binder.getService();
+            musicSrv.setList(songs);
+            musicBound = true;
+            musicSrv.setCallBacks(playbackController);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicBound = false;
+        }
+    };
+
+    public void highlightCurrentPosition() {
+        if (getCurrentPagePosition() == 0) {
+            fragmentSongs.notifySongStateChanges(songs);
+        } else if (getCurrentPagePosition() == 1) {
+            fragmentArtistSongs.notifySongStateChanges(songs);
+        } else {
+            fragmentPlaylistSongs.notifySongStateChanges(songs);
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCheck() {
+        return check;
+    }
+
+    private Menu menu;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        findMenuItem();
-        setOnClickListenerForMenuItem();
-        SearchView searchView = (SearchView) it_search.getActionView();
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        searchView.setQueryHint(getString(R.string.search_song_name));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (viewPager.getCurrentItem() == 0) {
-                    fragmentSongs.getAdapterSong().getFilter().filter(newText);
-                } else if (viewPager.getCurrentItem() == 1) {
-                    fragmentArtistSongs.getAdapterSong().getFilter().filter(newText);
-                } else {
-                    fragmentPlaylistSongs.getAdapterSong().getFilter().filter(newText);
-                }
-                return false;
-            }
-        });
+        menuItemController = new MenuItemController(this, menu);
+        menuItemController.findMenuItem();
+        menuItemController.setOnClickListenerForMenuItem();
+        menuItemController.createSearchView();
         return true;
     }
 
-    public void findMenuItem() {
-        it_search = menu.findItem(R.id.menu_search);
-        it_my_account = menu.findItem(R.id.menu_my_account);
-        it_refresh = menu.findItem(R.id.it_refresh);
-        it_new_playlist = menu.findItem(R.id.it_new_playlist);
-        it_sleep_timer = menu.findItem(R.id.it_sleep_timer);
-        it_add_to_other_playlist = menu.findItem(R.id.it_add_to_other_playlist);
-        it_add_to_this_playlist = menu.findItem(R.id.it_add_song_to_this_playlist);
-        it_delete_from_playlist = menu.findItem(R.id.it_delete_from_playlist);
-        it_deselect_item = menu.findItem(R.id.it_deselect_item);
-
-        it_language = menu.findItem(R.id.it_change_language);
-        it_eng = menu.findItem(R.id.it_eng);
-        it_vn = menu.findItem(R.id.it_vn);
-
-        if(name == null || name.length() == 0) it_my_account.setTitle(R.string.login);
-        else it_my_account.setTitle(name);
-    }
-
-    private void setOnClickListenerForMenuItem() {
-        it_my_account.setOnMenuItemClickListener( menuItem -> {
-            Intent accountIntent = new Intent(ActivityMain.this, ActivityAccount.class);
-            accountIntent.putExtra(ActivityLogin.NAME, name);
-            accountIntent.putExtra(ActivityLogin.CHECK, check);
-            startActivity(accountIntent);
-            finish();
-            return true;
-        });
-        it_new_playlist.setOnMenuItemClickListener( menuItem -> {
-            alertDialogPlaylist.createDialogAddNewPlaylist();
-            return true;
-        });
-        it_add_to_this_playlist.setOnMenuItemClickListener(menuItem -> {
-            fragmentPlaylist.onClickOptionAddSongs(fragmentPlaylistSongs.getPlaylist_pos());
-            return true;
-        });
-        it_add_to_other_playlist.setOnMenuItemClickListener(menuItem -> {
-            onClickOptionAddToPlaylist();
-            return true;
-        });
-        it_delete_from_playlist.setOnMenuItemClickListener(menuItem -> {
-            fragmentPlaylistSongs.deleteFromPlaylist();
-            return true;
-        });
-        it_deselect_item.setOnMenuItemClickListener(menuItem -> {
-            cancelSelected();
-            return true;
-        });
-
-        it_eng.setOnMenuItemClickListener(menuItem -> {
-            setLocale("en");
-            shaEditor = sharedPreferences.edit();
-            shaEditor.putString("prefer_lang", "en");
-            shaEditor.apply();
-            return true;
-        });
-        it_vn.setOnMenuItemClickListener(menuItem -> {
-            setLocale("vi");
-            shaEditor = sharedPreferences.edit();
-            shaEditor.putString("prefer_lang", "vi");
-            shaEditor.apply();
-            return true;
-        });
-
-        it_refresh.setOnMenuItemClickListener(menuItem -> {
-            refresh();
-            return true;
-        });
-
-        it_sleep_timer.setOnMenuItemClickListener(menuItem -> {
-            fragmentTimerPicker = new FragmentTimerPicker();
-            fragmentTimerPicker.show(getSupportFragmentManager(), "Timer picker");
-            return true;
-        });
+    public void setFilterForFragment(String newText) {
+        if (viewPager.getCurrentItem() == 0) {
+            fragmentSongs.getAdapterSong().getFilter().filter(newText);
+        } else if (viewPager.getCurrentItem() == 1) {
+            fragmentArtistSongs.getAdapterSong().getFilter().filter(newText);
+        } else {
+            fragmentPlaylistSongs.getAdapterSong().getFilter().filter(newText);
+        }
     }
 
     public void refresh() {
@@ -338,57 +257,6 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         if (fragmentPlaylist != null) {
             fragmentPlaylist.getAdapterPlayList().setList(playLists);
         }
-    }
-
-    public void changeMenuWhenSelectMultipleItem() {
-        it_refresh.setVisible(false);
-        it_new_playlist.setVisible(false);
-        it_sleep_timer.setVisible(false);
-        it_add_to_other_playlist.setVisible(true);
-        if(viewPager.getCurrentItem() == 2) {
-            it_delete_from_playlist.setVisible(true);
-        }else {
-            it_delete_from_playlist.setVisible(false);
-        }
-        it_deselect_item.setVisible(true);
-    }
-
-    public void changeMenuInPlaylistDetails() {
-        it_refresh.setVisible(true);
-        it_new_playlist.setVisible(true);
-        it_sleep_timer.setVisible(true);
-        if (viewPager.getCurrentItem() == 2) {
-            it_add_to_this_playlist.setVisible(true);
-        } else {
-            it_add_to_this_playlist.setVisible(false);
-        }
-        it_delete_from_playlist.setVisible(false);
-        it_deselect_item.setVisible(false);
-    }
-
-    public void recoverMenu() {
-        it_refresh.setVisible(true);
-        it_new_playlist.setVisible(true);
-        it_sleep_timer.setVisible(true);
-        it_add_to_this_playlist.setVisible(false);
-        it_add_to_other_playlist.setVisible(false);
-        it_delete_from_playlist.setVisible(false);
-        it_deselect_item.setVisible(false);
-    }
-
-    @Override
-    public void onPlayNewSong() {
-        highlightCurrentPosition();
-    }
-
-    @Override
-    public void onMusicPause() {
-        highlightCurrentPosition();
-    }
-
-    @Override
-    public void onMusicResume() {
-        highlightCurrentPosition();
     }
 
     public void maximizeMediaController(View view) {
@@ -416,14 +284,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
             appBarLayout.setVisibility(View.VISIBLE);
             layout_mini_controller.setVisibility(View.VISIBLE);
         } else {
             recoverFragment();
-            recoverMenu();
+            menuItemController.recoverMenu();
             setIconForTabTitle();
         }
     }
@@ -440,9 +307,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
     }
 
-    //add song to any playlist
     public void onClickOptionAddToPlaylist() {
-        alertDialogPlaylist.createDialogAddSongsToPlaylist();
+        createDialogAddToPlaylist();
+    }
+
+    public void createDialogAddToPlaylist() {
+        dialogController.createDialogAddSongsToPlaylist();
     }
 
     public void cancelSelected() {
@@ -456,7 +326,13 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             fragmentPlaylistSongs.getAdapterSong().setMultiSelected(false);
             fragmentPlaylistSongs.getAdapterSong().initSelectedSongs();
         }
-        recoverMenu();
+        menuItemController.recoverMenu();
+    }
+
+    public void savePreferLang(String lang) {
+        shaEditor = sharedPreferences.edit();
+        shaEditor.putString("prefer_lang", lang);
+        shaEditor.apply();
     }
 
     public void setLocale(String lang) {
@@ -480,36 +356,8 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         return bundle;
     }
 
-    CountDownTimer countDownTimer;
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        int milliseconds = (hourOfDay * 3600 + minute * 60) * 1000;
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
-        countDownTimer = new CountDownTimer(milliseconds, 1000) {
-            long r_hour, r_min, r_sec, secs;
-            String s_hour, s_min, s_sec;
-
-            public void onTick(long millisUntilFinished) {
-                secs = millisUntilFinished / 1000;
-                r_hour = secs / 3600;
-                r_min = (secs % 3600) / 60;
-                r_sec = secs % 60;
-                s_hour = String.valueOf(r_hour);
-                s_min = String.valueOf(r_min);
-                s_sec = String.valueOf(r_sec);
-                if (r_hour < 10) s_hour = "0" + r_hour;
-                if (r_min < 10) s_min = "0" + r_min;
-                if (r_sec < 10) s_sec = "0" + r_sec;
-                it_sleep_timer.setTitle(String.format("%s: %s:%s:%s", getString(R.string.timer), s_hour, s_min, s_sec));
-            }
-            public void onFinish() {
-                it_sleep_timer.setTitle(R.string.set_timer);
-                playbackController.stop();
-            }
-        };
-        countDownTimer.start();
+    public void stopPlayBack() {
+        playbackController.stop();
     }
 
     public void replace_fragment(boolean isTransaction, int pos, Fragment fragment) {
@@ -525,13 +373,12 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
             pagerAdapter.notifyDataSetChanged();
         }
     }
-//
-//    public void addSongsToPlaylist(ArrayList<Song> songs, int playlistId) {
-//        dbMusicHelper.addSongsToPlaylist(songs, playlistId);
-//    }
 
     public void onClickOptionAddSongs(int playlist_pos) {
-        fragmentPlaylist.onClickOptionAddSongs(playlist_pos);
+        if (playlist_pos == -1)
+            fragmentPlaylist.onClickOptionAddSongs(fragmentPlaylistSongs.getPlaylist_pos());
+        else
+            fragmentPlaylist.onClickOptionAddSongs(playlist_pos);
     }
 
     public ArrayList<Song> getPlaylistSongs(int playlistId) {
@@ -566,9 +413,9 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         int playlistId = playLists.get(pos).getId();
         fragmentPlaylist.addSelectedSongToPlaylist(playlistId);
         if (isCurrentPlaylist) {
-            setPlaylistSongs(dbMusicHelper.getPlaylistSongs(playlistId));
+            songs = dbMusicHelper.getPlaylistSongs(playlistId);
+            setPlaylistSongs(songs);
             popStackedFragment();
-            setList(songs);
         }
     }
 
@@ -608,9 +455,36 @@ public class ActivityMain extends AppCompatActivity implements MusicService.Serv
         }
     }
 
-    public static void setList(ArrayList<Song> songs) {
-        ActivityMain.songs = songs;
-        musicSrv.setList(songs);
+//    public static void setList(ArrayList<Song> songs) {
+//        ActivityMain.songs = songs;
+//        if(musicSrv != null) {
+//            musicSrv.setList(songs);
+//        }
+//    }
+
+    public void changeMenuWhenSelectMultipleItem() {
+        menuItemController.changeMenuWhenSelectMultipleItem();
+    }
+
+    public void changeMenuInPlaylistDetails() {
+        menuItemController.changeMenuInPlaylistDetails();
+    }
+
+    public void createDialogAddNewPlaylist() {
+        dialogController.createDialogAddNewPlaylist();
+    }
+
+    public void hideMiniController() {
+        layout_mini_controller.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        menuItemController.startCounterClock(hourOfDay, minute);
+    }
+
+    public void resetCallBacks() {
+        musicSrv.setCallBacks(playbackController);
     }
 
 }

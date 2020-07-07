@@ -13,14 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.controller.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterSong;
 import com.example.mymusicapp.entity.Song;
 
 import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
-import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
 
 
 /**
@@ -30,7 +29,6 @@ public class FragmentSongs extends Fragment{
 
     private RecyclerView rcv_songs;
     private AdapterSong adapterSong;
-    private static int lastClickPosition = -1;
     private ArrayList<Song> songs;
     public FragmentSongs() {
         // Required empty public constructor
@@ -42,7 +40,7 @@ public class FragmentSongs extends Fragment{
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         rcv_songs = view.findViewById(R.id.rcv_songs);
         songs = ActivityMain.songs;
-        if(musicSrv != null) musicSrv.setList(songs);
+//        ActivityMain.setList(songs);
         adapterSong = new AdapterSong(songs, getContext());
         adapterSong.initSelectedSongs();
         adapterSong.setSongItemClickListener(new AdapterSong.SongItemClickListener() {

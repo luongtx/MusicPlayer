@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.controller.ActivityMain;
 import com.example.mymusicapp.adapter.AdapterArtist;
 import com.example.mymusicapp.entity.Artist;
 
