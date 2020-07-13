@@ -4,7 +4,7 @@
     <string name="login">Đăng nhập</string>
     <string name="signup">Đăng ký</string>
     <string name="facebook_app_id">277789886668240</string>
-    <string name="fb_login_protocol_scheme">fb277789886668240</string>
+<!--    <string name="fb_login_protocol_scheme">fb277789886668240</string>-->
     <string name="update_success">Cập nhật thành công</string>
     <string name="wrong_password">Sai mật khẩu</string>
     <string name="wrong_new_password">Mật khẩu mới nhập không đúng</string>

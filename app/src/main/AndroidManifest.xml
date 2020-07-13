@@ -13,16 +13,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".controller.ActivityMain"/>
-        <activity android:name=".controller.ActivitySignUp"/>
-        <activity android:name=".controller.ActivityLogin">
+        <activity
+            android:name=".controller.ActivityMain"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".controller.ActivityLogin"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".controller.ActivitySignUp"/>
         <service android:name="com.example.mymusicapp.service.MusicService" />
-
+        <receiver android:name=".service.NotificationActionService"/>
+        <service android:name=".service.OnClearFromRecentService"/>
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
                 "keyboard|keyboardHidden|screenLayout|screenSize|orientation"

@@ -51,7 +51,8 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     AppBarLayout appBarLayout;
     AdapterViewPager pagerAdapter;
     public static MusicService musicSrv;
-    PlaybackController playbackController;
+    MediaPlaybackController mediaPlaybackController;
+    NotificationPlaybackController notificationPlaybackController;
     private Intent playIntent;
     private boolean musicBound = false;
     public static ArrayList<Song> all_songs;
@@ -101,8 +102,8 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
 
         layout_mini_controller = findViewById(R.id.layout_mini_controller);
         layout_mini_controller.setVisibility(View.GONE);
-        playbackController = new PlaybackController(this, layout_mini_controller);
-
+        mediaPlaybackController = new MediaPlaybackController(this, layout_mini_controller);
+        notificationPlaybackController = new NotificationPlaybackController(this, mediaPlaybackController);
         loadData();
         setOnChangeListenerForViewPager();
         dialogController = new DialogController(this);
@@ -196,7 +197,8 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
             musicSrv = binder.getService();
             musicSrv.setList(songs);
             musicBound = true;
-            musicSrv.setCallBacks(playbackController);
+            musicSrv.addCallBacks(mediaPlaybackController);
+            musicSrv.addCallBacks(notificationPlaybackController);
         }
 
         @Override
@@ -223,10 +225,8 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         return check;
     }
 
-    private Menu menu;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
         menuItemController = new MenuItemController(this, menu);
         menuItemController.findMenuItem();
@@ -357,7 +357,7 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     }
 
     public void stopPlayBack() {
-        playbackController.stop();
+        mediaPlaybackController.stop();
     }
 
     public void replace_fragment(boolean isTransaction, int pos, Fragment fragment) {
@@ -432,7 +432,7 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     }
 
     public void pickSong(int position) {
-        playbackController.songPicked(position);
+        mediaPlaybackController.songPicked(position);
     }
 
     public void deleteFromPlaylist() {
@@ -454,13 +454,6 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
             fragmentPlaylistSongs.setPlaylistSongs(playlistSongs);
         }
     }
-
-//    public static void setList(ArrayList<Song> songs) {
-//        ActivityMain.songs = songs;
-//        if(musicSrv != null) {
-//            musicSrv.setList(songs);
-//        }
-//    }
 
     public void changeMenuWhenSelectMultipleItem() {
         menuItemController.changeMenuWhenSelectMultipleItem();
@@ -484,7 +477,7 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     }
 
     public void resetCallBacks() {
-        musicSrv.setCallBacks(playbackController);
+        musicSrv.getServiceCallbacks().set(0, mediaPlaybackController);
     }
 
 }

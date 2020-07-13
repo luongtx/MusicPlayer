@@ -7,10 +7,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.example.mymusicapp.entity.Song;
 
@@ -28,17 +30,33 @@ public class MusicService extends Service implements
     public static boolean isTouching;
     public static int currentPagePos;
     private final IBinder musicBind = new MusicBinder();
-
+    public static final int STATE_PAUSE = 0;
+    public static final int STATE_RESUME = 1;
+    public static final int STATE_NEW = 2;
     public interface ServiceCallbacks {
         void onPlayNewSong();
         void onMusicPause();
         void onMusicResume();
     }
 
-    private ServiceCallbacks serviceCallbacks;
+    private ArrayList<ServiceCallbacks> serviceCallbacks;
 
-    public void setCallBacks(ServiceCallbacks callBacks) {
-        serviceCallbacks = callBacks;
+    public void addCallBacks(ServiceCallbacks callback) {
+        serviceCallbacks.add(callback);
+    }
+
+    public void callBack(int state) {
+        if(state == 0) {
+            serviceCallbacks.forEach(ServiceCallbacks::onMusicPause);
+        } else if(state == 1) {
+            serviceCallbacks.forEach(ServiceCallbacks::onMusicResume);
+        } else {
+            serviceCallbacks.forEach(ServiceCallbacks::onPlayNewSong);
+        }
+    }
+
+    public ArrayList<ServiceCallbacks> getServiceCallbacks() {
+        return serviceCallbacks;
     }
 
     @Override
@@ -50,13 +68,8 @@ public class MusicService extends Service implements
         isShuffling = false;
         player = new MediaPlayer();
         initMusicPlayer();
+        serviceCallbacks = new ArrayList<>();
     }
-
-//    public class LocalBinder extends Binder {
-//        MusicService getService() {
-//            return MusicService.this;
-//        }
-//    }
 
     public void initMusicPlayer() {
         player.setWakeMode(getApplicationContext(),
@@ -106,10 +119,10 @@ public class MusicService extends Service implements
             }
             player.prepareAsync();
             playSong.setState(1);
-            serviceCallbacks.onPlayNewSong();
+            callBack(STATE_NEW);
         } else {
             player.pause();
-            serviceCallbacks.onMusicPause();
+            callBack(STATE_PAUSE);
         }
     }
 
@@ -120,7 +133,7 @@ public class MusicService extends Service implements
     public void pause() {
         player.pause();
         songs.get(currentSongPos).setState(0);
-        serviceCallbacks.onMusicPause();
+        callBack(STATE_PAUSE);
     }
 
     public void resume() {
@@ -130,7 +143,7 @@ public class MusicService extends Service implements
             player.start();
             songs.get(currentSongPos).setState(1);
         }
-        serviceCallbacks.onMusicResume();
+        callBack(STATE_RESUME);
     }
 
     public int getPlayingSongPos() {
@@ -155,7 +168,7 @@ public class MusicService extends Service implements
                 playSong(currentSongPos);
             } else {
                 playSong(currentSongPos + 1);
-                serviceCallbacks.onPlayNewSong();
+                callBack(STATE_NEW);
             }
         }
     }
