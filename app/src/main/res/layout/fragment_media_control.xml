@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/colorPrimaryLight"
-    tools:context="com.example.mymusicapp.activity.ActivityMain">
+    tools:context="com.example.mymusicapp.controller.ActivityMain">
     <ImageView
         android:id="@+id/iv_end"
         android:layout_margin="5dp"

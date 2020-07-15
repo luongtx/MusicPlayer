@@ -3,11 +3,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="login">Đăng nhập</string>
     <string name="signup">Đăng ký</string>
-    <!--    <string name="ten_dn">Điền tên đăng nhập</string>-->
-    <!--    <string name="mk_dn">Điền mật khẩu</string>-->
-    <!--    <string name="mk_dn_lai">Điền lại mật khẩu</string>-->
     <string name="facebook_app_id">277789886668240</string>
-    <string name="fb_login_protocol_scheme">fb277789886668240</string>
+<!--    <string name="fb_login_protocol_scheme">fb277789886668240</string>-->
     <string name="update_success">Cập nhật thành công</string>
     <string name="wrong_password">Sai mật khẩu</string>
     <string name="wrong_new_password">Mật khẩu mới nhập không đúng</string>
@@ -43,7 +40,7 @@
     <string name="add_to_playlist">Thêm vào playlist</string>
     <string name="deselect_selected_item">Hủy các lựa chọn</string>
     <string name="seleted_playlist_song_deleted">Đã xóa các bài hát được chọn khỏi playlist!</string>
-    <string name="add_song_to_this_playlist">Thêm bài hát vào playlist</string>
+    <string name="add_song_to_this_playlist">Thêm vào playlist này</string>
     <string name="my_account">Tài khoản của tôi</string>
     <string name="enter_full">Vui nhập</string>
     <string name="welcome">"Xin chào "</string>

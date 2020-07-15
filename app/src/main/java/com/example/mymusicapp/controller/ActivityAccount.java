@@ -1,4 +1,4 @@
-package com.example.mymusicapp.activity;
+package com.example.mymusicapp.controller;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -14,15 +14,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.repository.DBAccountHelper;
-import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.Locale;
 

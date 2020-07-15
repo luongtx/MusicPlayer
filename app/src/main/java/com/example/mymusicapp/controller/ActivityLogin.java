@@ -1,4 +1,4 @@
-package com.example.mymusicapp.activity;
+package com.example.mymusicapp.controller;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -173,7 +173,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     public void skipLogin(View v)
     {
         Intent intent = new Intent(ActivityLogin.this,
-                com.example.mymusicapp.activity.ActivityMain.class); // paste first line
+                com.example.mymusicapp.controller.ActivityMain.class); // paste first line
 //        intent.putExtra(NAME, "");
 //        intent.putExtra(CHECK,"1");
         startActivity(intent);
@@ -191,7 +191,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 db.close();
                 if (login) {
                     Intent intent = new Intent(ActivityLogin.this,
-                            com.example.mymusicapp.activity.ActivityMain.class); // paste first line
+                            com.example.mymusicapp.controller.ActivityMain.class); // paste first line
                     startActivity(intent);
                     SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
                     editor.putString(NAME, name);
@@ -240,7 +240,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 handleSignInResult(task);
                 String name = task.getResult().getEmail();
                 Intent intent = new Intent(ActivityLogin.this,
-                        com.example.mymusicapp.activity.ActivityMain.class); // paste first line
+                        com.example.mymusicapp.controller.ActivityMain.class); // paste first line
                 SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
                     editor.putString(NAME, name);
                     editor.putString(CHECK,"API");
@@ -271,7 +271,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     String id = object.getString("id");
 
                     Intent intent = new Intent(ActivityLogin.this,
-                            com.example.mymusicapp.activity.ActivityMain.class); // paste first line
+                            com.example.mymusicapp.controller.ActivityMain.class); // paste first line
 //                    intent.putExtra("name", email);
 //                    intent.putExtra("check","API");
                     SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();

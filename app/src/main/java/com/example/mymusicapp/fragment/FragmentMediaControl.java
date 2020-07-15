@@ -1,5 +1,6 @@
 package com.example.mymusicapp.fragment;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,15 +16,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.mymusicapp.MusicService;
-import com.example.mymusicapp.PlaybackController;
+import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
-import com.example.mymusicapp.activity.ActivityMain;
+import com.example.mymusicapp.controller.ActivityMain;
+import com.example.mymusicapp.controller.MediaPlaybackController;
 import com.example.mymusicapp.entity.Song;
 
 import java.util.Objects;
 
-import static com.example.mymusicapp.activity.ActivityMain.musicSrv;
+import static com.example.mymusicapp.controller.ActivityMain.musicSrv;
 
 public class FragmentMediaControl extends Fragment implements MusicService.ServiceCallbacks {
     // TODO: Rename parameter arguments, choose names that match
@@ -34,11 +35,10 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     SeekBar postionBar, volumnBar;
     TextView tvStart, tvEnd;
     TextView tvArtist, tvTitle;
-//    ImageButton btn_next, btn_prev, btn_play, btn_shuffle, btn_loop;
     LinearLayout layout_mini_controller;
     Song currentSong;
     SeekBarTask seekBarTask;
-    PlaybackController playbackController;
+    MediaPlaybackController mediaPlaybackController;
     View view;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,11 +47,14 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         if(view != null) return view;
         view = inflater.inflate(R.layout.fragment_media_control, container, false);
 
-        currentSong = musicSrv.getSongs().get(MusicService.currSongIndex);
+        currentSong = musicSrv.getSongs().get(MusicService.currentSongPos);
         tvTitle = view.findViewById(R.id.tvTitle);
         tvArtist = view.findViewById(R.id.tvArtist);
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
+
+        mediaPlaybackController = new MediaPlaybackController(getContext(), view.findViewById(R.id.layout_mini_controller));
+        musicSrv.getServiceCallbacks().set(0, mediaPlaybackController);
 
         iv_dvd = view.findViewById(R.id.ivDVD);
         btn_end = view.findViewById(R.id.iv_end);
@@ -59,10 +62,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvStart = view.findViewById(R.id.elapsedTimeLabel);
         tvEnd = view.findViewById(R.id.remainingTimeLabel);
         volumnBar = view.findViewById(R.id.volumeBar);
-
-
-        layout_mini_controller = view.findViewById(R.id.layout_mini_controller);
-        playbackController = new PlaybackController(layout_mini_controller);
 
         Glide.with(view).load(R.drawable.img_dvd_spinning).into(iv_dvd);
 
@@ -94,16 +93,21 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        musicSrv.setCallBacks(FragmentMediaControl.this);
+        musicSrv.addCallBacks(FragmentMediaControl.this);
         seekBarTask = new SeekBarTask();
         seekBarTask.execute();
     }
 
+    Context context;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
     private void resetView() {
-//        if (MusicService.currSongIndex < ActivityMain.songs.size()) {
-//            currentSong = ActivityMain.songs.get(MusicService.currSongIndex);
-//        }
-        currentSong = musicSrv.getSongs().get(MusicService.currSongIndex);
+        currentSong = musicSrv.getSongs().get(MusicService.currentSongPos);
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
         tvStart.setText("0:00");
@@ -121,13 +125,11 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     @Override
     public void onMusicPause() {
         Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_video).into(iv_dvd);
-//        ((ActivityMain)getActivity()).onMusicPause();
     }
 
     @Override
     public void onMusicResume() {
         Glide.with(Objects.requireNonNull(getView())).load(R.drawable.img_dvd_spinning).into(iv_dvd);
-//        ((ActivityMain)getActivity()).onMusicResume();
     }
 
     @Override
@@ -135,12 +137,13 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         super.onPause();
         if(seekBarTask != null && isRemoving()) {
             seekBarTask.cancel(false);
+
         }
     }
 
     @Override
     public void onDestroy() {
-        musicSrv.setCallBacks((ActivityMain)getActivity());
+        ((ActivityMain) context).resetCallBacks();
         super.onDestroy();
     }
 

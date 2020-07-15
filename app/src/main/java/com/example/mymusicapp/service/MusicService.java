@@ -1,4 +1,4 @@
-package com.example.mymusicapp;
+package com.example.mymusicapp.service;
 
 import android.app.Service;
 import android.content.ContentUris;
@@ -7,11 +7,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.example.mymusicapp.entity.Song;
 
@@ -23,42 +24,54 @@ public class MusicService extends Service implements
 
     public static MediaPlayer player;
     private ArrayList<Song> songs;
-    public static int currSongIndex;
-    static boolean isLooping;
-    static boolean isShuffling;
+    public static int currentSongPos;
+    public static boolean isLooping;
+    public static boolean isShuffling;
+    public static boolean isTouching;
+    public static int currentPagePos;
     private final IBinder musicBind = new MusicBinder();
-
+    public static final int STATE_PAUSE = 0;
+    public static final int STATE_RESUME = 1;
+    public static final int STATE_NEW = 2;
     public interface ServiceCallbacks {
         void onPlayNewSong();
         void onMusicPause();
         void onMusicResume();
     }
 
-    private ServiceCallbacks serviceCallbacks;
+    private ArrayList<ServiceCallbacks> serviceCallbacks;
 
-    public void setCallBacks(ServiceCallbacks callBacks) {
-        serviceCallbacks = callBacks;
+    public void addCallBacks(ServiceCallbacks callback) {
+        serviceCallbacks.add(callback);
+    }
+
+    public void callBack(int state) {
+        if(state == 0) {
+            serviceCallbacks.forEach(ServiceCallbacks::onMusicPause);
+        } else if(state == 1) {
+            serviceCallbacks.forEach(ServiceCallbacks::onMusicResume);
+        } else {
+            serviceCallbacks.forEach(ServiceCallbacks::onPlayNewSong);
+        }
+    }
+
+    public ArrayList<ServiceCallbacks> getServiceCallbacks() {
+        return serviceCallbacks;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        currSongIndex = -1;
+        currentSongPos = -1;
+        currentPagePos = -1;
         isLooping = false;
         isShuffling = false;
         player = new MediaPlayer();
         initMusicPlayer();
+        serviceCallbacks = new ArrayList<>();
     }
 
-//    public class LocalBinder extends Binder {
-//        MusicService getService() {
-//            return MusicService.this;
-//        }
-//    }
-
     public void initMusicPlayer() {
-
-        //The wake lock will let playback continue when the device becomes idle
         player.setWakeMode(getApplicationContext(),
                 PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -92,46 +105,54 @@ public class MusicService extends Service implements
 
     public void playSong(int songIndex) {
         player.reset();
-        currSongIndex = songIndex;
-        if (songs != null && currSongIndex + 1 <= songs.size() && currSongIndex >= 0) {
-            if (isShuffling) currSongIndex = generateRandomIdx();
-            Song playSong = songs.get(currSongIndex);
+        currentSongPos = songIndex;
+        resetSongState();
+        if (songs != null && currentSongPos + 1 <= songs.size() && currentSongPos >= 0) {
+            if (isShuffling && !isTouching) currentSongPos = generateRandomIndex();
+            Song playSong = songs.get(currentSongPos);
             int songId = playSong.getId();
             Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId);
             try {
                 player.setDataSource(getApplicationContext(), trackUri);
             } catch (Exception e) {
-                Log.e("MUSIC SERVICE", "Error setting data source", e);
+                e.printStackTrace();
             }
             player.prepareAsync();
-            serviceCallbacks.onPlayNewSong();
+            playSong.setState(1);
+            callBack(STATE_NEW);
         } else {
             player.pause();
-            serviceCallbacks.onMusicPause();
+            callBack(STATE_PAUSE);
         }
+    }
+
+    public void resetSongState() {
+        songs.forEach(song -> song.setState(-1));
     }
 
     public void pause() {
         player.pause();
-        serviceCallbacks.onMusicPause();
+        songs.get(currentSongPos).setState(0);
+        callBack(STATE_PAUSE);
     }
 
     public void resume() {
-        if (currSongIndex >= songs.size()) {
+        if (currentSongPos >= songs.size()) {
             playSong(songs.size() - 1);
         } else {
             player.start();
+            songs.get(currentSongPos).setState(1);
         }
-        serviceCallbacks.onMusicResume();
+        callBack(STATE_RESUME);
     }
 
     public int getPlayingSongPos() {
-        return currSongIndex;
+        return currentSongPos;
     }
 
-    public int generateRandomIdx() {
+    public int generateRandomIndex() {
         int newIndex = (int) (Math.random() * songs.size());
-        while (newIndex == currSongIndex) {
+        while (newIndex == currentSongPos) {
             newIndex = (int) (Math.random() * songs.size());
         }
         return newIndex;
@@ -140,14 +161,14 @@ public class MusicService extends Service implements
     @Override
     public void onCompletion(MediaPlayer mp) {
         if (isLooping) {
-            playSong(currSongIndex);
+            playSong(currentSongPos);
         } else {
             if (isShuffling) {
-                currSongIndex = generateRandomIdx();
-                playSong(currSongIndex);
+                currentSongPos = generateRandomIndex();
+                playSong(currentSongPos);
             } else {
-                playSong(currSongIndex + 1);
-                serviceCallbacks.onPlayNewSong();
+                playSong(currentSongPos + 1);
+                callBack(STATE_NEW);
             }
         }
     }
@@ -180,5 +201,31 @@ public class MusicService extends Service implements
 
     public int getSongIdAt(int position) {
         return songs.get(position).getId();
+    }
+
+    public int getCurrentSongId() {
+        return songs.get(currentSongPos).getId();
+    }
+
+    public static boolean isIsShuffling() {
+        return isShuffling;
+    }
+
+    public static boolean isIsLooping() {
+        return isLooping;
+    }
+
+    public void indexCurrentSong(ArrayList<Song> songs) {
+        if (player != null && currentSongPos != -1) {
+            if (player.isPlaying()) {
+                songs.get(currentSongPos).setState(1);
+            } else {
+                songs.get(currentSongPos).setState(0);
+            }
+        }
+    }
+
+    public Song getCurrentSong(){
+        return songs.get(getPlayingSongPos());
     }
 }

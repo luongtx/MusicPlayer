@@ -15,7 +15,7 @@
         android:background="@color/icons">
         <!-- TODO: Update blank fragment layout -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcv_songs"
+            android:id="@+id/rcv_select_songs"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical" />

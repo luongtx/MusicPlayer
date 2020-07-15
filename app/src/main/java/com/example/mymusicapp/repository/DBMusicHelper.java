@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.mymusicapp.MusicProvider;
+import com.example.mymusicapp.service.MusicProvider;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.entity.Playlist;
 import com.example.mymusicapp.entity.Song;
