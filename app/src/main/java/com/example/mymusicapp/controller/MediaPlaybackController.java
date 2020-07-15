@@ -4,20 +4,21 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
+import com.example.mymusicapp.service.MusicService;
 
 import static com.example.mymusicapp.controller.ActivityMain.musicSrv;
 import static com.example.mymusicapp.controller.ActivityMain.songs;
 
-public class PlaybackController implements View.OnClickListener, MusicService.ServiceCallbacks{
+public class MediaPlaybackController implements View.OnClickListener, MusicService.ServiceCallbacks{
 
 
     Context context;
     View view;
     private int currSongId = -1;
     ImageButton btn_prev, btn_play, btn_next, btn_shuffle, btn_loop;
-    public PlaybackController(Context context, View view) {
+
+    public MediaPlaybackController(Context context, View view) {
         this.context = context;
         this.view = view;
         btn_prev = view.findViewById(R.id.iv_prev);
@@ -134,3 +135,5 @@ public class PlaybackController implements View.OnClickListener, MusicService.Se
         btn_play.setBackgroundResource(R.drawable.ic_pause);
     }
 }
+
+

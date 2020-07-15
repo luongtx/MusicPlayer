@@ -43,8 +43,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
     implementation 'com.facebook.android:facebook-login:5.15.3'
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
-    implementation 'com.google.firebase:firebase-core:17.4.3'
-    implementation 'com.google.firebase:firebase-analytics:17.4.3'
+    implementation 'com.google.firebase:firebase-core:17.4.4'
+    implementation 'com.google.firebase:firebase-analytics:17.4.4'
+    implementation 'androidx.media:media:1.1.0'
 
 }
 apply plugin: 'com.android.application'

@@ -7,11 +7,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.example.mymusicapp.entity.Song;
 
@@ -29,17 +30,33 @@ public class MusicService extends Service implements
     public static boolean isTouching;
     public static int currentPagePos;
     private final IBinder musicBind = new MusicBinder();
-
+    public static final int STATE_PAUSE = 0;
+    public static final int STATE_RESUME = 1;
+    public static final int STATE_NEW = 2;
     public interface ServiceCallbacks {
         void onPlayNewSong();
         void onMusicPause();
         void onMusicResume();
     }
 
-    private ServiceCallbacks serviceCallbacks;
+    private ArrayList<ServiceCallbacks> serviceCallbacks;
 
-    public void setCallBacks(ServiceCallbacks callBacks) {
-        serviceCallbacks = callBacks;
+    public void addCallBacks(ServiceCallbacks callback) {
+        serviceCallbacks.add(callback);
+    }
+
+    public void callBack(int state) {
+        if(state == 0) {
+            serviceCallbacks.forEach(ServiceCallbacks::onMusicPause);
+        } else if(state == 1) {
+            serviceCallbacks.forEach(ServiceCallbacks::onMusicResume);
+        } else {
+            serviceCallbacks.forEach(ServiceCallbacks::onPlayNewSong);
+        }
+    }
+
+    public ArrayList<ServiceCallbacks> getServiceCallbacks() {
+        return serviceCallbacks;
     }
 
     @Override
@@ -51,17 +68,10 @@ public class MusicService extends Service implements
         isShuffling = false;
         player = new MediaPlayer();
         initMusicPlayer();
+        serviceCallbacks = new ArrayList<>();
     }
 
-//    public class LocalBinder extends Binder {
-//        MusicService getService() {
-//            return MusicService.this;
-//        }
-//    }
-
     public void initMusicPlayer() {
-
-        //The wake lock will let playback continue when the device becomes idle
         player.setWakeMode(getApplicationContext(),
                 PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -98,21 +108,21 @@ public class MusicService extends Service implements
         currentSongPos = songIndex;
         resetSongState();
         if (songs != null && currentSongPos + 1 <= songs.size() && currentSongPos >= 0) {
-            if (isShuffling && !isTouching) currentSongPos = generateRandomIdx();
+            if (isShuffling && !isTouching) currentSongPos = generateRandomIndex();
             Song playSong = songs.get(currentSongPos);
             int songId = playSong.getId();
             Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId);
             try {
                 player.setDataSource(getApplicationContext(), trackUri);
             } catch (Exception e) {
-                Log.e("MUSIC SERVICE", "Error setting data source", e);
+                e.printStackTrace();
             }
             player.prepareAsync();
             playSong.setState(1);
-            serviceCallbacks.onPlayNewSong();
+            callBack(STATE_NEW);
         } else {
             player.pause();
-            serviceCallbacks.onMusicPause();
+            callBack(STATE_PAUSE);
         }
     }
 
@@ -123,7 +133,7 @@ public class MusicService extends Service implements
     public void pause() {
         player.pause();
         songs.get(currentSongPos).setState(0);
-        serviceCallbacks.onMusicPause();
+        callBack(STATE_PAUSE);
     }
 
     public void resume() {
@@ -133,14 +143,14 @@ public class MusicService extends Service implements
             player.start();
             songs.get(currentSongPos).setState(1);
         }
-        serviceCallbacks.onMusicResume();
+        callBack(STATE_RESUME);
     }
 
     public int getPlayingSongPos() {
         return currentSongPos;
     }
 
-    public int generateRandomIdx() {
+    public int generateRandomIndex() {
         int newIndex = (int) (Math.random() * songs.size());
         while (newIndex == currentSongPos) {
             newIndex = (int) (Math.random() * songs.size());
@@ -154,11 +164,11 @@ public class MusicService extends Service implements
             playSong(currentSongPos);
         } else {
             if (isShuffling) {
-                currentSongPos = generateRandomIdx();
+                currentSongPos = generateRandomIndex();
                 playSong(currentSongPos);
             } else {
                 playSong(currentSongPos + 1);
-                serviceCallbacks.onPlayNewSong();
+                callBack(STATE_NEW);
             }
         }
     }
@@ -213,5 +223,9 @@ public class MusicService extends Service implements
                 songs.get(currentSongPos).setState(0);
             }
         }
+    }
+
+    public Song getCurrentSong(){
+        return songs.get(getPlayingSongPos());
     }
 }

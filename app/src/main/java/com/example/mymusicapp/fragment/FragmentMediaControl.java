@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide;
 import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.controller.ActivityMain;
-import com.example.mymusicapp.controller.PlaybackController;
+import com.example.mymusicapp.controller.MediaPlaybackController;
 import com.example.mymusicapp.entity.Song;
 
 import java.util.Objects;
@@ -38,7 +38,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     LinearLayout layout_mini_controller;
     Song currentSong;
     SeekBarTask seekBarTask;
-    PlaybackController playbackController;
+    MediaPlaybackController mediaPlaybackController;
     View view;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,8 +53,8 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvTitle.setText(currentSong.getTitle());
         tvArtist.setText(currentSong.getArtist());
 
-        playbackController = new PlaybackController(getContext(), view.findViewById(R.id.layout_mini_controller));
-        musicSrv.setCallBacks(playbackController);
+        mediaPlaybackController = new MediaPlaybackController(getContext(), view.findViewById(R.id.layout_mini_controller));
+        musicSrv.getServiceCallbacks().set(0, mediaPlaybackController);
 
         iv_dvd = view.findViewById(R.id.ivDVD);
         btn_end = view.findViewById(R.id.iv_end);
@@ -93,7 +93,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        musicSrv.setCallBacks(FragmentMediaControl.this);
+        musicSrv.addCallBacks(FragmentMediaControl.this);
         seekBarTask = new SeekBarTask();
         seekBarTask.execute();
     }
