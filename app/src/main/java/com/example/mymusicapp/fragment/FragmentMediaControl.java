@@ -54,7 +54,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvArtist.setText(currentSong.getArtist());
 
         mediaPlaybackController = new MediaPlaybackController(getContext(), view.findViewById(R.id.layout_mini_controller));
-        musicSrv.getServiceCallbacks().set(0, mediaPlaybackController);
+        musicSrv.addCallBacks(mediaPlaybackController);
 
         iv_dvd = view.findViewById(R.id.ivDVD);
         btn_end = view.findViewById(R.id.iv_end);
@@ -86,7 +86,7 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
 
             }
         });
-        btn_end.setOnClickListener(v -> ((ActivityMain)getActivity()).onBackPressed());
+        btn_end.setOnClickListener(v -> ((ActivityMain) context).onBackPressed());
         return view;
     }
 
@@ -137,14 +137,13 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         super.onPause();
         if(seekBarTask != null && isRemoving()) {
             seekBarTask.cancel(false);
-
         }
     }
 
     @Override
     public void onDestroy() {
-        ((ActivityMain) context).resetCallBacks();
         super.onDestroy();
+        ((ActivityMain) context).resetCallBacks();
     }
 
     class SeekBarTask extends AsyncTask<String, Integer, String> {

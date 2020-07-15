@@ -55,23 +55,15 @@ public class MediaPlaybackController implements View.OnClickListener, MusicServi
     public void previous() {
         MusicService.isTouching = false;
         musicSrv.playSong(musicSrv.getPlayingSongPos() - 1);
-        btn_play.setBackgroundResource(R.drawable.ic_pause);
     }
 
     public void toggle_play() {
-        if (MusicService.player.isPlaying()) {
-            musicSrv.pause();
-            btn_play.setBackgroundResource(R.drawable.ic_play);
-        } else {
-            musicSrv.resume();
-            btn_play.setBackgroundResource(R.drawable.ic_pause);
-        }
+        musicSrv.togglePlay();
     }
 
     public void next() {
         MusicService.isTouching = false;
         musicSrv.playSong(musicSrv.getPlayingSongPos() + 1);
-        btn_play.setBackgroundResource(R.drawable.ic_pause);
     }
 
     public void shuffle() {

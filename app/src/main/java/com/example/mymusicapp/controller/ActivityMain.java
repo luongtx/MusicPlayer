@@ -477,7 +477,8 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     }
 
     public void resetCallBacks() {
-        musicSrv.getServiceCallbacks().set(0, mediaPlaybackController);
+        musicSrv.cancelCallBack();
+        musicSrv.addCallBacks(mediaPlaybackController);
+        musicSrv.addCallBacks(notificationPlaybackController);
     }
-
 }
