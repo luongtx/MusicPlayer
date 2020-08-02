@@ -162,4 +162,8 @@ public class NotificationPlaybackController implements MusicService.ServiceCallb
 
         }
     }
+
+    public BroadcastReceiver getBroadcastReceiver() {
+        return broadcastReceiver;
+    }
 }

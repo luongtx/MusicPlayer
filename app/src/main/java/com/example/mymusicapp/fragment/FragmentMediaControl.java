@@ -1,8 +1,9 @@
 package com.example.mymusicapp.fragment;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.controller.ActivityMain;
 import com.example.mymusicapp.controller.MediaPlaybackController;
 import com.example.mymusicapp.entity.Song;
+import com.example.mymusicapp.service.MusicService;
 
 import java.util.Objects;
 
@@ -40,11 +41,12 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     SeekBarTask seekBarTask;
     MediaPlaybackController mediaPlaybackController;
     View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        if(view != null) return view;
+        if (view != null) return view;
         view = inflater.inflate(R.layout.fragment_media_control, container, false);
 
         currentSong = musicSrv.getSongs().get(MusicService.currentSongPos);
@@ -94,8 +96,10 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         musicSrv.addCallBacks(FragmentMediaControl.this);
+
         seekBarTask = new SeekBarTask();
-        seekBarTask.execute();
+        seekBarHandler = new SeekBarHandler();
+        seekBarTask.start();
     }
 
     Context context;
@@ -114,7 +118,8 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         tvEnd.setText(MusicService.getReadableTime(currentSong.getDuration()));
 
         seekBarTask = new SeekBarTask();
-        seekBarTask.execute();
+        seekBarHandler = new SeekBarHandler();
+        seekBarTask.start();
     }
 
     @Override
@@ -135,9 +140,6 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
     @Override
     public void onPause() {
         super.onPause();
-        if(seekBarTask != null && isRemoving()) {
-            seekBarTask.cancel(false);
-        }
     }
 
     @Override
@@ -146,39 +148,38 @@ public class FragmentMediaControl extends Fragment implements MusicService.Servi
         ((ActivityMain) context).resetCallBacks();
     }
 
-    class SeekBarTask extends AsyncTask<String, Integer, String> {
-        int duration;
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
+    class SeekBarTask extends Thread {
 
-        @Override
-        protected String doInBackground(String... params) {
+        int duration;
+        int currentMilisecs;
+
+        public void run() {
             duration = currentSong.getDuration();
-            //bug: never completed
-            while(MusicService.player.getCurrentPosition() < duration){
+            while (MusicService.player.getCurrentPosition() < duration) {
                 try {
-                    publishProgress(MusicService.player.getCurrentPosition());
+                    currentMilisecs = MusicService.player.getCurrentPosition();
+                    Message message = new Message();
+                    message.what = currentMilisecs;
+                    seekBarHandler.sendMessage(message);
                     Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                } catch (InterruptedException ignored) {
+
                 }
             }
-            return "done";
         }
+    }
+
+    SeekBarHandler seekBarHandler;
+
+    class SeekBarHandler extends Handler {
+        int currentMilisecs;
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            postionBar.setProgress(100*values[0]/duration);
-            tvStart.setText(MusicService.getReadableTime(values[0]));
-        }
-
-        //bug: never used
-        @Override
-        protected void onPostExecute(String s) {
-            cancel(true);
-            resetView();
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            currentMilisecs = msg.what;
+            postionBar.setProgress(100 * currentMilisecs / currentSong.getDuration());
+            tvStart.setText(MusicService.getReadableTime(currentMilisecs));
         }
     }
 
