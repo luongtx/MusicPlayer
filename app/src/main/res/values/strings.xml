@@ -69,4 +69,11 @@
     <string name="english">English</string>
     <string name="tiengvn">Tiếng việt</string>
     <string name="timer">Time remaining</string>
+    <string name="nav_header_title" translatable="false">Tran Xuan Luong</string>
+    <string name="nav_header_subtitle" translatable="false">luongtx98@gmail.com</string>
+    <string name="offline">Offline Music</string>
+    <string name="online">Online Music</string>
+    <string name="open" translatable="false">Open</string>
+    <string name="close" translatable="false">Close</string>
+    <string name="setting">Setting</string>
 </resources>

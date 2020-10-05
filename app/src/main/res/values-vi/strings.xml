@@ -69,4 +69,7 @@
     <string name="english">English</string>
     <string name="tiengvn">Tiếng việt</string>
     <string name="timer">Bộ đếm giờ</string>
+    <string name="offline">Nhạc Offline</string>
+    <string name="online">Nhạc Online</string>
+    <string name="setting">Cài đặt</string>
 </resources>

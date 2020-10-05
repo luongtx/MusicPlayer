@@ -15,16 +15,18 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.mymusicapp.service.MusicProvider;
-import com.example.mymusicapp.service.MusicService;
 import com.example.mymusicapp.R;
 import com.example.mymusicapp.adapter.AdapterViewPager;
 import com.example.mymusicapp.entity.Artist;
@@ -37,7 +39,10 @@ import com.example.mymusicapp.fragment.FragmentPlaylist;
 import com.example.mymusicapp.fragment.FragmentPlaylistSongs;
 import com.example.mymusicapp.fragment.FragmentSongs;
 import com.example.mymusicapp.repository.DBMusicHelper;
+import com.example.mymusicapp.service.MusicProvider;
+import com.example.mymusicapp.service.MusicService;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -73,13 +78,17 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     DialogController dialogController;
     MenuItemController menuItemController;
     private int[] tabIcons = {R.drawable.ic_audiotrack, R.drawable.ic_star, R.drawable.ic_featured_play_list};
-    private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
+    //    private int[] tabTitles = {R.string.songs, R.string.artists, R.string.playlists};
     String name, check;
     public Locale myLocale;
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor shaEditor;
     String prefer_lang;
+
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +101,7 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         viewPager = findViewById(R.id.pager);
 
         setSupportActionBar(toolbar);
-
+        setUpNavigationDrawer();
         setUpViewPager();
         setIconForTabTitle();
 
@@ -123,6 +132,28 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         prefer_lang = sharedPreferences.getString("prefer_lang", "en");
 
         setLocale(prefer_lang);
+    }
+
+    private void setUpNavigationDrawer() {
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.setDrawerIndicatorEnabled(true);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            if (item.getItemId() == R.id.menu_offline) {
+                Toast.makeText(ActivityMain.this, "btn offline clicked", Toast.LENGTH_SHORT).show();
+            } else if (item.getItemId() == R.id.menu_online) {
+                Toast.makeText(ActivityMain.this, "btn online clicked", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(ActivityMain.this, "btn settings clicked", Toast.LENGTH_SHORT).show();
+            }
+            return false;
+        });
     }
 
     private void setUpViewPager() {
@@ -166,6 +197,7 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
                 menuItemController.recoverMenu();
                 setIconForTabTitle();
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
 
@@ -174,7 +206,7 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     }
 
     public void setIconForTabTitle() {
-        for(int i = 0 ; i< tabIcons.length; i++) {
+        for (int i = 0; i < tabIcons.length; i++) {
             tabLayout.getTabAt(i).setIcon(tabIcons[i]);
         }
     }
@@ -182,18 +214,18 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     @Override
     protected void onStart() {
         super.onStart();
-        if(playIntent==null){
+        if (playIntent == null) {
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
         }
     }
 
-    private ServiceConnection musicConnection = new ServiceConnection(){
+    private ServiceConnection musicConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
             musicSrv = binder.getService();
             musicSrv.setList(songs);
             musicBound = true;
@@ -296,11 +328,11 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     }
 
     public void recoverFragment() {
-        if(viewPager.getCurrentItem() == 1) {
+        if (viewPager.getCurrentItem() == 1) {
             pagerAdapter.get_list_fragment().remove(1);
             pagerAdapter.get_list_fragment().add(1, fragmentArtists);
             pagerAdapter.notifyDataSetChanged();
-        } else if(viewPager.getCurrentItem() == 2) {
+        } else if (viewPager.getCurrentItem() == 2) {
             pagerAdapter.get_list_fragment().remove(2);
             pagerAdapter.get_list_fragment().add(2, fragmentPlaylist);
             pagerAdapter.notifyDataSetChanged();
@@ -450,7 +482,7 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     }
 
     public void setPlaylistSongs(ArrayList<Song> playlistSongs) {
-        if(fragmentPlaylistSongs != null) {
+        if (fragmentPlaylistSongs != null) {
             fragmentPlaylistSongs.setPlaylistSongs(playlistSongs);
         }
     }
@@ -487,4 +519,5 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         super.onPause();
         unregisterReceiver(notificationPlaybackController.getBroadcastReceiver());
     }
+
 }
