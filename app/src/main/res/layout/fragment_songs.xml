@@ -11,6 +11,5 @@
         android:id="@+id/rcv_songs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:scrollbars="vertical" />
 </androidx.core.widget.NestedScrollView>

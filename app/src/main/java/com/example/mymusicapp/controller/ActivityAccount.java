@@ -23,11 +23,11 @@ import com.facebook.login.widget.LoginButton;
 import java.util.Locale;
 
 public class ActivityAccount extends AppCompatActivity {
-    TextView tvName,tv1,tv2,tv3;
-    Button btnLogOut,btnChangePass, btnChangePass2;
+    TextView tvName, tv1, tv2, tv3;
+    Button btnLogOut, btnChangePass, btnChangePass2;
     EditText etOldPass, etNewPass, etNewPassAgain;
     private LoginButton loginButton;
-    private String name , check ="";
+    private String name, check = "";
 
 
     @SuppressLint("SetTextI18n")
@@ -52,8 +52,7 @@ public class ActivityAccount extends AppCompatActivity {
         name = prefs.getString(ActivityLogin.NAME, "");
         check = prefs.getString(ActivityLogin.CHECK, "");
 
-        if(name.equals(""))
-        {
+        if (name.equals("")) {
             tv1.setVisibility(View.VISIBLE);
             tv2.setVisibility(View.VISIBLE);
             tv3.setVisibility(View.VISIBLE);
@@ -64,9 +63,7 @@ public class ActivityAccount extends AppCompatActivity {
             btnChangePass2.setVisibility(View.GONE);
             tvName.setVisibility(View.GONE);
             btnLogOut.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             tvName.setText(getString(R.string.welcome) + name);
             tv1.setVisibility(View.GONE);
             tv2.setVisibility(View.GONE);
@@ -80,23 +77,18 @@ public class ActivityAccount extends AppCompatActivity {
             btnLogOut.setVisibility(View.VISIBLE);
         }
 
-        if(check.equals("API"))
-        {
+        if (check.equals("API")) {
             etNewPassAgain.setVisibility(View.GONE);
             etNewPass.setVisibility(View.GONE);
             etOldPass.setVisibility(View.GONE);
             btnChangePass.setVisibility(View.GONE);
             btnChangePass2.setVisibility(View.GONE);
-        }
-        else if (check.equals("0"))
-        {
+        } else if (check.equals("0")) {
             etNewPassAgain.setVisibility(View.GONE);
             etNewPass.setVisibility(View.GONE);
             etOldPass.setVisibility(View.GONE);
             btnChangePass2.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             etNewPassAgain.setVisibility(View.GONE);
             etNewPass.setVisibility(View.GONE);
             etOldPass.setVisibility(View.GONE);
@@ -117,24 +109,20 @@ public class ActivityAccount extends AppCompatActivity {
         });
 
 
-        btnLogOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ActivityAccount.this, ActivityLogin.class);
-                intent.putExtra("tvn", name);
-                tvName.setText("");
-                name ="";
-                SharedPreferences.Editor editor = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, ActivityLogin.MODE_PRIVATE).edit();
-                editor.putString(ActivityLogin.NAME, "");
-                editor.putString(ActivityLogin.CHECK,"");
-                editor.apply();
-//                setResult(RESULT_OK, intent);
-                startActivity(intent);
-                ActivityAccount.this.finish();
+        btnLogOut.setOnClickListener(v -> {
+            Intent intent = new Intent(ActivityAccount.this, ActivityLogin.class);
+            intent.putExtra("tvn", name);
+            tvName.setText("");
+            name = "";
+            SharedPreferences.Editor editor = getSharedPreferences(ActivityLogin.MY_PREFS_FILENAME, MODE_PRIVATE).edit();
+            editor.putString(ActivityLogin.NAME, "");
+            editor.putString(ActivityLogin.CHECK, "");
+            editor.apply();
+            setResult(RESULT_OK, intent);
+            startActivity(intent);
+            ActivityAccount.this.finish();
 
-            }
         });
-
 
     }
 
@@ -173,13 +161,13 @@ public class ActivityAccount extends AppCompatActivity {
         }
 
     }
-    public void DN(View v)
-    {
+
+    public void DN(View v) {
         ActivityAccount.this.finish();
     }
-    public void DK(View v)
-    {
-        startActivity(new Intent(ActivityAccount.this,ActivitySignUp.class));
+
+    public void DK(View v) {
+        startActivity(new Intent(ActivityAccount.this, ActivitySignUp.class));
         ActivityAccount.this.finish();
     }
 

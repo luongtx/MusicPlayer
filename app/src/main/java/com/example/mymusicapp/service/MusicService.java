@@ -34,7 +34,9 @@ public class MusicService extends Service implements
 
     public interface ServiceCallbacks {
         void onPlayNewSong();
+
         void onMusicPause();
+
         void onMusicResume();
     }
 
@@ -49,9 +51,9 @@ public class MusicService extends Service implements
     }
 
     public void callBack(int state) {
-        if(state == 0) {
+        if (state == 0) {
             serviceCallbacks.forEach(ServiceCallbacks::onMusicPause);
-        } else if(state == 1) {
+        } else if (state == 1) {
             serviceCallbacks.forEach(ServiceCallbacks::onMusicResume);
         } else {
             serviceCallbacks.forEach(ServiceCallbacks::onPlayNewSong);
@@ -125,6 +127,7 @@ public class MusicService extends Service implements
     }
 
     public void togglePlay() {
+        if (currentSongPos == -1) return;
         if (player.isPlaying()) {
             pause();
         } else {
@@ -191,8 +194,8 @@ public class MusicService extends Service implements
     }
 
     public static String getReadableTime(int milliseconds) {
-        int seconds = milliseconds/1000;
-        int minutes = seconds/60;
+        int seconds = milliseconds / 1000;
+        int minutes = seconds / 60;
         int r_seconds = seconds % 60;
         String min_toString = Integer.toString(minutes);
         String sec_toString = Integer.toString(r_seconds);
@@ -231,7 +234,7 @@ public class MusicService extends Service implements
         }
     }
 
-    public Song getCurrentSong(){
+    public Song getCurrentSong() {
         if (currentSongPos < 0) return songs.get(0);
         else if (currentSongPos > songs.size() - 1) return songs.get(songs.size() - 1);
         else return songs.get(currentSongPos);

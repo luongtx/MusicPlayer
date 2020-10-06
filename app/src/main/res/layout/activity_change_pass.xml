@@ -4,16 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgr"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     tools:context=".controller.ActivityAccount">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:onClick="DN"
+        android:src="@drawable/earbud" />
 
     <TextView
         android:id="@+id/tvName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="185dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:textAlignment="center"
@@ -117,7 +124,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:orientation="horizontal">
 
@@ -156,5 +163,4 @@
             android:textColor="#3F51B5"
             android:textSize="24sp" />
     </LinearLayout>
-
 </LinearLayout>

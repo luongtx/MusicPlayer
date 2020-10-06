@@ -15,7 +15,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:theme="@style/AppTheme.NoActionBar"
-            app:layout_scrollFlags="scroll|enterAlways|snap" />
+            app:layout_scrollFlags="noScroll" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
@@ -23,25 +23,12 @@
             android:layout_height="wrap_content"
             app:tabBackground="@drawable/tab_background"
             app:tabGravity="fill"
-            app:tabIconTint="@drawable/tab_foreground"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/colorAccent"
             app:tabTextColor="@color/icons">
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/songs" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/artists" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/playlists" />
         </com.google.android.material.tabs.TabLayout>
+
     </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/content_main" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

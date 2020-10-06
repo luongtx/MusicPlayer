@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgr"
+    android:background="@color/colorPrimary"
+    android:gravity="center"
     android:orientation="vertical"
     tools:context=".controller.ActivitySignUp">
 
@@ -12,10 +13,6 @@
         android:id="@+id/etNameSignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="320dp"
-        android:layout_marginRight="10dp"
-        android:ems="10"
         android:hint="@string/enter_account_name"
         android:inputType="textPersonName"
         android:textAlignment="center"
@@ -64,5 +61,4 @@
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textStyle="bold" />
-
 </LinearLayout>

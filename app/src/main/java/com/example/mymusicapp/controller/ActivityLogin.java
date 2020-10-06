@@ -106,7 +106,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         {
             startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
         }
-        setLocale(language);
+//        setLocale(language);
         spinner = (Spinner) findViewById(R.id.spinner);
         listLang = new ArrayList<>();
 
@@ -132,7 +132,6 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
                     editor.putString("prefer_lang", language);
                     editor.apply();
-                    setLocale(language);
                 }
                 else
                 {
@@ -140,8 +139,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE).edit();
                     editor.putString("prefer_lang", language);
                     editor.apply();
-                    setLocale(language);
                 }
+                setLocale(language);
             }
 
             @Override

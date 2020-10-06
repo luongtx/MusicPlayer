@@ -36,6 +36,7 @@
                 android:title="@string/set_timer" />
             <item
                 android:id="@+id/it_change_language"
+                android:icon="@drawable/ic_baseline_language"
                 android:title="@string/change_language"
                 app:showAsAction="ifRoom">
                 <menu>

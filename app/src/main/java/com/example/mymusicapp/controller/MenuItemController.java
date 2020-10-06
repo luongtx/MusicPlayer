@@ -1,7 +1,6 @@
 package com.example.mymusicapp.controller;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.CountDownTimer;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,20 +42,17 @@ public class MenuItemController {
         it_eng = menu.findItem(R.id.it_eng);
         it_vn = menu.findItem(R.id.it_vn);
 
-        if(parent.getName() == null || parent.getName().length() == 0) it_my_account.setTitle(context.getString(R.string.login));
+        if (parent.getName() == null || parent.getName().length() == 0)
+            it_my_account.setTitle(context.getString(R.string.login));
         else it_my_account.setTitle(parent.getName());
     }
 
     public void setOnClickListenerForMenuItem() {
-        it_my_account.setOnMenuItemClickListener( menuItem -> {
-            Intent accountIntent = new Intent(context, ActivityAccount.class);
-            accountIntent.putExtra(ActivityLogin.NAME, parent.getName());
-            accountIntent.putExtra(ActivityLogin.CHECK, parent.getCheck());
-            parent.startActivity(accountIntent);
-            parent.finish();
+        it_my_account.setOnMenuItemClickListener(menuItem -> {
+            parent.navigateActivityAccount();
             return true;
         });
-        it_new_playlist.setOnMenuItemClickListener( menuItem -> {
+        it_new_playlist.setOnMenuItemClickListener(menuItem -> {
             parent.createDialogAddNewPlaylist();
             return true;
         });
@@ -105,9 +101,9 @@ public class MenuItemController {
         it_new_playlist.setVisible(false);
         it_sleep_timer.setVisible(false);
         it_add_to_other_playlist.setVisible(true);
-        if(parent.getCurrentPagePosition() == 2) {
+        if (parent.getCurrentPagePosition() == 2) {
             it_delete_from_playlist.setVisible(true);
-        }else {
+        } else {
             it_delete_from_playlist.setVisible(false);
         }
         it_deselect_item.setVisible(true);
@@ -145,6 +141,7 @@ public class MenuItemController {
             public boolean onQueryTextSubmit(String query) {
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 parent.setFilterForFragment(newText);
@@ -154,6 +151,7 @@ public class MenuItemController {
     }
 
     static CountDownTimer countDownTimer;
+
     public void startCounterClock(int hourOfDay, int minute) {
 
         int milliseconds = (hourOfDay * 3600 + minute * 60) * 1000;
@@ -177,6 +175,7 @@ public class MenuItemController {
                 if (r_sec < 10) s_sec = "0" + r_sec;
                 it_sleep_timer.setTitle(String.format("%s: %s:%s:%s", parent.getString(R.string.timer), s_hour, s_min, s_sec));
             }
+
             public void onFinish() {
                 it_sleep_timer.setTitle(R.string.set_timer);
                 parent.stopPlayBack();

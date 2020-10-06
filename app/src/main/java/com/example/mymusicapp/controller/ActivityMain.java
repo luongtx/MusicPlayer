@@ -13,7 +13,9 @@ import android.os.IBinder;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -90,6 +92,10 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     NavigationView navigationView;
     ActionBarDrawerToggle toggle;
 
+    View parentHeaderView;
+    TextView tvUser, tvEmail;
+    ImageView ivUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +107,7 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         viewPager = findViewById(R.id.pager);
 
         setSupportActionBar(toolbar);
+
         setUpNavigationDrawer();
         setUpViewPager();
         setIconForTabTitle();
@@ -110,11 +117,11 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         fragmentPlaylist = (FragmentPlaylist) pagerAdapter.getItem(2);
 
         layout_mini_controller = findViewById(R.id.layout_mini_controller);
-        layout_mini_controller.setVisibility(View.GONE);
+//        layout_mini_controller.setVisibility(View.GONE);
         mediaPlaybackController = new MediaPlaybackController(this, layout_mini_controller);
         notificationPlaybackController = new NotificationPlaybackController(this, mediaPlaybackController);
         loadData();
-        setOnChangeListenerForViewPager();
+//        setOnChangeListenerForViewPager();
         dialogController = new DialogController(this);
     }
 
@@ -132,6 +139,30 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         prefer_lang = sharedPreferences.getString("prefer_lang", "en");
 
         setLocale(prefer_lang);
+
+        //navigation header information
+        parentHeaderView = navigationView.getHeaderView(0);
+        ivUser = parentHeaderView.findViewById(R.id.ivUser);
+        tvUser = parentHeaderView.findViewById(R.id.tvUser);
+        tvEmail = parentHeaderView.findViewById(R.id.tvEmail);
+
+        tvUser.setText(name);
+        ivUser.setOnClickListener(v -> {
+            navigateActivityAccount();
+        });
+    }
+
+    public void navigateActivityAccount() {
+        try {
+//            unbindService(musicConnection);
+            Intent accountIntent = new Intent(this, ActivityAccount.class);
+            accountIntent.putExtra(ActivityLogin.NAME, name);
+            accountIntent.putExtra(ActivityLogin.CHECK, check);
+            startActivity(accountIntent);
+//            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setUpNavigationDrawer() {
@@ -154,6 +185,8 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
             }
             return false;
         });
+
+
     }
 
     private void setUpViewPager() {
@@ -176,21 +209,21 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
             public void onPageSelected(int position) {
                 if (position == 0) {
                     songs = musicProvider.loadSongs();
-                    if (MusicService.currentPagePos == position)
-                        musicSrv.indexCurrentSong(songs);
+//                    if (MusicService.currentPagePos == position)
+//                        musicSrv.indexCurrentSong(songs);
                     fragmentSongs.notifySongStateChanges(songs);
                 } else if (position == 1) {
                     if (pagerAdapter.getItem(1).equals(fragmentArtistSongs)) {
                         songs = musicProvider.loadSongsByArtist(fragmentArtistSongs.getArtistName());
-                        if (MusicService.currentPagePos == position)
-                            musicSrv.indexCurrentSong(songs);
+//                        if (MusicService.currentPagePos == position)
+//                            musicSrv.indexCurrentSong(songs);
                         fragmentArtistSongs.notifySongStateChanges(songs);
                     }
                 } else {
                     if (pagerAdapter.getItem(2).equals(fragmentPlaylistSongs)) {
                         songs = dbMusicHelper.getPlaylistSongs(fragmentPlaylistSongs.getPlaylist_pos());
-                        if (MusicService.currentPagePos == position)
-                            musicSrv.indexCurrentSong(songs);
+//                        if (MusicService.currentPagePos == position)
+//                            musicSrv.indexCurrentSong(songs);
                         fragmentPlaylistSongs.notifySongStateChanges(songs);
                     }
                 }
