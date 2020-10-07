@@ -20,6 +20,9 @@
 
         </activity>
         <activity
+            android:name=".controller.SettingActivity"
+            android:launchMode="singleTask" />
+        <activity
             android:name=".controller.ActivityLogin"
             android:launchMode="singleTask">
             <intent-filter>

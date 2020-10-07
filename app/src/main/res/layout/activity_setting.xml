@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_setting"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="*"
+    tools:context=".controller.SettingActivity">
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/setting" />
+
+    <TableRow android:layout_margin="20dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/color_theme"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <Spinner
+            android:id="@+id/spinner_theme"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:entries="@array/colors" />
+    </TableRow>
+
+    <TableRow android:layout_margin="20dp">
+
+        <TextView
+            android:id="@+id/tvReset"
+            android:layout_column="1"
+            android:layout_gravity="center"
+            android:text="@string/reset"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="20sp" />
+    </TableRow>
+
+    <TableRow>
+
+        <Button
+            android:id="@+id/btnClose"
+            android:layout_width="match_parent"
+            android:layout_column="1"
+            android:layout_marginEnd="20dp"
+            android:text="@string/close" />
+    </TableRow>
+</TableLayout>

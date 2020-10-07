@@ -75,4 +75,6 @@
     <string name="open" translatable="false">Open</string>
     <string name="close" translatable="false">Close</string>
     <string name="setting">Setting</string>
+    <string name="color_theme">Color Theme</string>
+    <string name="reset">Reset</string>
 </resources>

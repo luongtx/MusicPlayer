@@ -163,6 +163,7 @@ public class ActivityAccount extends AppCompatActivity {
     }
 
     public void DN(View v) {
+        startActivity(new Intent(ActivityAccount.this, ActivityLogin.class));
         ActivityAccount.this.finish();
     }
 

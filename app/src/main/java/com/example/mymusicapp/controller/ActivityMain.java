@@ -50,6 +50,9 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static com.example.mymusicapp.util.Constants.KEY_THEME;
+import static com.example.mymusicapp.util.Constants.MY_PREFS_FILENAME;
+
 public class ActivityMain extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     Toolbar toolbar;
@@ -99,8 +102,8 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadTheme();
         setContentView(R.layout.activity_main);
-
         appBarLayout = findViewById(R.id.layout_appbar);
         tabLayout = findViewById(R.id.tab_layout);
         toolbar = findViewById(R.id.toolbar_main);
@@ -181,7 +184,9 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
             } else if (item.getItemId() == R.id.menu_online) {
                 Toast.makeText(ActivityMain.this, "btn online clicked", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(ActivityMain.this, "btn settings clicked", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ActivityMain.this, SettingActivity.class);
+                startActivity(intent);
+//                finish();
             }
             return false;
         });
@@ -242,6 +247,12 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         for (int i = 0; i < tabIcons.length; i++) {
             tabLayout.getTabAt(i).setIcon(tabIcons[i]);
         }
+    }
+
+    private void loadTheme() {
+        SharedPreferences sharedPreferences = getSharedPreferences(MY_PREFS_FILENAME, MODE_PRIVATE);
+        int theme = sharedPreferences.getInt(KEY_THEME, R.style.AppTheme_NoActionBar);
+        setTheme(theme);
     }
 
     @Override
@@ -345,6 +356,7 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
     protected void onDestroy() {
         super.onDestroy();
         unbindService(musicConnection);
+        unregisterReceiver(notificationPlaybackController.getBroadcastReceiver());
     }
 
     @Override
@@ -547,10 +559,11 @@ public class ActivityMain extends AppCompatActivity implements TimePickerDialog.
         musicSrv.addCallBacks(notificationPlaybackController);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(notificationPlaybackController.getBroadcastReceiver());
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        unregisterReceiver(notificationPlaybackController.getBroadcastReceiver());
+//    }
+
 
 }
